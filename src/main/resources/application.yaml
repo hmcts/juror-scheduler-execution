@@ -1,0 +1,201 @@
+server:
+  port: 9090
+management:
+  endpoint:
+    health:
+      show-details: "always"
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health, info, prometheus
+springdoc:
+  packagesToScan: uk.gov.hmcts.juror
+  writer-with-order-by-keys: true
+spring:
+  config:
+    import: "optional:configtree:/mnt/secrets/juror/"
+  application:
+    name: HMCTS API Job Executor
+logging:
+  level:
+    uk.gov.hmcts.juror: info
+uk:
+  gov:
+    hmcts:
+      juror:
+        security:
+          use-database: false
+          token-validity: 18000
+          secret: ${SECRET}
+        job:
+          execution:
+            remote:
+              scheduler-service-update-status-url: /job/{job-key}/task/{task-id}/status
+              scheduler-service-get-latest-status-url: /job/{job-key}/status
+              scheduler-service-get-status-url: /job/{job-key}/task/{task-id}
+              scheduler-service:
+                security:
+                  claims:
+                    permissions:
+                      - task::status::update
+                      - task::view
+                      - job::view::status
+                  issuer: api-job-execution-service
+                  secret: ${SCHEDULER_SERVICE_SECRET}
+                  subject: ${SCHEDULER_SERVICE_SUBJECT}
+                  token-validity: 300000
+                  authentication-prefix: "Bearer "
+                host: localhost
+                port: 8083
+                scheme: http
+              police-national-computer-check-service:
+                security:
+                  claims:
+                    permissions:
+                      - pnc::check::bulk
+                      - pnc::check::single
+                  issuer: api-job-execution-service
+                  subject: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT}
+                  secret: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET}
+                  token-validity: 300000
+                  authentication-prefix: "Bearer "
+                host: localhost
+                url: /jurors/check/bulk
+                port: 8084
+                scheme: http
+              juror-service:
+                scheme: http
+                host: ${JUROR_SERVICE_HOST}
+                port: ${JUROR_SERVICE_PORT}
+                url: /api/v1/moj/juror-record/pnc/{jurorNumber}
+                security:
+                  id: JDCRON001
+                  issuer: pnc-check-service
+                  token-validity: 160000
+                  subject: pnc-check-service
+                  secret: ${JUROR_SERVICE_SECRET}
+                  claims:
+                    login: AUTO
+                    userLevel: "1"
+                    daysToExpire: 6
+                    passwordWarning: true
+                    staff:
+                      name: AUTO
+                      rank: -1
+                      active: 1
+                      courts: [ ]
+jobs:
+  pool-transfer:
+    database:
+      schema: JUROR
+  print:
+    ftp-directory: /Users/benedwards/Desktop/JurorTest/ftp_print
+    sftp:
+      host: "localhost"
+      port: 2222
+      password: password404
+      user: userName101
+      azure-deployment: false
+      remote-directory: print
+      private-key: /Users/benedwards/.ssh/id_ecdsa
+      session-wait-timeout: 10000
+      pool-size: 10
+      allow-unknown-keys: true
+    database:
+      username: "system"
+      password: "postgres"
+      url: "jdbc:postgresql://localhost:5432/juror"
+      schema: "JUROR"
+    print-file-row-limit: 7
+  payment:
+    ftp-directory: /Users/benedwards/Desktop/JurorTest/ftp_payment
+    sftp:
+      host: "abc"
+    database:
+      username: "system"
+      password: "oracle"
+      url: "jdbc:oracle:thin:@localhost:1521:xe"
+      schema: "JUROR"
+  housekeeping:
+    juror-digital:
+      retention-threshold: 1
+      database:
+        schema: HK
+    standard:
+      max-log-file-age-in-days: 10
+      log-file-directory: /Users/benedwards/Desktop/JurorTest/logs
+      max-runtime: 240
+      read-only: false
+      owner-restrict: false
+      database:
+        username: "system"
+        password: "oracle"
+        url: "jdbc:oracle:thin:@localhost:1521:xe"
+        schema: HK
+  stats:
+    performance:
+      email-recipients: [ mojasloccssupsjuror@cgi.com ]
+      smtp:
+        username: cgi_juror_checks@justice.gov.uk
+      database:
+        schema: JUROR_DIGITAL_USER
+      deferrals-no-months: 11
+      excusals-no-months: 11
+      response-times-and-non-respond-no-months: 6
+      thirdparty-online-no-months: 6
+      welsh-online-responses-no-months: 6
+  checks:
+    dashboard-morning-checks:
+      checks-file: /filestore/HOME/jurorpl/checks.txt
+      archive-folder: /filestore/HOME/jurorpl/bin/morning_checks/archive
+      juror-pl-tmp-directory: /filestore/HOME/jurorpl/tmp
+      expected-job-config-location: /Users/benedwards/Desktop/JurorTest/morningChecksConfig.json
+    pnc:
+      batch:
+        batch-size: 500
+        database:
+          username: "system"
+          password: "postgres"
+          url: "jdbc:postgresql://localhost:5432/juror"
+          schema: "JUROR"
+  letter:
+    confirm:
+      database:
+        username: "system"
+        password: "oracle"
+        url: "jdbc:oracle:thin:@localhost:1521:xe"
+        schema: "JUROR"
+    withdraw:
+      database:
+        username: "system"
+        password: "oracle"
+        url: "jdbc:oracle:thin:@localhost:1521:xe"
+        schema: "JUROR"
+  dashboard:
+    ams:
+      database:
+        username: "system"
+        password: "oracle"
+        url: "jdbc:oracle:thin:@localhost:1521:xe"
+        schema: "JUROR"
+      sftp:
+        host: "localhost"
+        port: 2222
+        password: password404
+        user: userName101
+        azure-deployment: false
+        remote-directory: print
+        private-key: /Users/benedwards/.ssh/id_ecdsa
+        session-wait-timeout: 10000
+        pool-size: 10
+        allow-unknown-keys: true
+      pnc-certificate-location: tbc
+      pnc-certificate-password: tbc
+      pnc-certificate-alias: tbc
+defaults:
+  database:
+    username: "system"
+    password: "oracle"
+    url: "jdbc:oracle:thin:@localhost:1521:xe"
+    schema: "JUROR"

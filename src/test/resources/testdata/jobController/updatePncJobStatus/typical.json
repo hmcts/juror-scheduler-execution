@@ -1,0 +1,8 @@
+{
+  "status": "SUCCESS",
+  "message": "This is a typical message",
+  "meta_data": {
+    "key1": "value1",
+    "key2": "value2"
+  }
+}

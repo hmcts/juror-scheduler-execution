@@ -1,0 +1,164 @@
+#!groovy
+
+@Library("Infrastructure")
+
+import uk.gov.hmcts.contino.GradleBuilder
+
+def type = "java"
+def product = "juror"
+def component = "scheduler-execution"
+
+def branchesToSync = []
+
+def secrets = [
+  'juror-${env}': [
+    secret('app-insights-connection-string', 'app-insights-connection-string'),
+    secret('AppInsightsInstrumentationKey', 'azure.application-insights.instrumentation-key'),
+    secret('scheduler-execution-POSTGRES-HOST', 'DB_HOST'),
+    secret('scheduler-execution-POSTGRES-PORT', 'DB_PORT'),
+    secret('scheduler-execution-POSTGRES-DATABASE', 'DB_NAME'),
+    secret('scheduler-execution-POSTGRES-USER', 'DB_USER_NAME'),
+    secret('scheduler-execution-POSTGRES-PASS', 'DB_PASSWORD'),
+    secret('job-SECRET', 'SECRET'),
+    secret('pnc-SECRET', 'POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET'),
+    secret('api-JOB-SECRET', 'JUROR_SERVICE_SECRET')
+    ],
+]
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
+  [$class     : 'AzureKeyVaultSecret',
+   secretType : 'Secret',
+   name       : secretName,
+   version    : '',
+   envVariable: envVar
+  ]
+}
+
+GradleBuilder builder = new GradleBuilder(this, product)
+
+withPipeline(type, product, component) {
+  loadVaultSecrets(secrets)
+  enableSlackNotifications('#juror-build-notices')
+  syncBranchesWithMaster(branchesToSync)
+
+  env.SCHEDULER_SERVICE_SUBJECT = 'api.job.execution.service@schedular.cgi.com'
+  env.POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT = 'api.job.execution.service@schedular.cgi.com'
+  env.JUROR_SERVICE_HOST = 'juror-api.staging.platform.hmcts.net'
+  env.JUROR_SERVICE_PORT = 443
+
+  afterAlways('test') {
+    builder.gradle('jacocoTestReport')
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "main.html",
+      reportName           : "Checkstyle Main Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "test.html",
+      reportName           : "Checkstyle Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "integrationTest.html",
+      reportName           : "Checkstyle Integration Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "smokeTest.html",
+      reportName           : "Checkstyle Smoke Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "functionalTest.html",
+      reportName           : "Checkstyle Functional Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/pmd",
+      reportFiles          : "main.html",
+      reportName           : "PMD Main Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/pmd",
+      reportFiles          : "test.html",
+      reportName           : "PMD Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/pmd",
+      reportFiles          : "integrationTest.html",
+      reportName           : "PMD Integration Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/pmd",
+      reportFiles          : "smokeTest.html",
+      reportName           : "PMD Smoke Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/pmd",
+      reportFiles          : "functionalTest.html",
+      reportName           : "PMD Functional Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/test",
+      reportFiles          : "index.html",
+      reportName           : "Unit Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/integration",
+      reportFiles          : "index.html",
+      reportName           : "Integration Test Report"
+    ]
+  }
+
+  afterFailure('test') {
+    junit '**/test-results/integration/*.xml'
+  }
+}
