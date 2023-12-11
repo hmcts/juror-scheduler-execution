@@ -12,8 +12,8 @@ import uk.gov.hmcts.juror.standard.service.exceptions.NotFoundException;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;

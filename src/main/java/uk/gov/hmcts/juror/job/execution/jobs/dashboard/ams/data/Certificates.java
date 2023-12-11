@@ -44,15 +44,16 @@ public class Certificates extends DashboardDataEntry {
         }
     }
 
+    public void addRow(String name, String expiryDate, String status) {
+        this.addEntry(name, expiryDate, status);
+    }
+
     private String formatDate(Date date) {
-        synchronized(DATE_FORMATTER){
+        synchronized (DATE_FORMATTER) {
             return DATE_FORMATTER.format(date);
         }
     }
 
-    public void addRow(String name, String expiryDate, String status) {
-        this.addEntry(name, expiryDate, status);
-    }
 
     public Job.Result populate() {
         try {

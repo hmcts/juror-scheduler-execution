@@ -12,8 +12,8 @@ import uk.gov.hmcts.juror.standard.client.contract.Client;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public interface SchedulerServiceClient extends Client {
 

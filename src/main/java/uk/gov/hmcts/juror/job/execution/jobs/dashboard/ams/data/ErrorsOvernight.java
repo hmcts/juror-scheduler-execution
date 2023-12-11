@@ -6,6 +6,7 @@ public class ErrorsOvernight extends DashboardDataEntry {
     protected ErrorsOvernight(DashboardData dashboardData) {
         super(dashboardData, "Errors Overnight", "Server Name", "Status");
     }
+
     @SuppressWarnings("PMD.LawOfDemeter")
     public Job.Result populate() {
         //SSUPVL03 gets populated by auto sys

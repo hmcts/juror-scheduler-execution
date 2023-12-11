@@ -14,10 +14,10 @@ import uk.gov.hmcts.juror.job.execution.util.FileUtils;
 import uk.gov.hmcts.juror.job.execution.util.Sftp;
 
 import java.io.File;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j

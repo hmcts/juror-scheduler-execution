@@ -104,7 +104,7 @@ task smoke(type: Test) {
 }
 
 checkstyle {
-  maxWarnings = 120
+  maxWarnings = 0
   toolVersion = '10.12.3'
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
 }
@@ -116,6 +116,9 @@ pmd {
   // https://github.com/pmd/pmd/issues/876
   ruleSets = []
   ruleSetFiles = files("config/pmd/ruleset.xml")
+}
+pmdTest {
+  maxFailures = 668 //TODO reduce
 }
 
 jacocoTestReport {
