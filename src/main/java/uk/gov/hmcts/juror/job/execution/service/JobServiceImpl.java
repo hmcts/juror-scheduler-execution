@@ -13,7 +13,7 @@ import uk.gov.hmcts.juror.standard.service.exceptions.NotFoundException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public class JobServiceImpl implements JobService {
     public JobServiceImpl(Clock clock, SchedulerServiceClient schedulerServiceClient,
                           List<Job> jobList) {
         this.clock = clock;
-        this.jobRunners = new HashMap<>();
+        this.jobRunners = new ConcurrentHashMap<>();
         this.schedulerServiceClient = schedulerServiceClient;
         jobList.forEach(job -> {
             String jobName = job.getClass().getSimpleName().replaceAll("\\$\\$.*", "");

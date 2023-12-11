@@ -6,12 +6,8 @@ import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Getter
 @Slf4j
@@ -19,6 +15,7 @@ public abstract class ParallelJob extends Job {
 
 
     protected ParallelJob() {
+        super();
     }
 
     public abstract List<ResultSupplier> getResultSuppliers();
@@ -28,22 +25,21 @@ public abstract class ParallelJob extends Job {
         List<Result> results = Collections.synchronizedList(new ArrayList<>());
 
         for (ResultSupplier resultSupplier : getResultSuppliers()) {
-            AtomicBoolean hasError = new AtomicBoolean(false);
-            List<Result> resultSupplierResults = Collections.synchronizedList(new ArrayList<>());
-            resultSupplier.getResultRunners().parallelStream().forEach(resultRunner -> {
-                Result result = runJobStep(resultRunner, metaData);
-                if (result.getStatus() != Status.SUCCESS) {
-                    hasError.set(true);
-                }
-                resultSupplierResults.add(result);
-            });
-            Result result = Result.merge(resultSupplierResults);
+            Result result = executeResultSupplier(resultSupplier, metaData);
             results.add(result);
-            resultSupplier.runPostActions(result);
-            if (!resultSupplier.isContinueOnFailure() && hasError.get()) {
+            if (!resultSupplier.isContinueOnFailure() && result.getStatus() != Status.SUCCESS) {
                 break;
             }
         }
         return Result.merge(results);
+    }
+
+    private Result executeResultSupplier(ResultSupplier resultSupplier, MetaData metaData) {
+        List<Result> resultSupplierResults = Collections.synchronizedList(new ArrayList<>());
+        resultSupplier.getResultRunners().parallelStream().forEach(resultRunner ->
+            resultSupplierResults.add(runJobStep(resultRunner, metaData)));
+        Result result = Result.merge(resultSupplierResults);
+        resultSupplier.runPostActions(result);
+        return result;
     }
 }

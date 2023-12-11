@@ -16,7 +16,8 @@ public enum Status {
 
 
     private final int priority;
-    Status(int priority){
+
+    Status(int priority) {
         this.priority = priority;
     }
 }

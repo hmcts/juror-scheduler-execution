@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class SftpServiceImplTest {
 
-    private final List<Sftp.SftpServerGateway> GATEWAYS = List.of(
+    private final List<Sftp.SftpServerGateway> gateways = List.of(
         new TestSftpServerGateway(),
         new TestSftpServerGatewayError());
 
@@ -25,15 +25,15 @@ class SftpServiceImplTest {
 
     @BeforeEach
     void beforeEach() {
-        this.sftpService = new SftpServiceImpl(GATEWAYS);
+        this.sftpService = new SftpServiceImpl(gateways);
         this.uploadCount = new AtomicInteger(0);
     }
 
     @Test
     void positiveConstructorTest() {
         assertEquals(2, this.sftpService.sftpServerGatewaysByParentClass.size());
-        assertEquals(GATEWAYS.get(0), this.sftpService.sftpServerGatewaysByParentClass.get(TestSftp.class));
-        assertEquals(GATEWAYS.get(1), this.sftpService.sftpServerGatewaysByParentClass.get(TestSftpError.class));
+        assertEquals(gateways.get(0), this.sftpService.sftpServerGatewaysByParentClass.get(TestSftp.class));
+        assertEquals(gateways.get(1), this.sftpService.sftpServerGatewaysByParentClass.get(TestSftpError.class));
     }
 
 

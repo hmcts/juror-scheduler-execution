@@ -127,7 +127,8 @@ class BureauLettersAutomaticallyGeneratedTest {
         doNothing().when(bureauLettersAutomaticallyGenerated)
             .populateTimestamp(eq(dashboardData), any(), any(LocalDateTime.class));
 
-        assertEquals(Job.Result.failed("Failed to get Confirmation letter or withdraw letter information"), bureauLettersAutomaticallyGenerated.populate(),
+        assertEquals(Job.Result.failed("Failed to get Confirmation letter or withdraw letter information"),
+            bureauLettersAutomaticallyGenerated.populate(),
             "Expected result success to be returned");
 
         verify(bureauLettersAutomaticallyGenerated, times(1)).addBureauLettersAutomaticallyGeneratedValue(
@@ -137,6 +138,7 @@ class BureauLettersAutomaticallyGeneratedTest {
         verify(bureauLettersAutomaticallyGenerated, times(1)).populateTimestamp(dashboardData,
             "Bureau Letters Automatically Generated", withdrawLetterLastUpdatedAt);
     }
+
     @Test
     void positivePopulateWithdrawNull() {
         LocalDateTime confirmationLetterLastUpdatedAt = LocalDateTime.now();
@@ -151,7 +153,8 @@ class BureauLettersAutomaticallyGeneratedTest {
         doNothing().when(bureauLettersAutomaticallyGenerated)
             .populateTimestamp(eq(dashboardData), any(), any(LocalDateTime.class));
 
-        assertEquals(Job.Result.failed("Failed to get Confirmation letter or withdraw letter information"), bureauLettersAutomaticallyGenerated.populate(),
+        assertEquals(Job.Result.failed("Failed to get Confirmation letter or withdraw letter information"),
+            bureauLettersAutomaticallyGenerated.populate(),
             "Expected result success to be returned");
 
         verify(bureauLettersAutomaticallyGenerated, times(1)).addBureauLettersAutomaticallyGeneratedValue(
@@ -161,6 +164,7 @@ class BureauLettersAutomaticallyGeneratedTest {
         verify(bureauLettersAutomaticallyGenerated, times(1)).populateTimestamp(dashboardData,
             "Bureau Letters Automatically Generated", confirmationLetterLastUpdatedAt);
     }
+
     @Test
     void positivePopulateBothNull() {
         doReturn(null).when(bureauLettersAutomaticallyGenerated)
@@ -173,7 +177,8 @@ class BureauLettersAutomaticallyGeneratedTest {
         doNothing().when(bureauLettersAutomaticallyGenerated)
             .populateTimestamp(eq(dashboardData), any(), any(LocalDateTime.class));
 
-        assertEquals(Job.Result.failed("Failed to get Confirmation letter or withdraw letter information"), bureauLettersAutomaticallyGenerated.populate(),
+        assertEquals(Job.Result.failed("Failed to get Confirmation letter or withdraw letter information"),
+            bureauLettersAutomaticallyGenerated.populate(),
             "Expected result success to be returned");
 
         verify(bureauLettersAutomaticallyGenerated, times(1)).addBureauLettersAutomaticallyGeneratedValue(
@@ -206,8 +211,8 @@ class BureauLettersAutomaticallyGeneratedTest {
         verify(taskResponse, times(1)).getMetaData();
         verify(bureauLettersAutomaticallyGenerated, times(1)).addRow("CONFIRMATION", "1");
 
-        verify(bureauLettersAutomaticallyGenerated, times(1)).
-            addBureauLettersAutomaticallyGeneratedValue("CONFIRMATION", "CONFIRM_LETTER");
+        verify(bureauLettersAutomaticallyGenerated, times(1))
+            .addBureauLettersAutomaticallyGeneratedValue("CONFIRMATION", "CONFIRM_LETTER");
         verifyNoMoreInteractions(bureauLettersAutomaticallyGenerated);
     }
 
@@ -226,8 +231,8 @@ class BureauLettersAutomaticallyGeneratedTest {
         verify(bureauLettersAutomaticallyGenerated, times(1))
             .addRow("CONFIRMATION", "ERROR");
 
-        verify(bureauLettersAutomaticallyGenerated, times(1)).
-            addBureauLettersAutomaticallyGeneratedValue("CONFIRMATION", "CONFIRM_LETTER");
+        verify(bureauLettersAutomaticallyGenerated, times(1))
+            .addBureauLettersAutomaticallyGeneratedValue("CONFIRMATION", "CONFIRM_LETTER");
         verifyNoMoreInteractions(bureauLettersAutomaticallyGenerated);
 
     }
@@ -251,8 +256,8 @@ class BureauLettersAutomaticallyGeneratedTest {
         verify(taskResponse, times(1)).getMetaData();
         verify(bureauLettersAutomaticallyGenerated, times(1)).addRow("CONFIRMATION", "ERROR");
 
-        verify(bureauLettersAutomaticallyGenerated, times(1)).
-            addBureauLettersAutomaticallyGeneratedValue("CONFIRMATION", "CONFIRM_LETTER");
+        verify(bureauLettersAutomaticallyGenerated, times(1))
+            .addBureauLettersAutomaticallyGeneratedValue("CONFIRMATION", "CONFIRM_LETTER");
         verifyNoMoreInteractions(bureauLettersAutomaticallyGenerated);
 
     }
@@ -272,8 +277,8 @@ class BureauLettersAutomaticallyGeneratedTest {
         verify(bureauLettersAutomaticallyGenerated, times(1))
             .addRow("CONFIRMATION", "ERROR");
 
-        verify(bureauLettersAutomaticallyGenerated, times(1)).
-            addBureauLettersAutomaticallyGeneratedValue("CONFIRMATION", "CONFIRM_LETTER");
+        verify(bureauLettersAutomaticallyGenerated, times(1))
+            .addBureauLettersAutomaticallyGeneratedValue("CONFIRMATION", "CONFIRM_LETTER");
         verifyNoMoreInteractions(bureauLettersAutomaticallyGenerated);
     }
 

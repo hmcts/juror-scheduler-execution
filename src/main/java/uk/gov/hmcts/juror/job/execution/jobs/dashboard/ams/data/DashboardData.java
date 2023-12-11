@@ -6,8 +6,6 @@ import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardConfig;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

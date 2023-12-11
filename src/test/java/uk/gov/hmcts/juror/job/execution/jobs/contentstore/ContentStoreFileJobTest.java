@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.util.FileSystemUtils;
-import uk.gov.hmcts.juror.job.execution.util.Sftp;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.ContentStore;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
@@ -18,6 +17,7 @@ import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 import uk.gov.hmcts.juror.job.execution.service.contracts.SftpService;
 import uk.gov.hmcts.juror.job.execution.util.FileSearch;
 import uk.gov.hmcts.juror.job.execution.util.FileUtils;
+import uk.gov.hmcts.juror.job.execution.util.Sftp;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,8 +55,8 @@ public class ContentStoreFileJobTest {
 
     protected SftpService sftpService;
     protected DatabaseConfig databaseConfig;
-    protected  DatabaseService databaseService;
-    protected  Connection connection;
+    protected DatabaseService databaseService;
+    protected Connection connection;
 
     protected File ftpDirectory;
     protected String fileType;
@@ -72,6 +72,7 @@ public class ContentStoreFileJobTest {
     protected DatabaseConfig createDatabaseConfig() {
         return new DatabaseConfig();
     }
+
     protected ContentStoreFileJob getContentStoreFileJob() throws IOException {
         this.ftpDirectory = Files.createTempDirectory("ContentStoreFileJobTest").toFile();
         this.databaseConfig = createDatabaseConfig();
@@ -114,13 +115,13 @@ public class ContentStoreFileJobTest {
     @DisplayName("protected Result generateFiles()")
     @Nested
     class GenerateFiles {
-        private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA " +
-            "FROM CONTENT_STORE CS " +
-            "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
+        private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA "
+            + "FROM CONTENT_STORE CS "
+            + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
 
-        private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE CS " +
-            "SET CS.DATE_SENT=SYSDATE " +
-            "WHERE CS.REQUEST_ID=? AND CS.FILE_TYPE=?";
+        private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE CS "
+            + "SET CS.DATE_SENT=SYSDATE "
+            + "WHERE CS.REQUEST_ID=? AND CS.FILE_TYPE=?";
 
 
         private List<ContentStore> getStandardContentStoreList() {
@@ -302,6 +303,7 @@ public class ContentStoreFileJobTest {
         }
 
         @Test
+        @SuppressWarnings("VariableDeclarationUsageDistance")//Required for mocks setup
         void negative_particular_success() throws IOException {
             try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class);
                  MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {

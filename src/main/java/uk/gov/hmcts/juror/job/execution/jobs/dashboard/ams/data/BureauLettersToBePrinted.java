@@ -7,9 +7,9 @@ import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+@SuppressWarnings("PMD.LawOfDemeter")
 public class BureauLettersToBePrinted extends DashboardDataEntry {
     public static final String BUREAU_LETTERS_TO_BE_PRINTED_SQL = """
             select f.form_type type,
@@ -68,7 +68,9 @@ public class BureauLettersToBePrinted extends DashboardDataEntry {
             String.valueOf(bureauLettersToBePrintedDB.getCount()));
     }
 
+
     public Job.Result populate() {
+        final String errorText = "ERROR";
         AtomicReference<Job.Result> result = new AtomicReference<>(null);
         try {
             databaseService.execute(databaseConfig, connection -> {
@@ -77,14 +79,14 @@ public class BureauLettersToBePrinted extends DashboardDataEntry {
                         BUREAU_LETTERS_TO_BE_PRINTED_SQL);
 
                 if (response == null || response.isEmpty()) {
-                    addRow("ERROR", "ERROR", "ERROR");
+                    addRow(errorText, errorText, errorText);
                     result.set(Job.Result.failed("No response from database"));
                 } else {
                     response.forEach(this::addRow);
                 }
             });
         } catch (Exception e) {
-            addRow("ERROR", "ERROR", "ERROR");
+            addRow(errorText, errorText, errorText);
             result.set(Job.Result.failed("Unexpected exception", e));
         }
         populateTimestamp(dashboardData, "Bureau Letters To Be Printed", LocalDateTime.now(clock));

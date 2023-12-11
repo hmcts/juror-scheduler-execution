@@ -25,6 +25,7 @@ public class ClientConfig {
     ) {
         return restTemplateBuilder(config.getSchedulerService(), jwtService);
     }
+
     @Bean
     @ClientType("JurorService")
     public RestTemplateBuilder jurorServiceRestTemplateBuilder(
@@ -33,6 +34,7 @@ public class ClientConfig {
     ) {
         return restTemplateBuilder(config.getJurorService(), jwtService);
     }
+
     @Bean
     @ClientType("PoliceNationalCheckService")
     public RestTemplateBuilder policeNationalCheckServiceRestTemplateBuilder(

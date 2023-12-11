@@ -2,7 +2,8 @@ package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams;
 
 import uk.gov.hmcts.juror.job.execution.testsupport.AbstractSftpTest;
 
-public class AmsDashboardSftpTest extends AbstractSftpTest<AmsDashboardSftp,AmsDashboardConfig, AmsDashboardSftp.AmsDashboardSftpServerGatewayImpl> {
+public class AmsDashboardSftpTest extends AbstractSftpTest<AmsDashboardSftp, AmsDashboardConfig,
+    AmsDashboardSftp.AmsDashboardSftpServerGatewayImpl> {
     @Override
     protected AmsDashboardSftp createSftp(AmsDashboardConfig config) {
         return new AmsDashboardSftp(config);

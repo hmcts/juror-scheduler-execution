@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -117,7 +116,7 @@ class ParallelJobTest {
         assertTrue(result.getMessage().contains("Success 22"), "Message should contain Success 22");
         assertTrue(result.getMessage().contains("Success 23"), "Message should contain Success 23");
         assertTrue(result.getMessage().contains("Success 33"), "Message should contain Success 33");
-        assertEquals(82,result.getMessage().length(), "Message should be 82 characters long");
+        assertEquals(82, result.getMessage().length(), "Message should be 82 characters long");
         assertEquals(3, postActionCalled.get(), "Post action should be called");
     }
 
@@ -198,7 +197,7 @@ class ParallelJobTest {
         assertTrue(result.getMessage().contains("Success 22"), "Message should contain Success 22");
         assertTrue(result.getMessage().contains("Success 23"), "Message should contain Success 23");
         assertTrue(result.getMessage().contains("Success 33"), "Message should contain Success 33");
-        assertEquals(82,result.getMessage().length(), "Message should be 82 characters long");
+        assertEquals(82, result.getMessage().length(), "Message should be 82 characters long");
         assertEquals(3, postActionCalled.get(), "Post action should be called");
     }
 
@@ -276,7 +275,7 @@ class ParallelJobTest {
         assertTrue(result.getMessage().contains("Success 21"), "Message should contain Success 21");
         assertTrue(result.getMessage().contains("Success 22"), "Message should contain Success 22");
         assertTrue(result.getMessage().contains("Success 23"), "Message should contain Success 23");
-        assertEquals(70,result.getMessage().length(), "Message should be 82 characters long");
+        assertEquals(70, result.getMessage().length(), "Message should be 82 characters long");
         assertEquals(2, postActionCalled.get(), "Post action should be called");
     }
 
@@ -354,9 +353,10 @@ class ParallelJobTest {
         assertTrue(result.getMessage().contains("Success 21"), "Message should contain Success 21");
         assertTrue(result.getMessage().contains("Success 22"), "Message should contain Success 22");
         assertTrue(result.getMessage().contains("Success 23"), "Message should contain Success 23");
-        assertEquals(70,result.getMessage().length(), "Message should be 82 characters long");
+        assertEquals(70, result.getMessage().length(), "Message should be 82 characters long");
         assertEquals(2, postActionCalled.get(), "Post action should be called");
     }
+
     static class TestParallelJob extends ParallelJob {
 
         private List<ResultSupplier> resultSupplier;

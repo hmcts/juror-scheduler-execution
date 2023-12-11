@@ -21,9 +21,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @Slf4j
@@ -44,6 +44,7 @@ public class DashboardMorningChecksJob extends LinearJob {
                                         SmtpService smtpService,
                                         ObjectMapper objectMapper,
                                         Clock clock) {
+        super();
         this.config = config;
         this.clock = clock;
         this.objectMapper = objectMapper;
@@ -69,19 +70,20 @@ public class DashboardMorningChecksJob extends LinearJob {
 
     Result archivePreviousCheckFile(final Support support) {
         FileUtils.move(this.config.getAttachmentFile(),
-            new File(this.config.getArchiveFolder().getAbsolutePath() +
-                "/Juror_MorningChecks_" + support.getLogDateTimeStr() + ".csv"), true);
+            new File(this.config.getArchiveFolder().getAbsolutePath()
+                + "/Juror_MorningChecks_" + support.getLogDateTimeStr() + ".csv"), true);
         return Result.passed();
     }
 
+    @SuppressWarnings({"PMD.LawOfDemeter", "PMD.CognitiveComplexity"})
     Result checkScheduledJobsRan(Support support) {
         try {
-            Map<String, String> metaData = new HashMap<>();
+            Map<String, String> metaData = new ConcurrentHashMap<>();
 
             MorningChecksJsonConfig morningChecksConfig =
                 this.objectMapper.readValue(this.config.getExpectedJobConfigLocation(),
                     MorningChecksJsonConfig.class);
-            MorningChecksJsonConfig.DayConfig dayConfig = morningChecksConfig.days.get(support.getDayOfWeek());
+            MorningChecksJsonConfig.DayConfig dayConfig = morningChecksConfig.getDay(support.getDayOfWeek());
 
             Status resultStatus = Status.SUCCESS;
             for (String jobKey : dayConfig.getExpectedJobs()) {
@@ -126,7 +128,7 @@ public class DashboardMorningChecksJob extends LinearJob {
                 .addMetaData(metaData);
         } catch (Exception e) {
             log.error("Failed to check jobs result", e);
-            return new Result(Status.FAILED_UNEXPECTED_EXCEPTION,"Failed to check jobs result", e);
+            return new Result(Status.FAILED_UNEXPECTED_EXCEPTION, "Failed to check jobs result", e);
         }
     }
 
@@ -150,10 +152,10 @@ public class DashboardMorningChecksJob extends LinearJob {
         private final List<String> messages;
         private final List<TableItem> tableItems;
 
-        private static final DateTimeFormatter logDateTimeFormatter;
+        private static final DateTimeFormatter LOG_DATE_TIME_FORMATTER;
 
         static {
-            logDateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss");
+            LOG_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss");
         }
 
         private final DayOfWeek dayOfWeek;
@@ -163,7 +165,7 @@ public class DashboardMorningChecksJob extends LinearJob {
             this.messages = new ArrayList<>();
             this.tableItems = new ArrayList<>();
             this.startTime = LocalDateTime.now(clock);
-            this.logDateTimeStr = startTime.format(logDateTimeFormatter);
+            this.logDateTimeStr = startTime.format(LOG_DATE_TIME_FORMATTER);
             this.dayOfWeek = DayOfWeek.from(this.startTime);
         }
 
@@ -198,22 +200,22 @@ public class DashboardMorningChecksJob extends LinearJob {
         }
 
         public String buildHtml() {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder(22);
             builder.append(PAGE_START)
                 .append(TABLE_START);
             for (TableItem tableItem : this.tableItems) {
                 builder.append(tableItem.toHtml());
             }
-            builder.append(TABLE_END);
-
-            builder.append("<br><ul>");
+            builder.append(TABLE_END)
+                .append("<br><ul>");
             for (String message : this.messages) {
                 builder.append("<li>").append(message).append("</li>");
             }
-            builder.append("</ul>");
-            builder.append(PAGE_END);
+            builder.append("</ul>")
+                .append(PAGE_END);
             return builder.toString();
         }
+
         @Getter
         @AllArgsConstructor
         public static class TableItem {
@@ -223,6 +225,7 @@ public class DashboardMorningChecksJob extends LinearJob {
             private String message;
             private Status status;
 
+            @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")//False positive
             public static Status mapStatus(uk.gov.hmcts.juror.job.execution.model.Status status) {
                 if (status == uk.gov.hmcts.juror.job.execution.model.Status.SUCCESS
                     || status == uk.gov.hmcts.juror.job.execution.model.Status.VALIDATION_PASSED

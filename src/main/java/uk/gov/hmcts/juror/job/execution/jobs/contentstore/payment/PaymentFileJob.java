@@ -12,17 +12,17 @@ import uk.gov.hmcts.juror.job.execution.service.contracts.SftpService;
 public class PaymentFileJob extends ContentStoreFileJob {
     @Autowired
     public PaymentFileJob(
-            PaymentConfig paymentConfig,
-            SftpService sftpService,
-            DatabaseService databaseService) {
+        PaymentConfig paymentConfig,
+        SftpService sftpService,
+        DatabaseService databaseService) {
         super(sftpService,
-                databaseService,
-                paymentConfig.getFtpDirectory(),
-                paymentConfig.getDatabase(),
-                "PAYMENT",
-                "payment_files_to_clob_extract",
-                new Object[0],
+            databaseService,
+            paymentConfig.getFtpDirectory(),
+            paymentConfig.getDatabase(),
+            "PAYMENT",
+            "payment_files_to_clob_extract",
+            new Object[0],
             "JURY\\d+\\.\\d+.*",
-                PaymentSftp.class);
+            PaymentSftp.class);
     }
 }

@@ -2,7 +2,6 @@ package uk.gov.hmcts.juror.job.execution.jobs.contentstore;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import uk.gov.hmcts.juror.job.execution.util.Sftp;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.ContentStore;
 import uk.gov.hmcts.juror.job.execution.jobs.LinearJob;
@@ -12,9 +11,10 @@ import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 import uk.gov.hmcts.juror.job.execution.service.contracts.SftpService;
 import uk.gov.hmcts.juror.job.execution.util.FileSearch;
 import uk.gov.hmcts.juror.job.execution.util.FileUtils;
+import uk.gov.hmcts.juror.job.execution.util.Sftp;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,13 +23,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Getter
 public abstract class ContentStoreFileJob extends LinearJob {
-    private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA " +
-        "FROM CONTENT_STORE CS " +
-        "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
+    private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA "
+        + "FROM CONTENT_STORE CS "
+        + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
 
-    private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE CS " +
-        "SET CS.DATE_SENT=SYSDATE " +
-        "WHERE CS.REQUEST_ID=? AND CS.FILE_TYPE=?";
+    private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE CS "
+        + "SET CS.DATE_SENT=SYSDATE "
+        + "WHERE CS.REQUEST_ID=? AND CS.FILE_TYPE=?";
 
     private final SftpService sftpService;
     private final DatabaseService databaseService;
@@ -53,13 +53,14 @@ public abstract class ContentStoreFileJob extends LinearJob {
         String fileNameRegex,
         Class<? extends Sftp> sftpClass
     ) {
+        super();
         this.sftpService = sftpService;
         this.databaseService = databaseService;
         this.ftpDirectory = ftpDirectory;
         this.databaseConfig = databaseConfig;
         this.fileType = fileType;
         this.procedureName = procedureName;
-        this.procedureArguments = procedureArguments;
+        this.procedureArguments = procedureArguments.clone();
         this.fileNameRegex = fileNameRegex;
         this.sftpClass = sftpClass;
         addRules(
@@ -69,7 +70,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
 
 
     protected Result generateFiles() {
-        Map<String, String> metaData = new HashMap<>();
+        Map<String, String> metaData = new ConcurrentHashMap<>();
         AtomicInteger successCount = new AtomicInteger(0);
         AtomicInteger failureCount = new AtomicInteger(0);
         AtomicInteger totalFiles = new AtomicInteger(0);
@@ -117,7 +118,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
     }
 
     protected Result uploadFiles() {
-        Map<String, String> metaData = new HashMap<>();
+        Map<String, String> metaData = new ConcurrentHashMap<>();
         AtomicInteger successCount = new AtomicInteger(0);
         AtomicInteger failureCount = new AtomicInteger(0);
         String message;

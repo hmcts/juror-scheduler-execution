@@ -1,8 +1,6 @@
 package uk.gov.hmcts.juror.job.execution.rules;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collection;

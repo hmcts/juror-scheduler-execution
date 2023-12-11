@@ -1,7 +1,6 @@
 package uk.gov.hmcts.juror.job.execution.jobs.letter;
 
 import lombok.Getter;
-import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.Count;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
@@ -9,9 +8,9 @@ import uk.gov.hmcts.juror.job.execution.jobs.StoredProcedureJob;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
 import java.util.List;
-import java.util.Map;
 
 @Getter
+@SuppressWarnings("AbbreviationAsWordInName")
 public abstract class LetterJob extends StoredProcedureJob {
 
     private final String countSql;

@@ -93,7 +93,7 @@ class SmtpServiceImplTest {
         final SmtpConfig config = createSmtpConfig();
         final String subject = "This is my very important subject line";
         final String text = "This the body of the email";
-        final String[] recipients = {"ben@hmcts.net","ben10@hmcts.net","ben@fishing.net"};
+        final String[] recipients = {"ben@hmcts.net", "ben10@hmcts.net", "ben@fishing.net"};
         SmtpServiceImpl smtpService = spy(this.smtpService);
         JavaMailSender javaMailSender = mock(JavaMailSender.class);
 

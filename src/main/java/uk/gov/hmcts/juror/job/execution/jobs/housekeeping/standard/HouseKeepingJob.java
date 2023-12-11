@@ -16,7 +16,7 @@ public class HouseKeepingJob extends LinearJob {
     private final DatabaseService databaseService;
     private final HouseKeepingConfig config;
 
-    private final String[] resultMessages = new String[]{
+    private final String[] resultMessages = {
         "POOL ERRORS RAISED",
         "FATAL ERROR RAISED",
         "LOG FILE ERROR RAISED",
@@ -26,6 +26,7 @@ public class HouseKeepingJob extends LinearJob {
     };
 
     protected HouseKeepingJob(DatabaseService databaseService, HouseKeepingConfig config) {
+        super();
         this.databaseService = databaseService;
         this.config = config;
     }
@@ -40,6 +41,7 @@ public class HouseKeepingJob extends LinearJob {
     }
 
 
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     Result callHouseKeepingProcedure() {
         try {
             AtomicReference<Status> status = new AtomicReference<>();

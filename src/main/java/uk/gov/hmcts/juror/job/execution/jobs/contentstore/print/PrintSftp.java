@@ -38,8 +38,11 @@ public class PrintSftp extends Sftp {
     @MessagingGateway
     public interface PrintSftpServerGatewayImpl extends SftpServerGateway {
         @Gateway(requestChannel = "toSftpChannel" + NAME + "Destination")
+        @Override
         void upload(File file);
-        default Class<? extends Sftp> getParent(){
+
+        @Override
+        default Class<? extends Sftp> getParent() {
             return PrintSftp.class;
         }
     }

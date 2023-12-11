@@ -54,8 +54,8 @@ public class JobController {
     @PreAuthorize("hasAuthority('" + PermissionConstants.UPDATE_PNC + "')")
     public ResponseEntity<Void> updatePncJobStatus(
         @Valid @RequestBody SchedulerServiceClient.StatusUpdatePayload payload,
-        @PathVariable(value = "jobKey") String jobKey,
-        @PathVariable(value = "taskId") Long taskId
+        @PathVariable("jobKey") String jobKey,
+        @PathVariable("taskId") Long taskId
     ) {
         this.pncBatchJob.updateResult(payload, jobKey, taskId);
         return ResponseEntity.accepted().build();

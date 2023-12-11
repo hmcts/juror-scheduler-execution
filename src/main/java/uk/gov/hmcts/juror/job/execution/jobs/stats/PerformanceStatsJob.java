@@ -8,7 +8,6 @@ import uk.gov.hmcts.juror.job.execution.model.Status;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +22,7 @@ public class PerformanceStatsJob extends ParallelJob {
     public PerformanceStatsJob(DatabaseService databaseService,
                                SmtpService smtpService,
                                PerformanceStatsConfig config) {
+        super();
         this.databaseService = databaseService;
         this.smtpService = smtpService;
         this.config = config;

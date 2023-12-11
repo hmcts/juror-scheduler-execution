@@ -38,8 +38,10 @@ public class AmsDashboardSftp extends Sftp {
     @MessagingGateway
     public interface AmsDashboardSftpServerGatewayImpl extends SftpServerGateway {
         @Gateway(requestChannel = "toSftpChannel" + NAME + "Destination")
+        @Override
         void upload(File file);
 
+        @Override
         default Class<? extends Sftp> getParent() {
             return AmsDashboardSftp.class;
         }

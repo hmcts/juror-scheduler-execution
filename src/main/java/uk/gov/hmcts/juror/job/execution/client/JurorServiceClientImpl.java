@@ -23,8 +23,9 @@ public class JurorServiceClientImpl extends AbstractRemoteRestClient implements 
     private final String url;
 
     @Autowired
-    protected JurorServiceClientImpl(@ClientType("JurorService") RestTemplateBuilder restTemplateBuilder,
-                                     @Value("${uk.gov.hmcts.juror.job.execution.remote.juror-service.url}") String url) {
+    protected JurorServiceClientImpl(
+        @ClientType("JurorService") RestTemplateBuilder restTemplateBuilder,
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.juror-service.url}") String url) {
         super(restTemplateBuilder);
         this.url = url;
     }

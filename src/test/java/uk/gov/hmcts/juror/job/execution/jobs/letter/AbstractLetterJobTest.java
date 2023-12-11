@@ -1,7 +1,6 @@
 package uk.gov.hmcts.juror.job.execution.jobs.letter;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.config.contracts.HasDatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.Count;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
@@ -9,7 +8,6 @@ import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
 import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,7 +46,6 @@ public abstract class AbstractLetterJobTest<J extends LetterJob, C extends HasDa
         assertEquals(getCountSql(), job.getCountSql(),
             "Count SQL should be the same as the one passed to the constructor");
     }
-
 
 
     @Test

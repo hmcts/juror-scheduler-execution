@@ -28,8 +28,10 @@ class StoredProcedureJobTest {
             return new TestStoredProcedureJobConfig();
         }
     }
+
     @Nested
-    class StoredProcedureJobWithArgumentsTest extends AbstractStoredProcedureJobTest<TestStoredProcedureJobWithArguments,
+    class StoredProcedureJobWithArgumentsTest
+        extends AbstractStoredProcedureJobTest<TestStoredProcedureJobWithArguments,
         TestStoredProcedureJobConfig> {
 
 
@@ -39,7 +41,7 @@ class StoredProcedureJobTest {
 
         @Override
         public TestStoredProcedureJobWithArguments createStoredProcedureJob(DatabaseService databaseService,
-                                                                          TestStoredProcedureJobConfig config) {
+                                                                            TestStoredProcedureJobConfig config) {
             return new TestStoredProcedureJobWithArguments(databaseService, config.getDatabase());
         }
 
@@ -72,6 +74,7 @@ class StoredProcedureJobTest {
             super(databaseService, databaseConfig, PROCEDURE_NAME, PROCEDURE_ARGUMENTS);
         }
     }
+
     public static class TestStoredProcedureJobConfig implements HasDatabaseConfig {
 
         private DatabaseConfig databaseConfig;

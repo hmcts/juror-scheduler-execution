@@ -59,7 +59,8 @@ class PoliceNationalComputerCheckClientImplTest {
                 ArgumentCaptor.forClass(
                     HttpEntity.class);
 
-            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.POST), argumentCaptor.capture(), eq(Void.class));
+            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.POST), argumentCaptor.capture(),
+                eq(Void.class));
             assertEquals(jurorCheckRequestBulk, argumentCaptor.getValue().getBody(), "Payloads should match");
         }
 
@@ -81,7 +82,8 @@ class PoliceNationalComputerCheckClientImplTest {
                     HttpEntity.class);
 
 
-            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.POST), argumentCaptor.capture(), eq(Void.class));
+            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.POST), argumentCaptor.capture(),
+                eq(Void.class));
 
             assertEquals(jurorCheckRequestBulk, argumentCaptor.getValue().getBody(), "Payloads should match");
         }
@@ -105,7 +107,8 @@ class PoliceNationalComputerCheckClientImplTest {
                     HttpEntity.class);
 
 
-            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.POST), argumentCaptor.capture(), eq(Void.class));
+            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.POST), argumentCaptor.capture(),
+                eq(Void.class));
 
             assertEquals(jurorCheckRequestBulk, argumentCaptor.getValue().getBody(), "Payloads should match");
         }

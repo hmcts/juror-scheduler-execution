@@ -72,7 +72,6 @@ class PerformanceStatsJobTest {
     @Test
     void positiveGetResultSuppliersTest() {
         Job.Result result = mock(Job.Result.class);
-        MetaData metaData = mock(MetaData.class);
         doNothing().when(performanceStatsJob).sendEmailWithResult(result);
         doReturn(result).when(performanceStatsJob).runRunProcedure(any());
         doReturn(result).when(performanceStatsJob).runRunProcedure(any(), any());
@@ -94,6 +93,7 @@ class PerformanceStatsJobTest {
         assertEquals(1, resultSupplier1.getResultRunners().size(),
             "There should be 1 result runner");
 
+        MetaData metaData = mock(MetaData.class);
         Function<MetaData, Job.Result> runner1 = resultSupplier1.getResultRunners().iterator().next();
         runner1.apply(metaData);
         verify(performanceStatsJob, times(1))

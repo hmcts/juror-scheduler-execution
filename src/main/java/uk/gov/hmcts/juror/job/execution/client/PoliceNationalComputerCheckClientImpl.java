@@ -17,12 +17,15 @@ import uk.gov.hmcts.juror.standard.service.exceptions.RemoteGatewayException;
 
 @Slf4j
 @Component
-public class PoliceNationalComputerCheckClientImpl extends AbstractRemoteRestClient implements PoliceNationalCheckServiceClient {
+public class PoliceNationalComputerCheckClientImpl extends AbstractRemoteRestClient
+    implements PoliceNationalCheckServiceClient {
     private final String bulkUpdateUrl;
 
     protected PoliceNationalComputerCheckClientImpl(
-        @ClientType("PoliceNationalCheckService") RestTemplateBuilder restTemplateBuilder,
-        @Value("${uk.gov.hmcts.juror.job.execution.remote.police-national-computer-check-service.url}") String bulkUpdateUrl) {
+        @ClientType("PoliceNationalCheckService")
+        RestTemplateBuilder restTemplateBuilder,
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.police-national-computer-check-service.url}")
+        String bulkUpdateUrl) {
         super(restTemplateBuilder);
         this.bulkUpdateUrl = bulkUpdateUrl;
     }
@@ -35,7 +38,7 @@ public class PoliceNationalComputerCheckClientImpl extends AbstractRemoteRestCli
             HttpEntity<JurorCheckRequestBulk>
                 requestUpdate = new HttpEntity<>(jurorCheckRequestBulk);
 
-           response =
+            response =
                 restTemplate.exchange(bulkUpdateUrl, HttpMethod.POST, requestUpdate, Void.class);
         } catch (Exception throwable) {
             String message = "Failed to run bulk juror pnc checks";

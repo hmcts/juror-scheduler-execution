@@ -145,6 +145,7 @@ class FileUtilsTest {
         List<String> returnedLines = FileUtils.getLines(new File("test"), "Line.*", null);
         assertEquals(List.of("Line 1", "Line 2", "Line 3"), returnedLines);
     }
+
     @Test
     void positiveGetLinesTypicalWithMustNotMatchFilter() {
         List<String> lines = List.of("Line 1", "Line 2", "Line 3", "BadLine 1", "BadLine 2", "BadLine 3");
@@ -156,6 +157,7 @@ class FileUtilsTest {
         List<String> returnedLines = FileUtils.getLines(new File("test"), null, "Line.*");
         assertEquals(List.of("BadLine 1", "BadLine 2", "BadLine 3"), returnedLines);
     }
+
     @Test
     void positiveGetLinesTypicalWithBothFilters() {
         List<String> lines = List.of("Line 1", "Line 2", "Line 3",

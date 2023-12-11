@@ -3,7 +3,7 @@ package uk.gov.hmcts.juror.job.execution.jobs.letter.withdraw;
 import uk.gov.hmcts.juror.job.execution.jobs.letter.AbstractLetterJobTest;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
-public class WithdrawLetterJobTest extends AbstractLetterJobTest<WithdrawLetterJob,WithdrawLetterConfig> {
+public class WithdrawLetterJobTest extends AbstractLetterJobTest<WithdrawLetterJob, WithdrawLetterConfig> {
     private static final String GENERATED_LETTER_COUNT_SQL = """
             select count(1) count
             from print_files f, part_hist h
@@ -17,6 +17,7 @@ public class WithdrawLetterJobTest extends AbstractLetterJobTest<WithdrawLetterJ
             and h.user_id = 'SYSTEM'
             and h.other_information = 'Withdrawal Letter Auto'
         """;
+
     @Override
     protected WithdrawLetterJob createJob(DatabaseService databaseService, WithdrawLetterConfig config) {
         return new WithdrawLetterJob(databaseService, config);

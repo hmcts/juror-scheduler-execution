@@ -1,21 +1,23 @@
 package uk.gov.hmcts.juror.job.execution.util;
 
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+
 public final class FileUtils {
+
+    private FileUtils() {
+
+    }
 
     public static File createFile(String path) {
         try {
@@ -38,7 +40,7 @@ public final class FileUtils {
         try {
             Files.delete(file.toPath());
         } catch (Exception e) {
-            throw new InternalServerException("Failed to delete file: " + file.getAbsolutePath());
+            throw new InternalServerException("Failed to delete file: " + file.getAbsolutePath(), e);
         }
     }
 
@@ -54,7 +56,7 @@ public final class FileUtils {
             Files.move(source.toPath(), destination.toPath());
         } catch (Exception e) {
             throw new InternalServerException(
-                "Failed to move file from: " + source.getAbsolutePath() + " to " + destination.getAbsolutePath());
+                "Failed to move file from: " + source.getAbsolutePath() + " to " + destination.getAbsolutePath(), e);
         }
     }
 
@@ -63,7 +65,7 @@ public final class FileUtils {
     }
 
     public static void writeToFile(File file, String data) throws IOException {
-        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+        try (OutputStream outputStream = Files.newOutputStream(file.toPath())) {
             final byte[] contentInBytes = data.getBytes();
             outputStream.write(contentInBytes);
             outputStream.flush();
@@ -77,7 +79,7 @@ public final class FileUtils {
             lines.forEach(line -> {
                 if ((mustMatchRegex == null || line.matches(mustMatchRegex))
                     && (mustNotMatchRegex == null || !line.matches(mustNotMatchRegex))) {
-                        matchingLines.add(line);
+                    matchingLines.add(line);
                 }
             });
         } catch (IOException e) {

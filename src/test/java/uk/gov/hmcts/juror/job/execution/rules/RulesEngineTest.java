@@ -45,7 +45,7 @@ class RulesEngineTest {
             createRule(false, "Rule 2"),
             createRule(false, "Rule 3")
         );
-       Set<String> failureMessages = new HashSet<>(RulesEngine.fire(rules));
+        Set<String> failureMessages = new HashSet<>(RulesEngine.fire(rules));
         assertEquals(3, failureMessages.size(),
             "All rules should fail as such all failure messages should be returned");
 

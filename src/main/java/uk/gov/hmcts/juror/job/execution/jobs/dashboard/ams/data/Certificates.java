@@ -14,11 +14,14 @@ import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Locale;
 
 
 @Slf4j
+@SuppressWarnings("PMD.LawOfDemeter")
 public class Certificates extends DashboardDataEntry {
-    private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+    private static final DateFormat DATE_FORMATTER =
+        new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.getDefault());
     final AmsDashboardConfig config;
     final Clock clock;
     final SmtpService smtpService;
@@ -37,7 +40,13 @@ public class Certificates extends DashboardDataEntry {
         if (expiryDate == null) {
             this.addRow(name, "Not Found", status);
         } else {
-            this.addRow(name, DATE_FORMATTER.format(expiryDate), status);
+            this.addRow(name, formatDate(expiryDate), status);
+        }
+    }
+
+    private String formatDate(Date date) {
+        synchronized(DATE_FORMATTER){
+            return DATE_FORMATTER.format(date);
         }
     }
 
@@ -55,15 +64,16 @@ public class Certificates extends DashboardDataEntry {
                 .getInstance(config.getPncCertificateLocation(),
                     config.getPncCertificatePassword().toCharArray());
 
-            if (!keyStore.containsAlias(config.getPncCertificateAlias())) {
-                message = "Unable to locate certificate from alias";
-            } else {
+            if (keyStore.containsAlias(config.getPncCertificateAlias())) {
                 Certificate certificate = keyStore.getCertificate(config.getPncCertificateAlias());
                 if (certificate instanceof X509Certificate x509Certificate) {
                     expiryDate = x509Certificate.getNotAfter();
                 } else {
                     message = "Unable to process certificate of type '" + certificate.getType() + "'";
                 }
+            } else {
+                message = "Unable to locate certificate from alias";
+
             }
             //Expiry date not verified here as this is done via the AMS dashboard
             addRow(
@@ -72,7 +82,7 @@ public class Certificates extends DashboardDataEntry {
                 status
             );
             if (expiryDate != null && expiryDate.after(DateUtils.addDays(Date.from(clock.instant()), -30))
-            && config.getSmtp() != null) {
+                && config.getSmtp() != null) {
                 smtpService.sendEmail(config.getSmtp(),
                     "PNC Certificate Expires soon",
                     "The PNC Certificate is due to expire at " + expiryDate + ". Please update the certificate.",

@@ -1,6 +1,5 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
@@ -11,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Slf4j
-
+@SuppressWarnings("PMD.LawOfDemeter")
 public class AutoSys extends DashboardDataEntry {
     private static final Set<String> JOB_KEYS_TO_TRACK = Set.of(
         "CONFIRM_LETTER",
@@ -53,12 +52,12 @@ public class AutoSys extends DashboardDataEntry {
         }
         populateTimestamp(dashboardData, "AUTOSYS LOG", lastUpdatedAt);
         populateTimestamp(dashboardData, "Errors Overnight", lastUpdatedAt);
-        if (!allPassed) {
-            dashboardData.getErrorsOvernight().addRow("SSUPVL03", "ERROR");
-            return Job.Result.failed("One or more jobs failed");
-        } else {
+        if (allPassed) {
             dashboardData.getErrorsOvernight().addRow("SSUPVL03", "None");
             return Job.Result.passed();
+        } else {
+            dashboardData.getErrorsOvernight().addRow("SSUPVL03", "ERROR");
+            return Job.Result.failed("One or more jobs failed");
         }
     }
 

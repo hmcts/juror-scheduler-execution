@@ -248,6 +248,7 @@ class FileSearchTest {
         TestUtil.isUnmodifiable(files);
         assertSame(paths.get(0).toFile(), files.iterator().next());
     }
+
     @Test
     @DisplayName("search(): All file match")
     void positiveSearchAllFilesMatch() throws Exception {
@@ -284,12 +285,13 @@ class FileSearchTest {
             .setOwner("RandomOwner");
 
         Set<File> files = fileSearch.search();
-        filesMockedStatic.verify(() -> Files.list(searchPath),times(1));
+        filesMockedStatic.verify(() -> Files.list(searchPath), times(1));
 
         assertEquals(0, files.size());
         TestUtil.isUnmodifiable(files);
 
     }
+
     private Path createPath(String fileName, String owner, long age) throws Exception {
         Path path = mock(Path.class);
         File file = mock(File.class);

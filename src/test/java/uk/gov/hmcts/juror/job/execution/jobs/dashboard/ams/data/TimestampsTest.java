@@ -14,10 +14,11 @@ class TimestampsTest {
     private DashboardData dashboardData;
 
     @BeforeEach
-    void beforeEach(){
+    void beforeEach() {
         this.dashboardData = mock(DashboardData.class);
         this.timestamps = new Timestamps(dashboardData);
     }
+
     @Test
     void positiveConstructorTest() {
         assertSame(dashboardData, timestamps.dashboardData,
@@ -56,7 +57,7 @@ class TimestampsTest {
     void positiveAddRowLocalDateTimeTest() {
         assertEquals(1, timestamps.rows.size(),
             "Expected row size to be 1");
-        timestamps.addRow("testName2", LocalDateTime.of(2023,11,13,11,8,34));
+        timestamps.addRow("testName2", LocalDateTime.of(2023, 11, 13, 11, 8, 34));
         assertEquals(2, timestamps.rows.size(),
             "Expected row size to be 2");
         assertEquals(2, timestamps.rows.get(1).length,

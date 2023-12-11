@@ -11,9 +11,7 @@ import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 import uk.gov.hmcts.juror.job.execution.util.FileUtils;
 
-import java.io.IOException;
 import java.time.Clock;
-import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -32,6 +30,7 @@ public class AmsDashboardGenerateJob extends ParallelJob {
                                    DatabaseService databaseService,
                                    SmtpService smtpService,
                                    AmsDashboardConfig config, Clock clock) {
+        super();
         this.schedulerServiceClient = schedulerServiceClient;
         this.smtpService = smtpService;
         this.databaseService = databaseService;

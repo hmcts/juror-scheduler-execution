@@ -10,7 +10,6 @@ import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.config.SftpConfig;
 import uk.gov.hmcts.juror.job.execution.config.contracts.HasDatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.config.contracts.HasSftpConfig;
-import uk.gov.hmcts.juror.job.execution.config.contracts.HasSmtpConfig;
 
 import java.io.File;
 

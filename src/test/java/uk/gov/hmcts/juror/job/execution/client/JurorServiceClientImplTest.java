@@ -61,7 +61,8 @@ class JurorServiceClientImplTest {
                 HttpEntity.class);
 
 
-            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.PATCH), argumentCaptor.capture(), eq(Void.class),
+            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.PATCH), argumentCaptor.capture(),
+                eq(Void.class),
                 eq(TestConstants.VALID_JUROR_NUMBER));
 
             assertEquals(payload, argumentCaptor.getValue().getBody(), "Payloads should match");
@@ -81,7 +82,8 @@ class JurorServiceClientImplTest {
                 HttpEntity.class);
 
 
-            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.PATCH), argumentCaptor.capture(), eq(Void.class),
+            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.PATCH), argumentCaptor.capture(),
+                eq(Void.class),
                 eq(TestConstants.VALID_JUROR_NUMBER));
 
             assertEquals(payload, argumentCaptor.getValue().getBody(), "Payloads should match");
@@ -105,7 +107,8 @@ class JurorServiceClientImplTest {
                 HttpEntity.class);
 
 
-            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.PATCH), argumentCaptor.capture(), eq(Void.class),
+            verify(restTemplate, times(1)).exchange(eq(URL), eq(HttpMethod.PATCH), argumentCaptor.capture(),
+                eq(Void.class),
                 eq(TestConstants.VALID_JUROR_NUMBER));
 
             assertEquals(payload, argumentCaptor.getValue().getBody(), "Payloads should match");

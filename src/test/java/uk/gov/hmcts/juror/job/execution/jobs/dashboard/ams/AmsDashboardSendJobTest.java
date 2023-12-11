@@ -24,22 +24,21 @@ class AmsDashboardSendJobTest {
     private AmsDashboardSendJob amsDashboardSendJob;
 
     @BeforeEach
-    void beforeEach(){
+    void beforeEach() {
         this.sftpService = mock(SftpService.class);
         this.config = AmsDashboardGenerateJobTest.createConfig();
         this.amsDashboardSendJob = spy(new AmsDashboardSendJob(sftpService, config));
     }
 
     @Test
-    void positiveConstructorTest(){
+    void positiveConstructorTest() {
         assertSame(sftpService, amsDashboardSendJob.getSftpService());
         assertSame(config, amsDashboardSendJob.getConfig());
     }
 
     @Test
-    void positiveGetResultSupplierTest(){
+    void positiveGetResultSupplierTest() {
         Job.ResultSupplier resultSupplier = amsDashboardSendJob.getResultSupplier();
-        MetaData metaData = mock(MetaData.class);
 
 
         assertFalse(resultSupplier.isContinueOnFailure(), "Result supplier should not continue on failure");
@@ -51,28 +50,30 @@ class AmsDashboardSendJobTest {
         Function<MetaData, Job.Result>
             resultSupplier2Runner = resultSupplier.getResultRunners().iterator().next();
 
+        MetaData metaData = mock(MetaData.class);
         Job.Result result = resultSupplier2Runner.apply(metaData);
         verify(amsDashboardSendJob, times(1)).sendDashboardFile();
         assertSame(expectedResult, result, "Result should be the same as the expected result");
     }
 
     @Test
-    void positiveSendDashboardFileSuccess(){
+    void positiveSendDashboardFileSuccess() {
         when(sftpService.upload(AmsDashboardSftp.class, config.getDashboardCsvLocation()))
             .thenReturn(true);
         Job.Result result = amsDashboardSendJob.sendDashboardFile();
         assertEquals(Job.Result.passed(), result, "Result should be passed");
-        verify(sftpService,times(1))
+        verify(sftpService, times(1))
             .upload(AmsDashboardSftp.class, config.getDashboardCsvLocation());
     }
+
     @Test
-    void negativeSendDashboardFileFail(){
+    void negativeSendDashboardFileFail() {
         when(sftpService.upload(AmsDashboardSftp.class, config.getDashboardCsvLocation()))
             .thenReturn(false);
         Job.Result result = amsDashboardSendJob.sendDashboardFile();
         assertEquals(Job.Result.failed("Failed to upload dashboard file"), result,
             "Result should be failed with exception and message");
-        verify(sftpService,times(1))
+        verify(sftpService, times(1))
             .upload(AmsDashboardSftp.class, config.getDashboardCsvLocation());
 
     }

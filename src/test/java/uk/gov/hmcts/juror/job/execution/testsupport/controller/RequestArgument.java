@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -56,8 +56,8 @@ public class RequestArgument implements Arguments {
         }
         this.requestPayload = requestPayload;
         this.expectedStatus = expectedStatus;
-        this.queryParams = new HashMap<>();
-        this.headers = new HashMap<>();
+        this.queryParams = new ConcurrentHashMap<>();
+        this.headers = new ConcurrentHashMap<>();
     }
 
     public void runPreActions(MockHttpServletRequestBuilder builder, ControllerTest controllerTest) throws Exception {

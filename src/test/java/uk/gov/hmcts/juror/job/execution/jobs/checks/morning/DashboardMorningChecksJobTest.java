@@ -173,9 +173,9 @@ class DashboardMorningChecksJobTest {
         Job.Result result = dashboardMorningChecksJob.archivePreviousCheckFile(support);
 
         fileUtilsMock.verify(() -> FileUtils.move(config.getAttachmentFile(),
-                new File(this.config.getArchiveFolder().getAbsolutePath() +
-                    "/Juror_MorningChecks_" + logDateTime +
-                    ".csv"), true),
+                new File(this.config.getArchiveFolder().getAbsolutePath()
+                    + "/Juror_MorningChecks_" + logDateTime
+                    + ".csv"), true),
             times(1));
     }
 
@@ -197,7 +197,6 @@ class DashboardMorningChecksJobTest {
             when(support.getDayOfWeek()).thenReturn(DayOfWeek.MONDAY);
             when(support.getStartTime()).thenReturn(LocalDateTime.now(clock));
 
-            LocalDateTime time24HoursAgo = LocalDateTime.now(clock).minusSeconds(86400);
             MorningChecksJsonConfig morningChecksJsonConfig = new MorningChecksJsonConfig();
             MorningChecksJsonConfig.DayConfig dayConfig = new MorningChecksJsonConfig.DayConfig();
 
@@ -222,7 +221,7 @@ class DashboardMorningChecksJobTest {
             }
             Job.Result result = dashboardMorningChecksJob.checkScheduledJobsRan(support);
 
-
+            LocalDateTime time24HoursAgo = LocalDateTime.now(clock).minusSeconds(86400);
             if (taskResponseList.stream().anyMatch(taskResponse ->
                 taskResponse.getStatus() != Status.SUCCESS
                     || taskResponse.getCreatedAt().isBefore(time24HoursAgo))
