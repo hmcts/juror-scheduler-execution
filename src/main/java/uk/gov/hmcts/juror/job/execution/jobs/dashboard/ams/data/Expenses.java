@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+@SuppressWarnings("PMD.LawOfDemeter")
 public class Expenses extends DashboardDataEntry {
     public static final String EXPENSES_SQL = """
         select to_char(Nvl(max(trunc(creation_date)),trunc(sysdate-1)),'DD/MM/YYYY') date,
@@ -39,13 +40,14 @@ public class Expenses extends DashboardDataEntry {
     }
 
     public Job.Result populate() {
+        final String errorText = "ERROR";
         AtomicReference<Job.Result> result = new AtomicReference<>(null);
         try {
             databaseService.execute(databaseConfig, connection -> {
                 List<ExpensesDB> response =
                     databaseService.executePreparedStatement(connection, ExpensesDB.class, EXPENSES_SQL);
                 if (response == null || response.isEmpty()) {
-                    addRow("ERROR", "ERROR");
+                    addRow(errorText, errorText);
                     result.set(Job.Result.failed("No response from database"));
                 } else {
                     ExpensesDB expensesDB = response.get(0);
@@ -55,7 +57,7 @@ public class Expenses extends DashboardDataEntry {
                 }
             });
         } catch (Exception e) {
-            addRow("ERROR", "ERROR");
+            addRow(errorText, errorText);
             result.set(Job.Result.failed("Unexpected exception", e));
         }
         populateTimestamp(dashboardData, "Expenses", LocalDateTime.now(clock));

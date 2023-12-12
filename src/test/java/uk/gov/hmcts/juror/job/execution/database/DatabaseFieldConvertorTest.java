@@ -50,7 +50,6 @@ public class DatabaseFieldConvertorTest {
         @Test
         void positiveStringClobConvertorTest() throws Exception {
             final String columnName = "testClob";
-            DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setTestClob", true);
             Clob clob = mock(Clob.class);
             String expectedValue = "testClobValue";
             when(clob.length()).thenReturn(12L);
@@ -59,7 +58,8 @@ public class DatabaseFieldConvertorTest {
             ResultSet resultSet = mock(ResultSet.class);
 
             when(resultSet.getObject(columnName, Clob.class)).thenReturn(clob);
-            assertEquals(expectedValue, DatabaseFieldConvertor.converters.get(String.class).apply(databaseColumn,
+            DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setTestClob", true);
+            assertEquals(expectedValue, DatabaseFieldConvertor.CONVERTERS.get(String.class).apply(databaseColumn,
                 resultSet), "Should return expected value");
             verify(resultSet, times(1)).getObject(columnName, Clob.class);
             verifyNoMoreInteractions(resultSet);
@@ -79,7 +79,7 @@ public class DatabaseFieldConvertorTest {
             when(resultSet.getObject("testClob", Clob.class)).thenReturn(clob);
 
             InternalServerException internalServerException = assertThrows(InternalServerException.class,
-                () -> DatabaseFieldConvertor.converters.get(String.class).apply(databaseColumn, resultSet),
+                () -> DatabaseFieldConvertor.CONVERTERS.get(String.class).apply(databaseColumn, resultSet),
                 "Should throw InternalServerException");
 
             assertEquals("Failed to convert clob to string", internalServerException.getMessage(),
@@ -96,7 +96,7 @@ public class DatabaseFieldConvertorTest {
             DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setTestString");
             ResultSet resultSet = mock(ResultSet.class);
             when(resultSet.getObject(columnName, String.class)).thenReturn(expectedValue);
-            assertEquals(expectedValue, DatabaseFieldConvertor.converters.get(String.class).apply(databaseColumn,
+            assertEquals(expectedValue, DatabaseFieldConvertor.CONVERTERS.get(String.class).apply(databaseColumn,
                 resultSet), "Should return expected value");
             verify(resultSet, times(1)).getObject(columnName, String.class);
             verifyNoMoreInteractions(resultSet);
@@ -109,7 +109,7 @@ public class DatabaseFieldConvertorTest {
             DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setTestInteger");
             ResultSet resultSet = mock(ResultSet.class);
             when(resultSet.getObject(columnName, Integer.class)).thenReturn(expectedValue);
-            assertEquals(expectedValue, DatabaseFieldConvertor.converters.get(Integer.class).apply(databaseColumn,
+            assertEquals(expectedValue, DatabaseFieldConvertor.CONVERTERS.get(Integer.class).apply(databaseColumn,
                 resultSet), "Should return expected value");
             verify(resultSet, times(1)).getObject(columnName, Integer.class);
             verifyNoMoreInteractions(resultSet);
@@ -123,7 +123,7 @@ public class DatabaseFieldConvertorTest {
             DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setBigDecimal");
             ResultSet resultSet = mock(ResultSet.class);
             when(resultSet.getObject(columnName, BigDecimal.class)).thenReturn(expectedValue);
-            assertEquals(expectedValue, DatabaseFieldConvertor.converters.get(BigDecimal.class).apply(databaseColumn,
+            assertEquals(expectedValue, DatabaseFieldConvertor.CONVERTERS.get(BigDecimal.class).apply(databaseColumn,
                 resultSet), "Should return expected value");
             verify(resultSet, times(1)).getObject(columnName, BigDecimal.class);
             verifyNoMoreInteractions(resultSet);
@@ -138,7 +138,7 @@ public class DatabaseFieldConvertorTest {
             DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setLocalDate");
             ResultSet resultSet = mock(ResultSet.class);
             when(resultSet.getObject(columnName, Date.class)).thenReturn(date);
-            assertEquals(expectedValue, DatabaseFieldConvertor.converters.get(LocalDate.class).apply(databaseColumn,
+            assertEquals(expectedValue, DatabaseFieldConvertor.CONVERTERS.get(LocalDate.class).apply(databaseColumn,
                 resultSet), "Should return expected value");
             verify(resultSet, times(1)).getObject(columnName, Date.class);
             verifyNoMoreInteractions(resultSet);
@@ -150,7 +150,7 @@ public class DatabaseFieldConvertorTest {
             DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setLocalDate");
             ResultSet resultSet = mock(ResultSet.class);
             when(resultSet.getObject(columnName, Date.class)).thenReturn(null);
-            assertNull(DatabaseFieldConvertor.converters.get(LocalDate.class).apply(databaseColumn,
+            assertNull(DatabaseFieldConvertor.CONVERTERS.get(LocalDate.class).apply(databaseColumn,
                 resultSet), "Should return expected value");
             verify(resultSet, times(1)).getObject(columnName, Date.class);
             verifyNoMoreInteractions(resultSet);
@@ -163,15 +163,15 @@ public class DatabaseFieldConvertorTest {
     class StaticConstructorTest {
         @Test
         void positiveConstructorTest() {
-            assertEquals(4, DatabaseFieldConvertor.converters.size(),
+            assertEquals(4, DatabaseFieldConvertor.CONVERTERS.size(),
                 "Converters should have 4 entries");
-            assertTrue(DatabaseFieldConvertor.converters.containsKey(String.class),
+            assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(String.class),
                 "Converters should contain String.class");
-            assertTrue(DatabaseFieldConvertor.converters.containsKey(Integer.class),
+            assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(Integer.class),
                 "Converters should contain Integer.class");
-            assertTrue(DatabaseFieldConvertor.converters.containsKey(BigDecimal.class),
+            assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(BigDecimal.class),
                 "Converters should contain BigDecimal.class");
-            assertTrue(DatabaseFieldConvertor.converters.containsKey(LocalDate.class),
+            assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(LocalDate.class),
                 "Converters should contain LocalDate.class");
         }
     }

@@ -29,6 +29,8 @@ public class RequirePncCheck {
     @DatabaseColumn(name = "post_code", setter = "setPostcode")
     private String postcode;
 
+
+    @SuppressWarnings("PMD.LawOfDemeter")
     public PoliceNationalCheckServiceClient.JurorCheckRequest toJurorCheckRequest() {
         return PoliceNationalCheckServiceClient.JurorCheckRequest.builder()
             .jurorNumber(jurorNumber)

@@ -9,7 +9,6 @@ import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.stereotype.Component;
 import uk.gov.hmcts.juror.job.execution.util.Sftp;
 
 import java.io.File;
@@ -39,8 +38,10 @@ public class PaymentSftp extends Sftp {
     @MessagingGateway
     public interface PaymentSftpServerGatewayImpl extends SftpServerGateway {
         @Gateway(requestChannel = "toSftpChannel" + NAME + "Destination")
+        @Override
         void upload(File file);
 
+        @Override
         default Class<? extends Sftp> getParent() {
             return PaymentSftp.class;
         }

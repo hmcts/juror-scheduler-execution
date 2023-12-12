@@ -132,8 +132,7 @@ class SchedulerServiceClientImplTest {
                 .thenThrow(cause);
 
             InternalServerException internalServerException
-                = assertThrows(InternalServerException.class,
-                () -> schedulerServiceClient.updateStatus(
+                = assertThrows(InternalServerException.class, () -> schedulerServiceClient.updateStatus(
                     TestConstants.VALID_JOB_KEY, TestConstants.VALID_TASK_ID_LONG, payload),
                 "Should throw InternalServerException");
 
@@ -150,8 +149,7 @@ class SchedulerServiceClientImplTest {
 
 
             RemoteGatewayException remoteGatewayException
-                = assertThrows(RemoteGatewayException.class,
-                () -> schedulerServiceClient.updateStatus(
+                = assertThrows(RemoteGatewayException.class, () -> schedulerServiceClient.updateStatus(
                     TestConstants.VALID_JOB_KEY, TestConstants.VALID_TASK_ID_LONG, payload),
                 "Should throw RemoteGatewayException");
 

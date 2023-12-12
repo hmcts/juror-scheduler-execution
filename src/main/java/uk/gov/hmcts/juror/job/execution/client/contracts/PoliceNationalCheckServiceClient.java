@@ -47,6 +47,7 @@ public interface PoliceNationalCheckServiceClient extends Client {
             private Long taskId;
         }
     }
+
     @Data
     @Builder
     class NameDetails {
@@ -61,6 +62,7 @@ public interface PoliceNationalCheckServiceClient extends Client {
         @NotBlank
         private String lastName;
     }
+
     @Builder
     @Getter
     @EqualsAndHashCode

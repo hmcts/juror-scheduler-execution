@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.DayOfWeek;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +12,11 @@ import java.util.Map;
 @Setter
 public class MorningChecksJsonConfig {
 
-    Map<DayOfWeek, DayConfig> days;
+    private Map<DayOfWeek, DayConfig> days;
+
+    public DayConfig getDay(DayOfWeek dayOfWeek) {
+        return days.get(dayOfWeek);
+    }
 
     @Getter
     @Setter
@@ -21,9 +24,5 @@ public class MorningChecksJsonConfig {
 
         @JsonProperty("expect_jobs")
         private List<String> expectedJobs;
-
-        public List<String> getExpectedJobs() {
-            return this.expectedJobs;
-        }
     }
 }

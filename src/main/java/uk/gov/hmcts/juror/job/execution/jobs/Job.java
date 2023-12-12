@@ -3,8 +3,6 @@ package uk.gov.hmcts.juror.job.execution.jobs;
 import io.jsonwebtoken.lang.Collections;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -16,16 +14,18 @@ import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Getter
 @Slf4j
+@SuppressWarnings("PMD.ShortClassName")
 public abstract class Job {
 
     private final Set<Rule> rules;
@@ -106,7 +106,7 @@ public abstract class Job {
             this.status = status;
             this.message = message;
             this.throwable = throwable;
-            this.metaData = new HashMap<>();
+            this.metaData = new ConcurrentHashMap<>();
         }
 
         public Result addMetaData(Map<String, String> metaData) {
@@ -139,6 +139,10 @@ public abstract class Job {
             return new Result(Status.PARTIAL_SUCCESS, message);
         }
 
+        @SuppressWarnings({
+            "PMD.AvoidLiteralsInIfCondition",
+            "PMD.NullAssignment"
+        })
         public static Result merge(Collection<Result> results) {
             if (results.size() == 1) {
                 return results.iterator().next();
@@ -147,14 +151,15 @@ public abstract class Job {
             List<String> messages = new ArrayList<>();
             Status status = null;
             Throwable throwable = null;
-            Map<String, String> metaData = new HashMap<>();
+            Map<String, String> metaData = new ConcurrentHashMap<>();
             for (Result result : results) {
-                if (status == null || (result.getStatus() != null  && result.getStatus().getPriority() > status.getPriority())) {
+                if (status == null || result.getStatus() != null
+                    && result.getStatus().getPriority() > status.getPriority()) {
                     status = result.getStatus();
                 }
-                if (result.getThrowable() != null) {
-                    throwable = result.getThrowable();
-                }
+
+                throwable = Optional.ofNullable(result.getThrowable()).orElse(throwable);
+
                 if (!Collections.isEmpty(result.getMetaData())) {
                     metaData.putAll(result.getMetaData());
                 }
@@ -162,7 +167,8 @@ public abstract class Job {
                     messages.add(result.getMessage());
                 }
             }
-            return new Result(status, messages.isEmpty() ? null : String.join("\\n", messages), throwable).addMetaData(metaData);
+            return new Result(status, messages.isEmpty() ? null : String.join("\\n", messages), throwable).addMetaData(
+                metaData);
         }
     }
 

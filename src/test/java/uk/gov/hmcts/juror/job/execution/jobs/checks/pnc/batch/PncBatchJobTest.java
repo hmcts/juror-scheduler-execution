@@ -25,9 +25,9 @@ import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 
 import java.sql.Connection;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -813,37 +813,41 @@ class PncBatchJobTest {
     void positiveCombineMetaData() {
         int minValue = 0;
         SchedulerServiceClient.StatusUpdatePayload payload = createStatusUpdatePayload();
-        HashMap<String, String> oldTaskMetaData = new HashMap<>();
+        Map<String, String> oldTaskMetaData = new ConcurrentHashMap<>();
         for (PoliceCheck policeCheck : PoliceCheck.values()) {
             payload.addMetaData("TOTAL_WITH_STATUS_" + policeCheck.name(),
-                RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+                Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
             oldTaskMetaData.put("TOTAL_WITH_STATUS_" + policeCheck.name(),
-                RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+                Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
             minValue += 10;
         }
-        payload.addMetaData("TOTAL_CHECKS_REQUESTED", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
-        oldTaskMetaData.put("TOTAL_CHECKS_REQUESTED", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+        payload.addMetaData("TOTAL_CHECKS_REQUESTED",
+            Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
+        oldTaskMetaData.put("TOTAL_CHECKS_REQUESTED",
+            Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
         minValue += 10;
 
-        payload.addMetaData("TOTAL_CHECKS_IN_BATCH", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
-        oldTaskMetaData.put("TOTAL_CHECKS_IN_BATCH", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+        payload.addMetaData("TOTAL_CHECKS_IN_BATCH",
+            Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
+        oldTaskMetaData.put("TOTAL_CHECKS_IN_BATCH",
+            Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
         minValue += 10;
 
-        payload.addMetaData("TOTAL_NULL_RESULTS", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
-        oldTaskMetaData.put("TOTAL_NULL_RESULTS", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+        payload.addMetaData("TOTAL_NULL_RESULTS", Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
+        oldTaskMetaData.put("TOTAL_NULL_RESULTS", Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
         minValue += 10;
 
         //Values that should not be merged
-        payload.addMetaData("TOTAL_123", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
-        oldTaskMetaData.put("TOTAL_123", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+        payload.addMetaData("TOTAL_123", Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
+        oldTaskMetaData.put("TOTAL_123", Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
         minValue += 10;
 
-        payload.addMetaData("TOTAL_321", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
-        oldTaskMetaData.put("TOTAL_321", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+        payload.addMetaData("TOTAL_321", Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
+        oldTaskMetaData.put("TOTAL_321", Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
         minValue += 10;
 
-        payload.addMetaData("MetaValue", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
-        oldTaskMetaData.put("MetaValue", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+        payload.addMetaData("MetaValue", Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
+        oldTaskMetaData.put("MetaValue", Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
 
         SchedulerServiceClient.TaskResponse oldTaskResponse = new SchedulerServiceClient.TaskResponse();
         oldTaskResponse.setMetaData(oldTaskMetaData);
@@ -886,17 +890,18 @@ class PncBatchJobTest {
         SchedulerServiceClient.StatusUpdatePayload payload = createStatusUpdatePayload();
         for (PoliceCheck policeCheck : PoliceCheck.values()) {
             payload.addMetaData("TOTAL_WITH_STATUS_" + policeCheck.name(),
-                RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+                Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10))
+            );
             minValue += 10;
         }
         //Values that should not be merged
-        payload.addMetaData("TOTAL_123", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+        payload.addMetaData("TOTAL_123", Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
         minValue += 10;
 
-        payload.addMetaData("TOTAL_321", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+        payload.addMetaData("TOTAL_321", Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
         minValue += 10;
 
-        payload.addMetaData("MetaValue", RandomUtils.nextInt(minValue + 1, minValue + 10) + "");
+        payload.addMetaData("MetaValue", Integer.toString(RandomUtils.nextInt(minValue + 1, minValue + 10)));
 
         assertEquals(PoliceCheck.values().length + 3, payload.getMetaData().size(),
             "payload metaData size is not as expected");
@@ -957,7 +962,7 @@ class PncBatchJobTest {
         SchedulerServiceClient.StatusUpdatePayload payload = createStatusUpdatePayload();
         for (PoliceCheck policeCheck : PoliceCheck.values()) {
             payload.addMetaData("TOTAL_WITH_STATUS_" + policeCheck.name(),
-                (long) Math.pow(10, policeCheck.ordinal()) + "");
+                Long.toString((long) Math.pow(10, policeCheck.ordinal())));
         }
         long expectedValue = sum(PoliceCheck.ELIGIBLE, PoliceCheck.INELIGIBLE);
         long actualValue = pncBatchJob.sumMetaData(payload, PoliceCheck.ELIGIBLE, PoliceCheck.INELIGIBLE);
@@ -969,8 +974,8 @@ class PncBatchJobTest {
     void positiveSumMetaDataAll() {
         SchedulerServiceClient.StatusUpdatePayload payload = createStatusUpdatePayload();
         for (PoliceCheck policeCheck : PoliceCheck.values()) {
-            payload.addMetaData("TOTAL_WITH_STATUS_" + policeCheck.name(), (long) Math.pow(10, policeCheck.ordinal()) +
-                "");
+            payload.addMetaData("TOTAL_WITH_STATUS_" + policeCheck.name(),
+                Long.toString((long) Math.pow(10, policeCheck.ordinal())));
         }
         long expectedValue = sum(PoliceCheck.values());
         long actualValue = pncBatchJob.sumMetaData(payload, PoliceCheck.values());
@@ -991,7 +996,7 @@ class PncBatchJobTest {
         return new SchedulerServiceClient.StatusUpdatePayload(
             Status.SUCCESS,
             "message",
-            new HashMap<>()
+            new ConcurrentHashMap<>()
         );
     }
 }

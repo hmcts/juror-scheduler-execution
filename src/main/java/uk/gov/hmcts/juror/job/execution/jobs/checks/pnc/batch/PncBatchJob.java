@@ -61,6 +61,7 @@ public class PncBatchJob extends LinearJob {
                        PoliceNationalCheckServiceClient policeNationalCheckServiceClient,
                        SchedulerServiceClient schedulerServiceClient,
                        JurorServiceClient jurorServiceClient) {
+        super();
         this.databaseService = databaseService;
         this.config = pncBatchConfig;
         this.policeNationalCheckServiceClient = policeNationalCheckServiceClient;
@@ -89,6 +90,7 @@ public class PncBatchJob extends LinearJob {
     }
 
 
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public int triggerPncCheck(List<PoliceNationalCheckServiceClient.JurorCheckRequest> jurorCheckRequests,
                                MetaData metaData) {
         List<List<PoliceNationalCheckServiceClient.JurorCheckRequest>> batches =
@@ -169,7 +171,7 @@ public class PncBatchJob extends LinearJob {
                          SchedulerServiceClient.TaskResponse taskResponse) {
         for (String key : META_DATA_KEYS_TO_COMBINE) {
             if (taskResponse == null) {
-                payload.addMetaData(key, payload.getMetaDataValueOrDefault(key,"0"));
+                payload.addMetaData(key, payload.getMetaDataValueOrDefault(key, "0"));
             } else {
                 payload.addMetaData(key,
                     combineMetaData(taskResponse.getMetaData().get(key), payload.getMetaDataValue(key)));

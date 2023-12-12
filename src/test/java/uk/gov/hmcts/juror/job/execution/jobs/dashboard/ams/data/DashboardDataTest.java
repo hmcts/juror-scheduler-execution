@@ -149,7 +149,7 @@ class DashboardDataTest {
         assertEquals("13/11/2023 03:35:30\n"
             + "TestTitle,Test,123\n"
             + "SomeOtherTitle,Test,123\n"
-            + "NewTitle,Test,123",csv, "csv should be the same");
+            + "NewTitle,Test,123", csv, "csv should be the same");
 
 
     }

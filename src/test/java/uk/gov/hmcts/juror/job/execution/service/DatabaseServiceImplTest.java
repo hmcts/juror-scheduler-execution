@@ -203,17 +203,18 @@ class DatabaseServiceImplTest {
         databaseServiceImplSpy.executeStoredProcedure(config, "procedureForTestPurposes", "Argument 1", "Argument 2");
 
         verify(databaseServiceImplSpy, times(1))
-            .executeStoredProcedure(connection
-                , "procedureForTestPurposes",
+            .executeStoredProcedure(connection,
+                "procedureForTestPurposes",
                 "Argument 1", "Argument 2");
     }
 
 
     @Nested
     @DisplayName("""
-         public <T> T executeStoredProcedureWithReturn(Connection connection, String procedureName, Class<T> returnClass,
-                                                          int returnSqlType,
-                                                          Object... arguments)
+         public <T> T executeStoredProcedureWithReturn(Connection connection, 
+                        String procedureName, Class<T> returnClass,
+                        int returnSqlType,
+                        Object... arguments)
         """)
     class ExecuteStoredProcedureWithReturn {
 
@@ -290,7 +291,7 @@ class DatabaseServiceImplTest {
                         "argument1"),
                     "Should throw InternalServerException");
 
-            assertEquals("Failed to execute stored procedure: procedureForTestPurposes",
+            assertEquals("Failed to execute stored procedure with return: procedureForTestPurposes",
                 internalServerException.getMessage(), "Message should be the same");
             assertEquals(cause, internalServerException.getCause(), "Cause should be the same");
 
@@ -436,7 +437,7 @@ class DatabaseServiceImplTest {
         }
 
         @Test
-        void positiveNoResponse() throws Exception{
+        void positiveNoResponse() throws Exception {
             final String sql = "SELECT count(1) as count FROM USER";
             PreparedStatement preparedStatement = mock(PreparedStatement.class);
             when(connection.prepareStatement(sql)).thenReturn(preparedStatement);
@@ -466,13 +467,13 @@ class DatabaseServiceImplTest {
             RuntimeException cause = new RuntimeException("I am the cause");
             when(preparedStatement.executeQuery()).thenThrow(cause);
 
-           InternalServerException internalServerException =
-               assertThrows(InternalServerException.class, ()->databaseService.executePreparedStatement(connection,
-                   Count.class, sql),"Should throw InternalServerException");
+            InternalServerException internalServerException =
+                assertThrows(InternalServerException.class, () -> databaseService.executePreparedStatement(connection,
+                    Count.class, sql), "Should throw InternalServerException");
 
-           assertEquals("Failed to get result set", internalServerException.getMessage(),
-               "Message should be the same");
-              assertEquals(cause, internalServerException.getCause(), "Cause should be the same");
+            assertEquals("Failed to get result set", internalServerException.getMessage(),
+                "Message should be the same");
+            assertEquals(cause, internalServerException.getCause(), "Cause should be the same");
 
             verify(connection, times(1)).prepareStatement(sql);
             verify(preparedStatement, times(1)).executeQuery();

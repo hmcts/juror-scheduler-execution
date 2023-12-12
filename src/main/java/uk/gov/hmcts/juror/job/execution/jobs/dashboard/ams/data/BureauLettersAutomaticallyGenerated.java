@@ -8,7 +8,7 @@ import uk.gov.hmcts.juror.job.execution.jobs.letter.LetterJob;
 import java.time.LocalDateTime;
 
 @Slf4j
-
+@SuppressWarnings("PMD.LawOfDemeter")
 public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
     final SchedulerServiceClient schedulerServiceClient;
 

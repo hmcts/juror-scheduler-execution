@@ -6,17 +6,15 @@ import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 @Getter
 @Slf4j
 public abstract class LinearJob extends Job {
 
-
     protected LinearJob() {
+        super();
     }
 
 

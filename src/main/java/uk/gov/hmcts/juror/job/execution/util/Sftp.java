@@ -19,11 +19,12 @@ import java.io.File;
 @Getter
 @Setter
 @Slf4j
+@SuppressWarnings({"PMD.ShortClassName", "PMD.AbstractClassWithoutAbstractMethod"})
 public abstract class Sftp {
 
     private final SftpConfig config;
 
-    protected Sftp (SftpConfig config){
+    protected Sftp(SftpConfig config) {
         this.config = config;
     }
 
@@ -33,7 +34,8 @@ public abstract class Sftp {
         factory.setPort(this.getConfig().getPort());
         factory.setUser(this.getConfig().getUser());
 
-        // Future refactor - after successful migration to Azure, remove the azureDeployment check (if/else statement only).
+        // Future refactor - after successful migration to Azure, remove the azureDeployment check (if/else statement
+        // only).
         if (this.getConfig().isAzureDeployment()) {
             Resource privateKeyResource = new FileSystemResource(this.getConfig().getPrivateKey());
             factory.setPrivateKey(privateKeyResource);
@@ -56,8 +58,9 @@ public abstract class Sftp {
         return handler;
     }
 
-    public interface SftpServerGateway{
+    public interface SftpServerGateway {
         void upload(File file);
+
         Class<? extends Sftp> getParent();
     }
 }

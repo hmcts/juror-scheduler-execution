@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileSearch {
+public final class FileSearch {
     final Supplier<Stream<Path>> streamSupplier;
     final List<Predicate<Path>> pathPredicates;
     final List<Predicate<File>> filePredicates;
@@ -26,7 +26,7 @@ public class FileSearch {
     private FileSearch(File directory, boolean recursive) {
         this.streamSupplier = () -> {
             try {
-                return (recursive ? Files.walk(directory.toPath()) : Files.list(directory.toPath()));
+                return recursive ? Files.walk(directory.toPath()) : Files.list(directory.toPath());
             } catch (Exception e) {
                 throw new InternalServerException("Failed to create file stream", e);
             }
@@ -48,6 +48,7 @@ public class FileSearch {
         return predicates.stream().reduce(x -> true, Predicate::and);
     }
 
+    @SuppressWarnings("PMD.LinguisticNaming")
     public FileSearch setFileNameRegexFilter(String fileNameRegex) {
         if (fileNameRegex != null) {
             this.pathPredicates.add(path -> path.getFileName().toString().matches(fileNameRegex));
@@ -55,17 +56,19 @@ public class FileSearch {
         return this;
     }
 
+    @SuppressWarnings("PMD.LinguisticNaming")
     public FileSearch setMaxAge(long maxAge) {
         this.filePredicates.add(file -> file.lastModified() < maxAge);
         return this;
     }
 
+    @SuppressWarnings("PMD.LinguisticNaming")
     public FileSearch setOwner(final String owner) {
         this.pathPredicates.add(path -> {
             try {
                 return Files.getOwner(path).getName().equals(owner);
             } catch (Exception e) {
-                throw new InternalServerException("Failed to find owner of file: " + path);
+                throw new InternalServerException("Failed to find owner of file: " + path, e);
             }
         });
         return this;

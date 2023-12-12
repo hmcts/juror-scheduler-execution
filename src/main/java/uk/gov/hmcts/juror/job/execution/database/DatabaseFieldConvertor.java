@@ -10,21 +10,21 @@ import java.sql.Clob;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 @Slf4j
 public final class DatabaseFieldConvertor {
 
-    static final Map<Class<?>, BiFunction<DatabaseColumn, ResultSet, ?>> converters = new HashMap<>();
+    static final Map<Class<?>, BiFunction<DatabaseColumn, ResultSet, ?>> CONVERTERS = new ConcurrentHashMap<>();
 
     private DatabaseFieldConvertor() {
 
     }
 
     static {
-        converters.put(String.class, (databaseColumn, resultSet) -> {
+        CONVERTERS.put(String.class, (databaseColumn, resultSet) -> {
             if (databaseColumn.isClob()) {
                 Clob clob = getResultSetObject(resultSet, databaseColumn.name(), Clob.class);
                 try {
@@ -36,13 +36,13 @@ public final class DatabaseFieldConvertor {
                 return getResultSetObject(resultSet, databaseColumn.name(), String.class);
             }
         });
-        converters.put(Integer.class,
+        CONVERTERS.put(Integer.class,
             (databaseColumn, resultSet) -> getResultSetObject(resultSet, databaseColumn.name(), Integer.class));
 
-        converters.put(BigDecimal.class,
+        CONVERTERS.put(BigDecimal.class,
             (databaseColumn, resultSet) -> getResultSetObject(resultSet, databaseColumn.name(), BigDecimal.class));
 
-        converters.put(LocalDate.class,
+        CONVERTERS.put(LocalDate.class,
             (databaseColumn, resultSet) -> {
                 Date date = getResultSetObject(resultSet, databaseColumn.name(), Date.class);
                 return date == null ? null : date.toLocalDate();
@@ -85,10 +85,10 @@ public final class DatabaseFieldConvertor {
                 getResultSetObject(resultSet, databaseColumn.name(), String.class)
             );
         }
-        if (!converters.containsKey(field.getType())) {
+        if (!CONVERTERS.containsKey(field.getType())) {
             throw new InternalServerException("Unsupported class type: " + field.getType());
         }
-        return converters.get(field.getType()).apply(databaseColumn, resultSet);
+        return CONVERTERS.get(field.getType()).apply(databaseColumn, resultSet);
     }
 
     static <T extends Enum<T>> T getEnumInstance(final Class<T> enumClass, final String value) {

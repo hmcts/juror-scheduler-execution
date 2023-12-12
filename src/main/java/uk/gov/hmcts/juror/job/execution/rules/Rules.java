@@ -41,8 +41,8 @@ public final class Rules {
             if (execute()) {
                 return null;
             }
-            return directory == null ?
-                "Directory must not be null" :
+            return directory == null
+                ? "Directory must not be null" :
                 directory.getAbsolutePath() + " must exist and be a directory";
         }
     }

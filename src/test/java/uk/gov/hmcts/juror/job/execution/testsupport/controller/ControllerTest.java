@@ -47,7 +47,7 @@ public abstract class ControllerTest {
     @SuppressWarnings({
         "PMD.JUnitTestsShouldIncludeAssert", "java:S2699"
     })
-//False positive - checked via inheritance
+    //False positive - checked via inheritance
     void positiveValidTypical(SuccessRequestArgument requestArgument) throws Exception {
         callAndValidate(requestArgument);
     }

@@ -9,6 +9,7 @@ import uk.gov.hmcts.juror.job.execution.jobs.checks.pnc.batch.PoliceCheck;
 import java.time.LocalDateTime;
 
 @Slf4j
+@SuppressWarnings("PMD.LawOfDemeter")
 public class PncCheck extends DashboardDataEntry {
     final SchedulerServiceClient schedulerServiceClient;
 
@@ -18,6 +19,7 @@ public class PncCheck extends DashboardDataEntry {
         this.schedulerServiceClient = schedulerServiceClient;
     }
 
+    @SuppressWarnings("PMD.UseObjectForClearerAPI")
     public void addRow(String type, String submitted, String completed, String failed, String unchecked) {
         this.addEntry(type,
             submitted,
@@ -27,6 +29,7 @@ public class PncCheck extends DashboardDataEntry {
     }
 
     public Job.Result populate() {
+        final String errorText = "ERROR";
         LocalDateTime lastUpdatedAt = null;
         Job.Result result;
         try {
@@ -34,7 +37,7 @@ public class PncCheck extends DashboardDataEntry {
                 schedulerServiceClient.getLatestTask("PNC_BATCH");
 
             if (task == null) {
-                this.addRow("Bureau", "ERROR", "ERROR", "ERROR", "ERROR");
+                this.addRow("Bureau", errorText, errorText, errorText, errorText);
                 result = Job.Result.failed("Failed to get PNC check results");
             } else {
                 String submitted = task.getMetaData().getOrDefault(PncBatchJob.TOTAL_CHECKS_REQUESTED_KEY, "0");
@@ -50,7 +53,7 @@ public class PncCheck extends DashboardDataEntry {
                 result = Job.Result.passed();
             }
         } catch (Exception e) {
-            this.addRow("Bureau", "ERROR", "ERROR", "ERROR", "ERROR");
+            this.addRow("Bureau", errorText, errorText, errorText, errorText);
             result = Job.Result.failed("Failed to get PNC check results", e);
         }
         addRow("Court", "0", "0", "0", "0");

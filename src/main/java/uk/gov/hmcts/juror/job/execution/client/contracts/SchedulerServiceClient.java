@@ -12,8 +12,8 @@ import uk.gov.hmcts.juror.standard.client.contract.Client;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public interface SchedulerServiceClient extends Client {
 
@@ -74,7 +74,7 @@ public interface SchedulerServiceClient extends Client {
 
         private Map<String, String> getMetaDataInternal() {
             if (this.metaData == null) {
-                this.metaData = new HashMap<>();
+                this.metaData = new ConcurrentHashMap<>();
             }
             return this.metaData;
         }

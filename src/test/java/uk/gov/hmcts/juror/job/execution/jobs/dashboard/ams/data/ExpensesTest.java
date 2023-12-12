@@ -96,8 +96,8 @@ class ExpensesTest {
         ExpensesDB expensesDB = new ExpensesDB();
         expensesDB.setAmount("123");
         expensesDB.setDate("someDate");
-        List<ExpensesDB> expensesDBList = List.of(expensesDB);
-        doReturn(expensesDBList).when(databaseService)
+        List<ExpensesDB> expensesDbList = List.of(expensesDB);
+        doReturn(expensesDbList).when(databaseService)
             .executePreparedStatement(connection, ExpensesDB.class, Expenses.EXPENSES_SQL);
         doNothing().when(expenses).populateTimestamp(any(), any(), any(LocalDateTime.class));
 
@@ -172,7 +172,7 @@ class ExpensesTest {
             .executePreparedStatement(connection, ExpensesDB.class, Expenses.EXPENSES_SQL);
         doNothing().when(expenses).populateTimestamp(any(), any(), any(LocalDateTime.class));
 
-        assertEquals(Job.Result.failed("Unexpected exception",cause), expenses.populate(),
+        assertEquals(Job.Result.failed("Unexpected exception", cause), expenses.populate(),
             "Expected populate to return passed");
 
         verify(databaseService, times(1)).execute(eq(databaseConfig), any());

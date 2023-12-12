@@ -12,8 +12,8 @@ import uk.gov.hmcts.juror.standard.service.exceptions.NotFoundException;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -79,7 +79,7 @@ class JobServiceImplTest {
         when(job.execute(metaData)).thenReturn(result);
         when(result.getStatus()).thenReturn(Status.SUCCESS);
         when(result.getMessage()).thenReturn("Test message");
-        when(result.getMetaData()).thenReturn(new HashMap<>());
+        when(result.getMetaData()).thenReturn(new ConcurrentHashMap<>());
         jobService.trigger(job, metaData);
 
 

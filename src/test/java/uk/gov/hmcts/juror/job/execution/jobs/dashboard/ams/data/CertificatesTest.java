@@ -1,6 +1,5 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
-import jdk.jfr.DataAmount;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -146,7 +145,7 @@ class CertificatesTest {
     }
 
     @Test
-    void negativePopulateCanNotFindCertificateAlias() throws Exception{
+    void negativePopulateCanNotFindCertificateAlias() throws Exception {
         keyStoreMockedStatic = Mockito.mockStatic(KeyStore.class);
         KeyStore keyStore = mock(KeyStore.class);
         keyStoreMockedStatic.when(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
@@ -198,7 +197,8 @@ class CertificatesTest {
             .populateTimestamp(dashboardData, "Certificates", LocalDateTime.now(clock));
 
 
-        assertEquals(Job.Result.failed("Unable to process certificate of type 'SomeCertificateType'"), result, "Result should be passed");
+        assertEquals(Job.Result.failed("Unable to process certificate of type 'SomeCertificateType'"), result,
+            "Result should be passed");
 
         keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
             config.getPncCertificatePassword().toCharArray()), times(1));
@@ -212,7 +212,7 @@ class CertificatesTest {
         KeyStore keyStore = mock(KeyStore.class);
         X509Certificate certificate = mock(X509Certificate.class);
 
-        Date expiryDate = Date.from(clock.instant().minus(30, ChronoUnit.DAYS));
+        Date expiryDate = Date.from(clock.instant().minus(29, ChronoUnit.DAYS));
         doReturn(expiryDate).when(certificate).getNotAfter();
 
         keyStoreMockedStatic.when(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
@@ -246,8 +246,7 @@ class CertificatesTest {
     }
 
     @Test
-    void negativePopulateUnexpectedException() throws Exception{
-        RuntimeException cause = new RuntimeException("I am the cause");
+    void negativePopulateUnexpectedException() throws Exception {
 
         keyStoreMockedStatic = Mockito.mockStatic(KeyStore.class);
         KeyStore keyStore = mock(KeyStore.class);
@@ -260,16 +259,17 @@ class CertificatesTest {
         doNothing().when(certificates).addRow(any(), any(Date.class), any());
         doNothing().when(certificates).populateTimestamp(any(), any(), any(LocalDateTime.class));
 
+        RuntimeException cause = new RuntimeException("I am the cause");
         doThrow(cause).when(keyStore).containsAlias(config.getPncCertificateAlias());
         doReturn(certificate).when(keyStore).getCertificate(config.getPncCertificateAlias());
 
         Job.Result result = certificates.populate();
 
-         verify(certificates, times(1))
+        verify(certificates, times(1))
             .populateTimestamp(dashboardData, "Certificates", LocalDateTime.now(clock));
 
 
-        assertEquals(Job.Result.failed("Failed to populate certificates. Unexpected exception",cause), result,
+        assertEquals(Job.Result.failed("Failed to populate certificates. Unexpected exception", cause), result,
             "Result should be failed with message");
 
         keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),

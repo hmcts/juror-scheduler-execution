@@ -4,13 +4,10 @@ import uk.gov.hmcts.juror.job.execution.config.SftpConfig;
 import uk.gov.hmcts.juror.job.execution.config.contracts.HasSftpConfig;
 import uk.gov.hmcts.juror.job.execution.testsupport.AbstractSftpTest;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
 
 class SftpTest extends AbstractSftpTest<Sftp, HasSftpConfig, Sftp.SftpServerGateway> {
 
-    public static class TestSftp extends Sftp{
+    public static class TestSftp extends Sftp {
 
         protected TestSftp(SftpConfig config) {
             super(config);
@@ -26,6 +23,7 @@ class SftpTest extends AbstractSftpTest<Sftp, HasSftpConfig, Sftp.SftpServerGate
     protected HasSftpConfig createConfig() {
         return new HasSftpConfig() {
             SftpConfig config;
+
             @Override
             public SftpConfig getSftp() {
                 return config;

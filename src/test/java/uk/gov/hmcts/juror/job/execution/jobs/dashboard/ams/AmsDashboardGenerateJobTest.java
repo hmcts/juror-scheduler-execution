@@ -94,7 +94,6 @@ public class AmsDashboardGenerateJobTest {
     @Test
     void positiveGetResultSuppliers() {
         List<Job.ResultSupplier> resultSuppliers = amsDashboardGenerateJob.getResultSuppliers();
-        MetaData metaData = mock(MetaData.class);
         assertEquals(2, resultSuppliers.size(), "There should be 2 result suppliers");
         Job.ResultSupplier resultSupplier1 = resultSuppliers.get(0);
         Job.ResultSupplier resultSupplier2 = resultSuppliers.get(1);
@@ -111,7 +110,7 @@ public class AmsDashboardGenerateJobTest {
         when(amsDashboardGenerateJob.generateDashboardFile(any())).thenReturn(expectedResult);
         Function<MetaData, Job.Result>
             resultSupplier2Runner = resultSupplier2.getResultRunners().iterator().next();
-
+        MetaData metaData = mock(MetaData.class);
         Job.Result result = resultSupplier2Runner.apply(metaData);
         verify(amsDashboardGenerateJob, times(1)).generateDashboardFile(any());
         assertSame(expectedResult, result, "Result should be the same as the expected result");

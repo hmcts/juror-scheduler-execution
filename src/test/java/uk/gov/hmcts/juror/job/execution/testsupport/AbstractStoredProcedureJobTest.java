@@ -23,14 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public abstract class AbstractStoredProcedureJobTest<J extends StoredProcedureJob,
@@ -118,26 +116,25 @@ public abstract class AbstractStoredProcedureJobTest<J extends StoredProcedureJo
         J job = createStoredProcedureJob(this.databaseService, config);
 
 
-
         Job.Result result = job.executeStoredProcedure();
-
+        assertEquals(Status.SUCCESS, result.getStatus(), "Status should be SUCCESS");
+        assertNull(result.getMessage(), "ErrorMessage should be null");
+        assertNull(result.getThrowable(), "Exception should be null");
+        assertEquals(0, result.getMetaData().size(), "MetaData should be empty");
 
         ArgumentCaptor<Consumer<Connection>> connectionConsumerCaptor = ArgumentCaptor.forClass(Consumer.class);
 
-        verify(databaseService,times(1))
+        verify(databaseService, times(1))
             .execute(eq(databaseConfig), connectionConsumerCaptor.capture());
 
         Consumer<Connection> connectionConsumer = connectionConsumerCaptor.getValue();
         Connection connection = mock(Connection.class);
         connectionConsumer.accept(connection);
 
-        verify(databaseService,times(1))
+        verify(databaseService, times(1))
             .executeStoredProcedure(connection, procedureName, job.getProcedureArguments());
 
-        assertEquals(Status.SUCCESS, result.getStatus(), "Status should be SUCCESS");
-        assertNull(result.getMessage(), "ErrorMessage should be null");
-        assertNull(result.getThrowable(), "Exception should be null");
-        assertEquals(0, result.getMetaData().size(), "MetaData should be empty");
+
 
         verifyNoMoreInteractions(databaseService);
     }

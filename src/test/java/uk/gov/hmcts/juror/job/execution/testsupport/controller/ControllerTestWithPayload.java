@@ -31,7 +31,7 @@ public abstract class ControllerTestWithPayload extends ControllerTest {
     @SuppressWarnings({
         "PMD.JUnitTestsShouldIncludeAssert", "java:S2699"
     })
-//False positive - checked via inheritance
+    //False positive - checked via inheritance
     void callAndExpectErrorResponse(ErrorRequestArgument errorRequestArgument) throws Exception {
         callAndValidate(errorRequestArgument);
     }
@@ -40,7 +40,7 @@ public abstract class ControllerTestWithPayload extends ControllerTest {
     @SuppressWarnings({
         "PMD.JUnitTestsShouldIncludeAssert", "java:S2699"
     })
-//False positive - checked via inheritance
+    //False positive - checked via inheritance
     void negativeInvalidContentType() throws Exception {
         callAndValidate(new ErrorRequestArgument(HttpStatus.UNSUPPORTED_MEDIA_TYPE, getTypicalPayload(),
             "INVALID_CONTENT_TYPE", "Content Type must be application/json").setContentType(MediaType.TEXT_PLAIN)

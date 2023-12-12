@@ -7,7 +7,8 @@ import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.checks.pnc.batch.PoliceCheck;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -85,7 +86,7 @@ class PncCheckTest {
 
     @Test
     void positivePopulateTest() {
-        HashMap<String, String> metaData = new HashMap<>();
+        Map<String, String> metaData = new ConcurrentHashMap<>();
         metaData.put("TOTAL_CHECKS_REQUESTED", "10");
         metaData.put("TOTAL_WITH_STATUS_ELIGIBLE", "5");
         metaData.put("TOTAL_WITH_STATUS_INELIGIBLE", "5");
@@ -109,11 +110,12 @@ class PncCheckTest {
         verify(pncCheck, times(1))
             .populateTimestamp(dashboardData, "PNC Checks", taskResponse.getLastUpdatedAt());
 
-        verify(pncCheck,times(1)).populate();
+        verify(pncCheck, times(1)).populate();
     }
+
     @Test
     void positivePopulate2Test() {
-        HashMap<String, String> metaData = new HashMap<>();
+        Map<String, String> metaData = new ConcurrentHashMap<>();
         metaData.put("TOTAL_CHECKS_REQUESTED", "10");
         metaData.put("TOTAL_WITH_STATUS_ELIGIBLE", "4");
         metaData.put("TOTAL_WITH_STATUS_INELIGIBLE", "4");
@@ -137,11 +139,12 @@ class PncCheckTest {
         verify(pncCheck, times(1))
             .populateTimestamp(dashboardData, "PNC Checks", taskResponse.getLastUpdatedAt());
 
-        verify(pncCheck,times(1)).populate();
+        verify(pncCheck, times(1)).populate();
     }
+
     @Test
     void positivePopulate3Test() {
-        HashMap<String, String> metaData = new HashMap<>();
+        Map<String, String> metaData = new ConcurrentHashMap<>();
         metaData.put("TOTAL_CHECKS_REQUESTED", "12");
         metaData.put("TOTAL_WITH_STATUS_ELIGIBLE", "4");
         metaData.put("TOTAL_WITH_STATUS_INELIGIBLE", "4");
@@ -165,7 +168,7 @@ class PncCheckTest {
         verify(pncCheck, times(1))
             .populateTimestamp(dashboardData, "PNC Checks", taskResponse.getLastUpdatedAt());
 
-        verify(pncCheck,times(1)).populate();
+        verify(pncCheck, times(1)).populate();
     }
 
     @Test
@@ -183,9 +186,9 @@ class PncCheckTest {
             .addRow("Court", "0", "0", "0", "0");
 
         verify(pncCheck, times(1))
-            .populateTimestamp(dashboardData, "PNC Checks",(LocalDateTime) null);
+            .populateTimestamp(dashboardData, "PNC Checks", (LocalDateTime) null);
 
-        verify(pncCheck,times(1)).populate();
+        verify(pncCheck, times(1)).populate();
     }
 
     @Test
@@ -194,7 +197,7 @@ class PncCheckTest {
         when(schedulerServiceClient.getLatestTask("PNC_BATCH")).thenThrow(cause);
 
         when(dashboardData.getTimestamps()).thenReturn(mock(Timestamps.class));
-        assertEquals(Job.Result.failed("Failed to get PNC check results",cause), pncCheck.populate(),
+        assertEquals(Job.Result.failed("Failed to get PNC check results", cause), pncCheck.populate(),
             "Expected result to be failed with message");
 
         verify(pncCheck, times(1))
@@ -204,14 +207,14 @@ class PncCheckTest {
             .addRow("Court", "0", "0", "0", "0");
 
         verify(pncCheck, times(1))
-            .populateTimestamp(dashboardData, "PNC Checks",(LocalDateTime) null);
+            .populateTimestamp(dashboardData, "PNC Checks", (LocalDateTime) null);
 
-        verify(pncCheck,times(1)).populate();
+        verify(pncCheck, times(1)).populate();
     }
 
     @Test
     void positiveGetPoliceCheckValueFoundTest() {
-        HashMap<String,String> metaData = new HashMap<>();
+        Map<String, String> metaData = new ConcurrentHashMap<>();
         SchedulerServiceClient.TaskResponse taskResponse = mock(SchedulerServiceClient.TaskResponse.class);
         when(taskResponse.getMetaData()).thenReturn(metaData);
         metaData.put("TOTAL_WITH_STATUS_ELIGIBLE", "5");
@@ -219,9 +222,10 @@ class PncCheckTest {
         assertEquals(5, pncCheck.getPoliceCheckValue(taskResponse, PoliceCheck.ELIGIBLE),
             "Expected value to be 5");
     }
+
     @Test
     void positiveGetPoliceCheckValueNotFoundTest() {
-        HashMap<String,String> metaData = new HashMap<>();
+        Map<String, String> metaData = new ConcurrentHashMap<>();
         SchedulerServiceClient.TaskResponse taskResponse = mock(SchedulerServiceClient.TaskResponse.class);
         when(taskResponse.getMetaData()).thenReturn(metaData);
         metaData.put("TOTAL_WITH_STATUS_ELIGIBLE", "5");

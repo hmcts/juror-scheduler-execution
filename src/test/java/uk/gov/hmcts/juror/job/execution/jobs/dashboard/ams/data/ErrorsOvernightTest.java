@@ -14,13 +14,13 @@ class ErrorsOvernightTest {
     private DashboardData dashboardData;
 
     @BeforeEach
-    void beforeEach(){
+    void beforeEach() {
         this.dashboardData = mock(DashboardData.class);
         this.errorsOvernight = new ErrorsOvernight(dashboardData);
     }
 
     @Test
-    void positiveConstructorTest(){
+    void positiveConstructorTest() {
         assertSame(dashboardData, errorsOvernight.dashboardData);
 
         assertEquals("Errors Overnight", errorsOvernight.title,
@@ -31,8 +31,9 @@ class ErrorsOvernightTest {
         assertEquals("Server Name", errorsOvernight.rows.get(0)[0]);
         assertEquals("Status", errorsOvernight.rows.get(0)[1]);
     }
+
     @Test
-    void positiveAddRowTest(){
+    void positiveAddRowTest() {
         assertEquals(1, errorsOvernight.rows.size());
         errorsOvernight.addRow("exampleServerName", "exampleStatus");
         assertEquals(2, errorsOvernight.rows.size());
@@ -45,10 +46,11 @@ class ErrorsOvernightTest {
         assertEquals("exampleServerName2", errorsOvernight.rows.get(2)[0]);
         assertEquals("exampleStatus2", errorsOvernight.rows.get(2)[1]);
     }
+
     @Test
-    void positivePopulateTest(){
+    void positivePopulateTest() {
         assertEquals(1, errorsOvernight.rows.size());
-        assertEquals(Job.Result.passed(),errorsOvernight.populate());
+        assertEquals(Job.Result.passed(), errorsOvernight.populate());
         assertEquals(2, errorsOvernight.rows.size());
         assertEquals(2, errorsOvernight.rows.get(1).length);
         assertEquals("SSUPVL04", errorsOvernight.rows.get(1)[0]);

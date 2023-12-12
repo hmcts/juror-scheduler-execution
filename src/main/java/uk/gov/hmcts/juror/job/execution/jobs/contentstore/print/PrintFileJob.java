@@ -12,17 +12,17 @@ import uk.gov.hmcts.juror.job.execution.service.contracts.SftpService;
 public class PrintFileJob extends ContentStoreFileJob {
     @Autowired
     public PrintFileJob(
-            PrintConfig printConfig,
-            SftpService sftpService,
-            DatabaseService databaseService) {
+        PrintConfig printConfig,
+        SftpService sftpService,
+        DatabaseService databaseService) {
         super(sftpService,
-                databaseService,
-                printConfig.getFtpDirectory(),
-                printConfig.getDatabase(),
-                "PRINT",
-                "printfiles_to_clob_extract",
-                new Object[]{printConfig.getPrintFileRowLimit()},
-                "JURY\\d+\\.\\d+.*",
-                PrintSftp.class);
+            databaseService,
+            printConfig.getFtpDirectory(),
+            printConfig.getDatabase(),
+            "PRINT",
+            "printfiles_to_clob_extract",
+            new Object[]{printConfig.getPrintFileRowLimit()},
+            "JURY\\d+\\.\\d+.*",
+            PrintSftp.class);
     }
 }

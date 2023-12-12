@@ -9,6 +9,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 
 @Slf4j
+@SuppressWarnings("PMD.LawOfDemeter")
 public class HouseKeeping extends DashboardDataEntry {
     final SchedulerServiceClient schedulerServiceClient;
     final Clock clock;
@@ -25,31 +26,32 @@ public class HouseKeeping extends DashboardDataEntry {
     }
 
     public Job.Result populate() {
+        final String section = "Housekeeping";
         final String jobKey = "HOUSE_KEEPING";
         Job.Result result;
         try {
             SchedulerServiceClient.TaskResponse response = schedulerServiceClient.getLatestTask(jobKey);
-            LocalDateTime sevenDaysAgo = LocalDateTime.now(clock).minusDays(7);
             if (response == null || response.getCreatedAt() == null) {
                 addRow("ERROR", "House keeping Job not found");
-                populateTimestamp(dashboardData, "Housekeeping", "ERROR");
+                populateTimestamp(dashboardData, section, "ERROR");
                 return Job.Result.failed("House keeping job not found");
             }
+            LocalDateTime sevenDaysAgo = LocalDateTime.now(clock).minusDays(7);
             if (response.getCreatedAt().isBefore(sevenDaysAgo)) {
                 addRow("Failed", "Last run was run more then 7 days ago");
                 result = Job.Result.failed("Last run was run more then 7 days ago");
-            } else if (response.getStatus() != Status.SUCCESS) {
-                addRow("Failed", "Status: " + response.getStatus());
-                result = Job.Result.failed("Expected status 'SUCCESS' but was " + response.getStatus());
-            } else {
+            } else if (response.getStatus() == Status.SUCCESS) {
                 addRow("Success", "");
                 result = Job.Result.passed();
+            } else {
+                addRow("Failed", "Status: " + response.getStatus());
+                result = Job.Result.failed("Expected status 'SUCCESS' but was " + response.getStatus());
             }
-            populateTimestamp(dashboardData, "Housekeeping", response.getLastUpdatedAt());
+            populateTimestamp(dashboardData, section, response.getLastUpdatedAt());
             return result;
         } catch (Exception e) {
             addRow("Failed", "Unexpected exception");
-            populateTimestamp(dashboardData, "Housekeeping", "ERROR");
+            populateTimestamp(dashboardData, section, "ERROR");
             log.error("Unexpected exception when getting latest task for " + jobKey, e);
             return Job.Result.failed("Unexpected gateway exception when getting latest task for " + jobKey, e);
         }

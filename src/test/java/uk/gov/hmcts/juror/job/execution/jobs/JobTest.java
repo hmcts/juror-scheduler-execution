@@ -15,10 +15,10 @@ import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -282,7 +282,7 @@ class JobTest {
             assertEquals(0, result.getMetaData().size(), "Expected empty meta data");
             result.addMetaData(entriesToAdd);
 
-            HashMap<String, String> expectedEntries = new HashMap<>(entriesToAdd);
+            Map<String, String> expectedEntries = new ConcurrentHashMap<>(entriesToAdd);
             assertEquals(3, result.getMetaData().size(), "Expected 3 entry in meta data");
             assertEquals(expectedEntries, result.getMetaData(), "Expected same meta data");
 

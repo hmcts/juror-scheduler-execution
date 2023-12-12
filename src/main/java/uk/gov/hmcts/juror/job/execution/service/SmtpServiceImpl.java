@@ -27,14 +27,13 @@ public class SmtpServiceImpl implements SmtpService {
 
     @Override
     public void sendEmail(SmtpConfig config, String subject, String text, String... recipients) {
-        JavaMailSender javaMailSender = getJavaMailSender(config);
-
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(config.getUsername());
         message.setTo(recipients);
         message.setSubject(subject);
         message.setText(text);
 
+        JavaMailSender javaMailSender = getJavaMailSender(config);
         javaMailSender.send(message);
     }
 }

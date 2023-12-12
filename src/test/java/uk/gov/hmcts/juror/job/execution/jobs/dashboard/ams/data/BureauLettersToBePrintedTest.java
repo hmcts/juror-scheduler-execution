@@ -74,7 +74,7 @@ class BureauLettersToBePrintedTest {
     }
 
     @Test
-    void positiveAddRowDBTest() {
+    void positiveAddRowDbTest() {
         BureauLettersToBePrintedDB bureauLettersToBePrintedDB = new BureauLettersToBePrintedDB();
         bureauLettersToBePrintedDB.setType("someType");
         bureauLettersToBePrintedDB.setDescription("someDescription");

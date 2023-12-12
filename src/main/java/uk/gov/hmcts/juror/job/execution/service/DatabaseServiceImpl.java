@@ -87,8 +87,8 @@ public class DatabaseServiceImpl implements DatabaseService {
             log.debug("Call to " + procedureName + " Successful");
             return callableStatement.getObject(1, returnClass);
         } catch (Exception e) {
-            log.error("Failed to execute stored procedure: " + procedureName, e);
-            throw new InternalServerException("Failed to execute stored procedure: " + procedureName, e);
+            log.error("Failed to execute stored procedure with return: " + procedureName, e);
+            throw new InternalServerException("Failed to execute stored procedure with return: " + procedureName, e);
         }
     }
 

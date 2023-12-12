@@ -14,10 +14,12 @@ public class AmsDashboardSendJob extends LinearJob {
     private final AmsDashboardConfig config;
 
     public AmsDashboardSendJob(SftpService sftpService,
-                               AmsDashboardConfig config){
+                               AmsDashboardConfig config) {
+        super();
         this.sftpService = sftpService;
         this.config = config;
     }
+
     @Override
     public ResultSupplier getResultSupplier() {
         return new ResultSupplier(false,
@@ -25,6 +27,7 @@ public class AmsDashboardSendJob extends LinearJob {
                 metaData -> sendDashboardFile()
             ));
     }
+
     Result sendDashboardFile() {
         if (sftpService.upload(AmsDashboardSftp.class, config.getDashboardCsvLocation())) {
             return Result.passed();

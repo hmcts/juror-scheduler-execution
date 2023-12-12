@@ -9,8 +9,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 
-import java.io.File;
-
 @Configuration
 @ConfigurationProperties(prefix = "jobs.housekeeping.standard")
 @Getter

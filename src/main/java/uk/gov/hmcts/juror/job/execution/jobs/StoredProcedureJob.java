@@ -18,10 +18,11 @@ public abstract class StoredProcedureJob extends LinearJob {
 
     protected StoredProcedureJob(DatabaseService databaseService, DatabaseConfig databaseConfig, String procedureName,
                                  Object... procedureArguments) {
+        super();
         this.databaseService = databaseService;
         this.databaseConfig = databaseConfig;
         this.procedureName = procedureName;
-        this.procedureArguments = procedureArguments;
+        this.procedureArguments = procedureArguments.clone();
     }
 
     @Override
@@ -41,6 +42,7 @@ public abstract class StoredProcedureJob extends LinearJob {
         return Result.passed();
     }
 
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     protected void postRunChecks(Job.Result result) {
         // Do nothing by default but here to allow optional implementation
     }

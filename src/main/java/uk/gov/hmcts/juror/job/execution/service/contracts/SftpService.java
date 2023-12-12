@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Collection;
 
 public interface SftpService {
-    Collection<File> upload(Class<? extends Sftp> sftpClass,Collection<File> filesToProcess);
-    boolean upload(Class<? extends Sftp> sftpClass,File fileToProcess);
+    Collection<File> upload(Class<? extends Sftp> sftpClass, Collection<File> filesToProcess);
+
+    boolean upload(Class<? extends Sftp> sftpClass, File fileToProcess);
 }
