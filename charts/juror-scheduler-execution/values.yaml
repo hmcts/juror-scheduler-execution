@@ -33,3 +33,4 @@ java:
     POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT: api.job.execution.service@schedular.cgi.com
     JUROR_SERVICE_HOST: juror-api.{{ .Values.global.environment }}.platform.hmcts.net
     JUROR_SERVICE_PORT: 443
+    SPRING_PROFILES_ACTIVE: test
