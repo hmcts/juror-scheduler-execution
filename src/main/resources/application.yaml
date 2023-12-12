@@ -27,7 +27,7 @@ uk:
         security:
           use-database: false
           token-validity: 18000
-          secret: ${SECRET}
+          secret: ${SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
         job:
           execution:
             remote:
@@ -42,8 +42,8 @@ uk:
                       - task::view
                       - job::view::status
                   issuer: api-job-execution-service
-                  secret: ${SCHEDULER_SERVICE_SECRET}
-                  subject: ${SCHEDULER_SERVICE_SUBJECT}
+                  secret: ${SCHEDULER_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
+                  subject: ${SCHEDULER_SERVICE_SUBJECT:api-job-execution-service}
                   token-validity: 300000
                   authentication-prefix: "Bearer "
                 host: localhost
@@ -56,8 +56,8 @@ uk:
                       - pnc::check::bulk
                       - pnc::check::single
                   issuer: api-job-execution-service
-                  subject: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT}
-                  secret: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET}
+                  subject: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT:api-job-execution-service}
+                  secret: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
                   token-validity: 300000
                   authentication-prefix: "Bearer "
                 host: localhost
@@ -66,15 +66,15 @@ uk:
                 scheme: http
               juror-service:
                 scheme: http
-                host: ${JUROR_SERVICE_HOST}
-                port: ${JUROR_SERVICE_PORT}
+                host: ${JUROR_SERVICE_HOST:localhost}
+                port: ${JUROR_SERVICE_PORT:8080}
                 url: /api/v1/moj/juror-record/pnc/{jurorNumber}
                 security:
                   id: JDCRON001
                   issuer: pnc-check-service
                   token-validity: 160000
                   subject: pnc-check-service
-                  secret: ${JUROR_SERVICE_SECRET}
+                  secret: ${JUROR_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
                   claims:
                     login: AUTO
                     userLevel: "1"
