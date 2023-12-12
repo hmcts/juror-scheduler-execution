@@ -56,26 +56,25 @@ class SftpTest extends AbstractSftpTest<Sftp, HasSftpConfig, Sftp.SftpServerGate
 
     @Override
     protected void verifySftpSessionFactoryBeanAnnotation() throws Exception {
-        throw new UnsupportedOperationException("Not required for this test");
     }
 
     @Override
     protected void verifyToSftpChannelPrintDestinationHandlerBeanAnnotation() throws Exception {
-        throw new UnsupportedOperationException("Not required for this test");
+
     }
 
     @Override
     protected void verifyToSftpChannelPrintDestinationHandlerServiceActivatorAnnotation() throws Exception {
-        throw new UnsupportedOperationException("Not required for this test");
+
     }
 
     @Override
     protected void verifyPrintSftpServerGatewayImplGetParent() {
-        throw new UnsupportedOperationException("Not required for this test");
+
     }
 
     @Override
     protected void verifyPrintSftpServerGatewayImplAnnotations() throws Exception {
-        throw new UnsupportedOperationException("Not required for this test");
+
     }
 }
