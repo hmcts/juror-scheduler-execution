@@ -105,7 +105,7 @@ task smoke(type: Test) {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '10.12.6'
+  toolVersion = '10.12.5'
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
 }
 
@@ -182,12 +182,17 @@ repositories {
 }
 
 ext {
-  log4JVersion = "2.20.0"
+  log4JVersion = "2.22.0"
 }
 
 ext['snakeyaml.version'] = '2.0'
 
 dependencies {
+  //Dependency overrides (Can be removed once other dependencies get updates to resolve security issues)
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
+  implementation 'ch.qos.logback:logback-classic:1.4.14'
+  implementation 'ch.qos.logback:logback-core:1.4.14'
+  //END
   implementation 'com.github.hmcts:juror-spring-support-library:1.0.3'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
@@ -205,7 +210,7 @@ dependencies {
   implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
 
 
-  implementation 'org.springframework.integration:spring-integration-sftp'
+  implementation 'org.springframework.integration:spring-integration-sftp:6.2.0'
 
   // Database, repository
   implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
