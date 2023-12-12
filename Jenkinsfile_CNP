@@ -19,7 +19,7 @@ def secrets = [
     secret('scheduler-execution-POSTGRES-DATABASE', 'DB_NAME'),
     secret('scheduler-execution-POSTGRES-USER', 'DB_USER_NAME'),
     secret('scheduler-execution-POSTGRES-PASS', 'DB_PASSWORD'),
-    secret('job-SECRET', 'SECRET'),
+    secret('job-SERVICE-SECRET', 'SECRET'),
     secret('pnc-SECRET', 'POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET'),
     secret('api-JOB-SECRET', 'JUROR_SERVICE_SECRET')
     ],

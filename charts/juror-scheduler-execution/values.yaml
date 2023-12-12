@@ -20,7 +20,7 @@ java:
           alias: DB_USER_NAME
         - name: scheduler-execution-POSTGRES-PASS
           alias: DB_PASSWORD
-        - name: job-SECRET
+        - name: job-SERVICE-SECRET
           alias: SECRET
         - name: scheduler-api-API-SECRET
           alias: SCHEDULER_SERVICE_SECRET
