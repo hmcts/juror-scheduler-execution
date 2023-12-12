@@ -135,8 +135,8 @@ project.tasks['check'].dependsOn integration
 
 sonarqube {
   properties {
-    property "sonar.projectName", "Juror :: spring-boot-template"
-    property "sonar.projectKey", "uk.gov.hmcts.juror:spring-boot-template"
+    property "sonar.projectName", "Juror :: juror-scheduler-execution"
+    property "sonar.projectKey", "uk.gov.hmcts.juror:juror-scheduler-execution"
   }
 }
 
