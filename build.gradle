@@ -222,7 +222,7 @@ dependencies {
   implementation 'org.projectlombok:lombok:1.18.26'
   testImplementation 'org.projectlombok:lombok:1.18.26'
   implementation 'org.jetbrains:annotations:20.1.0'
-  testImplementation 'junit:junit:4.13.1'
+  testImplementation 'junit:junit:4.13.2'
   annotationProcessor 'org.projectlombok:lombok:1.18.26'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
   implementation 'org.springframework.data:spring-data-commons:3.1.2'
