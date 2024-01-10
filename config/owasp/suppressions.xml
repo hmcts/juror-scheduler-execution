@@ -14,7 +14,7 @@
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/org\.apache\.sshd/sshd\-common@.*$</packageUrl>
    <cpe>cpe:/a:apache:sshd</cpe>
-    </suppress>
+  </suppress>
   <suppress>
    <notes><![CDATA[
    file name: sshd-core-2.11.0.jar
@@ -22,6 +22,7 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.sshd/sshd\-core@.*$</packageUrl>
    <cpe>cpe:/a:apache:sshd</cpe>
   </suppress>
+  <suppress>
    <notes><![CDATA[
    file name: sshd-sftp-2.11.0.jar
    ]]></notes>
