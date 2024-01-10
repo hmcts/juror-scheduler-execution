@@ -8,5 +8,26 @@
     <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson\-databind@.*$</packageUrl>
     <cve>CVE-2023-35116</cve>
   </suppress>
+  <suppress>
+   <notes><![CDATA[
+   file name: sshd-common-2.11.0.jar
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.sshd/sshd\-common@.*$</packageUrl>
+   <cpe>cpe:/a:apache:sshd</cpe>
+    </suppress>
+  <suppress>
+   <notes><![CDATA[
+   file name: sshd-core-2.11.0.jar
+   ]]></notes>
+   <sha1>857ef77adcd2c78ef6f2e3a07fb0f664c9687179</sha1>
+   <cpe>cpe:/a:apache:sshd</cpe>
+    </suppress>
+  <suppress>
+   <notes><![CDATA[
+   file name: sshd-sftp-2.11.0.jar
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.sshd/sshd\-sftp@.*$</packageUrl>
+   <cpe>cpe:/a:apache:sshd</cpe>
+</suppress>
   <!--End of false positives section -->
 </suppressions>
