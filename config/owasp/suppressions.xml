@@ -28,7 +28,7 @@
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/org\.apache\.sshd/sshd\-sftp@.*$</packageUrl>
    <cpe>cpe:/a:apache:sshd</cpe>
-</suppress>
+  </suppress>
   <suppress>
    <notes><![CDATA[
    file name: sshd-sftp-2.11.0.jar
