@@ -19,10 +19,9 @@
    <notes><![CDATA[
    file name: sshd-core-2.11.0.jar
    ]]></notes>
-   <sha1>857ef77adcd2c78ef6f2e3a07fb0f664c9687179</sha1>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.sshd/sshd\-core@.*$</packageUrl>
    <cpe>cpe:/a:apache:sshd</cpe>
-    </suppress>
-  <suppress>
+  </suppress>
    <notes><![CDATA[
    file name: sshd-sftp-2.11.0.jar
    ]]></notes>
