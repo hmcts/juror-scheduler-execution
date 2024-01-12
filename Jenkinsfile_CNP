@@ -15,6 +15,7 @@ def secrets = [
     secret('app-insights-connection-string', 'app-insights-connection-string'),
     secret('AppInsightsInstrumentationKey', 'azure.application-insights.instrumentation-key'),
     secret('job-SERVICE-SECRET', 'SECRET'),
+    secret('scheduler-api-API-SECRET', 'SCHEDULER_SERVICE_SECRET'),
     secret('pnc-SECRET', 'POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET'),
     secret('api-SERVICE-SECRET', 'JUROR_SERVICE_SECRET')
     ],
