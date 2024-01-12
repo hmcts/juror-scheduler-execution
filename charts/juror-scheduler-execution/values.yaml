@@ -10,16 +10,6 @@ java:
           alias: azure.application-insights.instrumentation-key
         - name: app-insights-connection-string
           alias: app-insights-connection-string
-        - name: scheduler-execution-POSTGRES-HOST
-          alias: DB_HOST
-        - name: scheduler-execution-POSTGRES-PORT
-          alias: DB_PORT
-        - name: scheduler-execution-POSTGRES-DATABASE
-          alias: DB_NAME
-        - name: scheduler-execution-POSTGRES-USER
-          alias: DB_USER_NAME
-        - name: scheduler-execution-POSTGRES-PASS
-          alias: DB_PASSWORD
         - name: job-SERVICE-SECRET
           alias: SECRET
         - name: scheduler-api-API-SECRET

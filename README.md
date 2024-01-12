@@ -2,11 +2,6 @@
 
 ### Environmental Variables
 ```
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=api_job_execution_application
-DB_USER_NAME=postgres
-DB_PASSWORD=postgres
 SECRET=WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0QnV0Rm9yVGhlRXhlY3V0aW9uTGF5ZXJUaGlzVGltZQ==
 SPRING_PROFILES_ACTIVE=test
 
