@@ -14,12 +14,8 @@ def secrets = [
   'juror-${env}': [
     secret('app-insights-connection-string', 'app-insights-connection-string'),
     secret('AppInsightsInstrumentationKey', 'azure.application-insights.instrumentation-key'),
-    secret('scheduler-execution-POSTGRES-HOST', 'DB_HOST'),
-    secret('scheduler-execution-POSTGRES-PORT', 'DB_PORT'),
-    secret('scheduler-execution-POSTGRES-DATABASE', 'DB_NAME'),
-    secret('scheduler-execution-POSTGRES-USER', 'DB_USER_NAME'),
-    secret('scheduler-execution-POSTGRES-PASS', 'DB_PASSWORD'),
     secret('job-SERVICE-SECRET', 'SECRET'),
+    secret('scheduler-api-API-SECRET', 'SCHEDULER_SERVICE_SECRET'),
     secret('pnc-SECRET', 'POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET'),
     secret('api-SERVICE-SECRET', 'JUROR_SERVICE_SECRET')
     ],
