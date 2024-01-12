@@ -188,11 +188,6 @@ ext {
 ext['snakeyaml.version'] = '2.0'
 
 dependencies {
-  //Dependency overrides (Can be removed once other dependencies get updates to resolve security issues)
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
-  implementation 'ch.qos.logback:logback-classic:1.4.14'
-  implementation 'ch.qos.logback:logback-core:1.4.14'
-  //END
   implementation 'com.github.hmcts:juror-spring-support-library:1.0.4'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
