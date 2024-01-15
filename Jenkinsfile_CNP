@@ -8,7 +8,7 @@ def type = "java"
 def product = "juror"
 def component = "scheduler-execution"
 
-def branchesToSync = ['demo', 'ithc', 'perftest']
+def branchesToSync = []
 
 def secrets = [
   'juror-${env}': [
