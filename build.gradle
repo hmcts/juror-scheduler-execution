@@ -215,7 +215,7 @@ dependencies {
   // Database, repository
   implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
   implementation 'org.postgresql:postgresql:42.7.1'
-  implementation 'com.oracle.database.jdbc:ojdbc10:19.21.0.0'
+  implementation 'com.oracle.database.jdbc:ojdbc10:19.22.0.0'
   implementation 'org.hibernate.orm:hibernate-envers:6.4.4.Final'
 
   // Documentation, logging
