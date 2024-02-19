@@ -189,7 +189,7 @@ ext['snakeyaml.version'] = '2.0'
 
 dependencies {
   //Dependency overrides (Can be removed once other dependencies get updates to resolve security issues)
-  implementation 'ch.qos.logback:logback-classic:1.4.14'
+  implementation 'ch.qos.logback:logback-classic:1.5.0'
   implementation 'ch.qos.logback:logback-core:1.5.0'
   //END
 
