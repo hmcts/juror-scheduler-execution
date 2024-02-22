@@ -17,6 +17,9 @@ spring:
     import: "optional:configtree:/mnt/secrets/juror/"
   application:
     name: HMCTS API Job Executor
+azure:
+  application-insights:
+    instrumentation-key: ${juror.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
 logging:
   level:
     uk.gov.hmcts.juror: info
