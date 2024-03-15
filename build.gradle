@@ -225,7 +225,7 @@ dependencies {
   testImplementation 'junit:junit:4.13.2'
   annotationProcessor 'org.projectlombok:lombok:1.18.30'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
-  implementation 'org.springframework.data:spring-data-commons:3.2.3'
+  implementation 'org.springframework.data:spring-data-commons:3.2.4'
   runtimeOnly(group: 'com.microsoft.azure', name: 'applicationinsights-core', version: '3.5.1')
 
   // Data Mapping
