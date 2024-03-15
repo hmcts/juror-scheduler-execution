@@ -44,6 +44,7 @@ public class ClientConfig {
         return restTemplateBuilder(config.getPoliceNationalComputerCheckService(), jwtService);
     }
 
+    @SuppressWarnings("removal")
     private RestTemplateBuilder restTemplateBuilder(final WebConfig webConfig,
                                                     final JwtService jwtService) {
         final List<ClientHttpRequestInterceptor> clientHttpRequestInterceptorList =
