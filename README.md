@@ -5,7 +5,7 @@
 SECRET=WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0QnV0Rm9yVGhlRXhlY3V0aW9uTGF5ZXJUaGlzVGltZQ==
 SPRING_PROFILES_ACTIVE=test
 
-SCHEDULER_SERVICE_SUBJECT=api.job.execution.service@schedular.cgi.com
+SCHEDULER_SERVICE_SUBJECT=external-api@juror-scheduler-api.hmcts.net
 SCHEDULER_SERVICE_SECRET=WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0
 
 POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT=api.job.execution.service@schedular.cgi.com
