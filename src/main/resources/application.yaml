@@ -49,9 +49,9 @@ uk:
                   subject: ${SCHEDULER_SERVICE_SUBJECT:api-job-execution-service}
                   token-validity: 300000
                   authentication-prefix: "Bearer "
-                host: localhost
-                port: 8083
-                scheme: http
+                host: ${SCHEDULER_SERVICE_HOST:localhost}
+                port: ${SCHEDULER_SERVICE_PORT:8083}
+                scheme: https
               police-national-computer-check-service:
                 security:
                   claims:
@@ -63,12 +63,12 @@ uk:
                   secret: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
                   token-validity: 300000
                   authentication-prefix: "Bearer "
-                host: localhost
+                host: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_HOST:localhost}
+                port: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_PORT:8084}
                 url: /jurors/check/bulk
-                port: 8084
-                scheme: http
+                scheme: https
               juror-service:
-                scheme: http
+                scheme: https
                 host: ${JUROR_SERVICE_HOST:localhost}
                 port: ${JUROR_SERVICE_PORT:8080}
                 url: /api/v1/moj/juror-record/pnc/{jurorNumber}

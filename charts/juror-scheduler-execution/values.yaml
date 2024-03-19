@@ -19,7 +19,11 @@ java:
         - name: api-JWT-SECRET-BUREAU
           alias: JUROR_SERVICE_SECRET
   environment:
+    SCHEDULER_SERVICE_HOST: juror-scheduler-api.{{ .Values.global.environment }}.platform.hmcts.net
+    SCHEDULER_SERVICE_PORT: 443
     SCHEDULER_SERVICE_SUBJECT: api.job.execution.service@schedular.cgi.com
+    POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_HOST: juror-pnc.{{ .Values.global.environment }}.platform.hmcts.net
+    POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_PORT: 443
     POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT: api.job.execution.service@schedular.cgi.com
     JUROR_SERVICE_HOST: juror-api.{{ .Values.global.environment }}.platform.hmcts.net
     JUROR_SERVICE_PORT: 443
