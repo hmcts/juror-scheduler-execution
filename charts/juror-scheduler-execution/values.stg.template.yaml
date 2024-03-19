@@ -3,4 +3,6 @@ java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
   environment:
+    SCHEDULER_SERVICE_HOST: juror-scheduler-api.staging.platform.hmcts.net
+    POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_HOST: juror-pnc.staging.platform.hmcts.net
     JUROR_SERVICE_HOST: juror-api.staging.platform.hmcts.net
