@@ -22,6 +22,7 @@ import java.sql.Types;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hibernate.validator.internal.util.Contracts.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -42,11 +43,18 @@ class DatabaseServiceImplTest {
     private Connection connection;
 
     private DatabaseConfig config;
+    private DatabaseConfig defaultDatabaseConfig;
 
     @BeforeEach
     void beforeEach() {
-        databaseService = new DatabaseServiceImpl();
         connection = mock(Connection.class);
+        defaultDatabaseConfig = new DatabaseConfig();
+        defaultDatabaseConfig.setUsername("defaultDatabaseUsername");
+        defaultDatabaseConfig.setPassword("defaultDatabasePassword");
+        defaultDatabaseConfig.setUrl("defaultDatabaseUrl");
+        defaultDatabaseConfig.setSchema("defaultDatabaseSchema");
+
+        databaseService = new DatabaseServiceImpl(defaultDatabaseConfig);
 
         config = new DatabaseConfig();
         config.setUsername("databaseUsername");
@@ -479,6 +487,65 @@ class DatabaseServiceImplTest {
             verify(preparedStatement, times(1)).executeQuery();
             verify(preparedStatement, times(1)).close();
             verifyNoMoreInteractions(connection, preparedStatement);
+        }
+    }
+
+    @Nested
+    @DisplayName("DatabaseConfig getEffectiveDatabaseConfig(DatabaseConfig config)")
+    class GetEffectiveDatabaseConfig {
+
+        @Test
+        void positiveProvidedIsNull() {
+            assertThat(databaseService.getEffectiveDatabaseConfig(null)).isEqualTo(defaultDatabaseConfig);
+        }
+        @Test
+        void positiveProvidedIsEmpty(){
+            assertThat(databaseService.getEffectiveDatabaseConfig(new DatabaseConfig()))
+                .isEqualTo(defaultDatabaseConfig);
+        }
+        @Test
+        void positiveMissingSchema(){
+            config.setSchema(null);
+            assertThat(databaseService.getEffectiveDatabaseConfig(config))
+                .isEqualTo(DatabaseConfig.builder()
+                    .schema(defaultDatabaseConfig.getSchema())
+                    .url(config.getUrl())
+                    .username(config.getUsername())
+                    .password(config.getPassword())
+                    .build());
+        }
+        @Test
+        void positiveMissingUrl(){
+            config.setUrl(null);
+            assertThat(databaseService.getEffectiveDatabaseConfig(config))
+                .isEqualTo(DatabaseConfig.builder()
+                    .schema(config.getSchema())
+                    .url(defaultDatabaseConfig.getUrl())
+                    .username(config.getUsername())
+                    .password(config.getPassword())
+                    .build());
+        }
+        @Test
+        void positiveMissingUsername(){
+            config.setUsername(null);
+            assertThat(databaseService.getEffectiveDatabaseConfig(config))
+                .isEqualTo(DatabaseConfig.builder()
+                    .schema(config.getSchema())
+                    .url(config.getUrl())
+                    .username(defaultDatabaseConfig.getUsername())
+                    .password(config.getPassword())
+                    .build());
+        }
+        @Test
+        void positiveMissingPassword(){
+            config.setPassword(null);
+            assertThat(databaseService.getEffectiveDatabaseConfig(config))
+                .isEqualTo(DatabaseConfig.builder()
+                    .schema(config.getSchema())
+                    .url(config.getUrl())
+                    .username(config.getUsername())
+                    .password(defaultDatabaseConfig.getPassword())
+                    .build());
         }
     }
 }
