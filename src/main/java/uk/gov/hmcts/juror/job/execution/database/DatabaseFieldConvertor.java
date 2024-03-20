@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.sql.Clob;
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,6 +85,11 @@ public final class DatabaseFieldConvertor {
             return getEnumInstance(field.getType().asSubclass(Enum.class),
                 getResultSetObject(resultSet, databaseColumn.name(), String.class)
             );
+        }
+        if (field.getType().isAssignableFrom(LocalDate.class)) {
+            return getResultSetObject(resultSet, databaseColumn.name(), Timestamp.class)
+                .toLocalDateTime()
+                .toLocalDate();
         }
         if (!CONVERTERS.containsKey(field.getType())) {
             throw new InternalServerException("Unsupported class type: " + field.getType());
