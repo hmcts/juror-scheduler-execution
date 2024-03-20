@@ -33,9 +33,16 @@ import static org.mockito.Mockito.when;
 class SchedulerServiceClientImplTest {
 
     private SchedulerServiceClientImpl schedulerServiceClient;
-    private static final String UPDATE_STATUS_URL = "/job/{job-key}/task/{task-id}/status";
-    private static final String GET_LATEST_STATUS_URL = "/job/{job-key}/status";
-    private static final String GET_STATUS_URL = "/job/{job-key}/task/{task-id}";
+    private static final String SCHEME = "https";
+    private static final String HOST = "localhost";
+    private static final String PORT = "8080";
+    private static final String URL_PREFIX = SCHEME + "://" + HOST + ":" + PORT;
+    private static final String UPDATE_STATUS_URL_SUFFIX = "/job/{job-key}/task/{task-id}/status";
+    private static final String UPDATE_STATUS_URL = URL_PREFIX + UPDATE_STATUS_URL_SUFFIX;
+    private static final String GET_LATEST_STATUS_URL_SUFFIX = "/job/{job-key}/status";
+    private static final String GET_LATEST_STATUS_URL = URL_PREFIX + GET_LATEST_STATUS_URL_SUFFIX;
+    private static final String GET_STATUS_URL_SUFFIX = "/job/{job-key}/task/{task-id}";
+    private static final String GET_STATUS_URL = URL_PREFIX + GET_STATUS_URL_SUFFIX;
 
     private RestTemplate restTemplate;
 
@@ -49,7 +56,7 @@ class SchedulerServiceClientImplTest {
         restTemplate = mock(RestTemplate.class);
         when(restTemplateBuilder.build()).thenReturn(restTemplate);
         schedulerServiceClient = new SchedulerServiceClientImpl(restTemplateBuilder,
-            UPDATE_STATUS_URL, GET_LATEST_STATUS_URL, GET_STATUS_URL);
+            SCHEME, HOST, PORT, UPDATE_STATUS_URL_SUFFIX, GET_LATEST_STATUS_URL_SUFFIX, GET_STATUS_URL_SUFFIX);
     }
 
     @DisplayName("UpdateStatus: " + UPDATE_STATUS_URL)

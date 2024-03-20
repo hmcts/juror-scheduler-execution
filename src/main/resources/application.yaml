@@ -46,7 +46,7 @@ uk:
                       - job::view::status
                   issuer: api-job-execution-service
                   secret: ${SCHEDULER_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
-                  subject: ${SCHEDULER_SERVICE_SUBJECT:api-job-execution-service}
+                  subject: ${SCHEDULER_SERVICE_SUBJECT:external-api@juror-scheduler-api.hmcts.net}
                   token-validity: 300000
                   authentication-prefix: "Bearer "
                 host: ${SCHEDULER_SERVICE_HOST:localhost}
@@ -70,7 +70,7 @@ uk:
               juror-service:
                 scheme: https
                 host: ${JUROR_SERVICE_HOST:localhost}
-                port: ${JUROR_SERVICE_PORT:8080}
+                port: ${JUROR_SERVICE_PORT:8084}
                 url: /api/v1/moj/juror-record/pnc/{jurorNumber}
                 security:
                   id: JDCRON001
@@ -105,21 +105,11 @@ jobs:
       session-wait-timeout: 10000
       pool-size: 10
       allow-unknown-keys: true
-    database:
-      username: "system"
-      password: "postgres"
-      url: "jdbc:postgresql://localhost:5432/juror"
-      schema: "JUROR"
     print-file-row-limit: 7
   payment:
     ftp-directory: /Users/benedwards/Desktop/JurorTest/ftp_payment
     sftp:
       host: "abc"
-    database:
-      username: "system"
-      password: "oracle"
-      url: "jdbc:oracle:thin:@localhost:1521:xe"
-      schema: "JUROR"
   housekeeping:
     juror-digital:
       retention-threshold: 1
@@ -132,9 +122,6 @@ jobs:
       read-only: false
       owner-restrict: false
       database:
-        username: "system"
-        password: "oracle"
-        url: "jdbc:oracle:thin:@localhost:1521:xe"
         schema: HK
   stats:
     performance:
@@ -157,31 +144,8 @@ jobs:
     pnc:
       batch:
         batch-size: 500
-        database:
-          username: "system"
-          password: "postgres"
-          url: "jdbc:postgresql://localhost:5432/juror"
-          schema: "JUROR"
-  letter:
-    confirm:
-      database:
-        username: "system"
-        password: "oracle"
-        url: "jdbc:oracle:thin:@localhost:1521:xe"
-        schema: "JUROR"
-    withdraw:
-      database:
-        username: "system"
-        password: "oracle"
-        url: "jdbc:oracle:thin:@localhost:1521:xe"
-        schema: "JUROR"
   dashboard:
     ams:
-      database:
-        username: "system"
-        password: "oracle"
-        url: "jdbc:oracle:thin:@localhost:1521:xe"
-        schema: "JUROR"
       sftp:
         host: "localhost"
         port: 2222
@@ -198,7 +162,8 @@ jobs:
       pnc-certificate-alias: tbc
 defaults:
   database:
-    username: "system"
-    password: "oracle"
-    url: "jdbc:oracle:thin:@localhost:1521:xe"
-    schema: "JUROR"
+    username: ${DB_USERNAME:system}
+    password: ${DB_PASSWORD:postgres}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/juror}
+    schema: "juror_mod"
+
