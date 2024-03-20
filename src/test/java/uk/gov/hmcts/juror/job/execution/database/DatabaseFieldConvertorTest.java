@@ -12,9 +12,7 @@ import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Clob;
-import java.sql.Date;
 import java.sql.ResultSet;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -141,8 +139,9 @@ public class DatabaseFieldConvertorTest {
             DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setLocalDate");
             ResultSet resultSet = mock(ResultSet.class);
             when(resultSet.getObject(columnName, Timestamp.class)).thenReturn(timestamp);
-            assertEquals(expectedValue.toLocalDate(), DatabaseFieldConvertor.CONVERTERS.get(LocalDate.class).apply(databaseColumn,
-                resultSet), "Should return expected value");
+            assertEquals(expectedValue.toLocalDate(),
+                DatabaseFieldConvertor.CONVERTERS.get(LocalDate.class).apply(databaseColumn,
+                    resultSet), "Should return expected value");
             verify(resultSet, times(1)).getObject(columnName, Timestamp.class);
             verifyNoMoreInteractions(resultSet);
         }
