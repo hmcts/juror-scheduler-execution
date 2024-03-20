@@ -26,24 +26,28 @@ public class SchedulerServiceClientImpl extends AbstractRemoteRestClient impleme
 
     public SchedulerServiceClientImpl(
         @ClientType("SchedulerService") RestTemplateBuilder restTemplateBuilder,
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service.scheme}") String scheme,
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service.host}") String host,
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.juror-service.port}") String port,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service-update-status-url}") String updateStatusUrl,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service-get-latest-status-url}")
         String getLatestStatusUrl,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service-get-status-url}") String getStatusUrl
     ) {
         super(restTemplateBuilder);
-        this.updateStatusUrl = updateStatusUrl;
-        this.getLatestStatusUrl = getLatestStatusUrl;
-        this.getStatusUrl = getStatusUrl;
+        String urlPrefix = scheme + "://" + host + ":" + port;
+        this.updateStatusUrl = urlPrefix + updateStatusUrl;
+        this.getLatestStatusUrl = urlPrefix + getLatestStatusUrl;
+        this.getStatusUrl = urlPrefix + getStatusUrl;
     }
 
     @Override
     public void updateStatus(String jobKey, Long taskId, StatusUpdatePayload payload) {
         ResponseEntity<Void> response;
         try {
-            log.debug("JobKey: " + jobKey + ".\n"
+            log.info("JobKey: " + jobKey + ".\n"
                 + "TaskId: " + taskId + ".\n"
-                + "Result:: " + payload + ".");
+                + "Result: " + payload + ".");
             if (Strings.isBlank(jobKey) || taskId == null) {
                 return;//No need to continue if jobKey/taskId are not provided as these are required for reporting back
             }
