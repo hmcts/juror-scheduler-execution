@@ -91,17 +91,16 @@ uk:
 jobs:
   pool-transfer:
     database:
-      schema: JUROR
+      schema: juror_mod
   print:
     ftp-directory: /Users/benedwards/Desktop/JurorTest/ftp_print
     sftp:
-      host: "localhost"
-      port: 2222
-      password: password404
-      user: userName101
+      host: ${BAIS_HOST:localhost}
+      port: ${BAIS_PORT:2222}
+      user: ${BAIS_XEROX_USER:userName101}
       azure-deployment: false
       remote-directory: print
-      private-key: /Users/benedwards/.ssh/id_ecdsa
+      private-key: /mnt/secrets/juror/bais-xerox-key
       session-wait-timeout: 10000
       pool-size: 10
       allow-unknown-keys: true

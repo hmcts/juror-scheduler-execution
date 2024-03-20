@@ -18,6 +18,13 @@ java:
           alias: POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET
         - name: api-JWT-SECRET-BUREAU
           alias: JUROR_SERVICE_SECRET
+        - name: bais-host
+          alias: BAIS_HOST
+        - name: bais-xerox-user
+          alias: BAIS_XEROX_USER
+        - name: bais-xerox-key
+        - name: bais-sscl-user
+          alias: BAIS_SSCL_USER
   environment:
     SCHEDULER_SERVICE_HOST: juror-scheduler-api.{{ .Values.global.environment }}.platform.hmcts.net
     SCHEDULER_SERVICE_PORT: 443
@@ -27,4 +34,5 @@ java:
     POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT: api.job.execution.service@schedular.cgi.com
     JUROR_SERVICE_HOST: juror-api.{{ .Values.global.environment }}.platform.hmcts.net
     JUROR_SERVICE_PORT: 443
+    BAIS_PORT: 2200
     SPRING_PROFILES_ACTIVE: test
