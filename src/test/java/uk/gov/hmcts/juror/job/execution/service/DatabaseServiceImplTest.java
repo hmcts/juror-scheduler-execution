@@ -498,13 +498,15 @@ class DatabaseServiceImplTest {
         void positiveProvidedIsNull() {
             assertThat(databaseService.getEffectiveDatabaseConfig(null)).isEqualTo(defaultDatabaseConfig);
         }
+
         @Test
-        void positiveProvidedIsEmpty(){
+        void positiveProvidedIsEmpty() {
             assertThat(databaseService.getEffectiveDatabaseConfig(new DatabaseConfig()))
                 .isEqualTo(defaultDatabaseConfig);
         }
+
         @Test
-        void positiveMissingSchema(){
+        void positiveMissingSchema() {
             config.setSchema(null);
             assertThat(databaseService.getEffectiveDatabaseConfig(config))
                 .isEqualTo(DatabaseConfig.builder()
@@ -514,8 +516,9 @@ class DatabaseServiceImplTest {
                     .password(config.getPassword())
                     .build());
         }
+
         @Test
-        void positiveMissingUrl(){
+        void positiveMissingUrl() {
             config.setUrl(null);
             assertThat(databaseService.getEffectiveDatabaseConfig(config))
                 .isEqualTo(DatabaseConfig.builder()
@@ -525,8 +528,9 @@ class DatabaseServiceImplTest {
                     .password(config.getPassword())
                     .build());
         }
+
         @Test
-        void positiveMissingUsername(){
+        void positiveMissingUsername() {
             config.setUsername(null);
             assertThat(databaseService.getEffectiveDatabaseConfig(config))
                 .isEqualTo(DatabaseConfig.builder()
@@ -536,8 +540,9 @@ class DatabaseServiceImplTest {
                     .password(config.getPassword())
                     .build());
         }
+
         @Test
-        void positiveMissingPassword(){
+        void positiveMissingPassword() {
             config.setPassword(null);
             assertThat(databaseService.getEffectiveDatabaseConfig(config))
                 .isEqualTo(DatabaseConfig.builder()

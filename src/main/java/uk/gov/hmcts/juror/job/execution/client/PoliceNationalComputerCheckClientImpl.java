@@ -24,7 +24,8 @@ public class PoliceNationalComputerCheckClientImpl extends AbstractRemoteRestCli
     protected PoliceNationalComputerCheckClientImpl(
         @ClientType("PoliceNationalCheckService")
         RestTemplateBuilder restTemplateBuilder,
-        @Value("${uk.gov.hmcts.juror.job.execution.remote.police-national-computer-check-service.scheme}") String scheme,
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.police-national-computer-check-service.scheme}")
+        String scheme,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.police-national-computer-check-service.host}") String host,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.police-national-computer-check-service.port}") String port,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.police-national-computer-check-service.url}")

@@ -32,14 +32,21 @@ class PoliceNationalComputerCheckClientImplTest {
     private RestTemplate restTemplate;
 
     private ResponseEntity<Void> response;
-    private static final String URL = "/jurors/check/bulk";
+    private static final String SCHEME = "https";
+    private static final String HOST = "localhost";
+    private static final String PORT = "8080";
+    private static final String URL_PREFIX = SCHEME + "://" + HOST + ":" + PORT;
+    private static final String URL_SUFFIX = "/jurors/check/bulk";
+
+    private static final String URL = URL_PREFIX + URL_SUFFIX;
 
     @BeforeEach
     void beforeEach() {
         RestTemplateBuilder restTemplateBuilder = mock(RestTemplateBuilder.class);
         restTemplate = mock(RestTemplate.class);
         when(restTemplateBuilder.build()).thenReturn(restTemplate);
-        policeNationalCheckServiceClient = new PoliceNationalComputerCheckClientImpl(restTemplateBuilder, URL);
+        policeNationalCheckServiceClient = new PoliceNationalComputerCheckClientImpl(restTemplateBuilder,
+            SCHEME, HOST, PORT, URL_SUFFIX);
         response = mock(ResponseEntity.class);
         when(restTemplate.exchange(eq(URL), eq(HttpMethod.POST), any(), eq(Void.class))).thenReturn(response);
     }

@@ -221,7 +221,7 @@ class JobTest {
                 mock(MetaData.class)
             );
             assertEquals(Status.FAILED_UNEXPECTED_EXCEPTION, result.getStatus(), "Expected same result");
-            assertEquals("Internal Server exception raised: InternalServerException: I am the cause",
+            assertEquals("Internal Server exception raised",
                 result.getMessage(),
                 "Expected same result");
             assertSame(cause, result.getThrowable(), "Expected same throwable");
