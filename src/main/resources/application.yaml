@@ -97,8 +97,7 @@ jobs:
     sftp:
       host: ${BAIS_HOST:localhost}
       port: ${BAIS_PORT:2222}
-      password: password404
-      user: ${BAIS_XEROX:userName101}
+      user: ${BAIS_XEROX_USER:userName101}
       azure-deployment: false
       remote-directory: print
       private-key: /mnt/secrets/juror/bais-xerox-key
