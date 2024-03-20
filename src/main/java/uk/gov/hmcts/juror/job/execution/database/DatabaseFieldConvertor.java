@@ -45,8 +45,8 @@ public final class DatabaseFieldConvertor {
 
         CONVERTERS.put(LocalDate.class,
             (databaseColumn, resultSet) -> {
-                Date date = getResultSetObject(resultSet, databaseColumn.name(), Date.class);
-                return date == null ? null : date.toLocalDate();
+                Timestamp timestamp = getResultSetObject(resultSet, databaseColumn.name(), Timestamp.class);
+                return timestamp == null ? null : timestamp.toLocalDateTime().toLocalDate();
             });
     }
 
@@ -85,11 +85,6 @@ public final class DatabaseFieldConvertor {
             return getEnumInstance(field.getType().asSubclass(Enum.class),
                 getResultSetObject(resultSet, databaseColumn.name(), String.class)
             );
-        }
-        if (field.getType().isAssignableFrom(LocalDate.class)) {
-            return getResultSetObject(resultSet, databaseColumn.name(), Timestamp.class)
-                .toLocalDateTime()
-                .toLocalDate();
         }
         if (!CONVERTERS.containsKey(field.getType())) {
             throw new InternalServerException("Unsupported class type: " + field.getType());
