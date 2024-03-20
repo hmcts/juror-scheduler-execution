@@ -28,7 +28,7 @@ public class SchedulerServiceClientImpl extends AbstractRemoteRestClient impleme
         @ClientType("SchedulerService") RestTemplateBuilder restTemplateBuilder,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service.scheme}") String scheme,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service.host}") String host,
-        @Value("${uk.gov.hmcts.juror.job.execution.remote.juror-service.port}") String port,
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service.port}") String port,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service-update-status-url}") String updateStatusUrl,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service-get-latest-status-url}")
         String getLatestStatusUrl,
