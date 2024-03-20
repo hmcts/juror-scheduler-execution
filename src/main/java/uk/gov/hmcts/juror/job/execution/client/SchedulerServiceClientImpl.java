@@ -23,7 +23,6 @@ public class SchedulerServiceClientImpl extends AbstractRemoteRestClient impleme
     private final String updateStatusUrl;
     private final String getLatestStatusUrl;
     private final String getStatusUrl;
-    private final String urlPrefix;
 
     public SchedulerServiceClientImpl(
         @ClientType("SchedulerService") RestTemplateBuilder restTemplateBuilder,
@@ -36,10 +35,10 @@ public class SchedulerServiceClientImpl extends AbstractRemoteRestClient impleme
         @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service-get-status-url}") String getStatusUrl
     ) {
         super(restTemplateBuilder);
-        this.urlPrefix = scheme + "://" + host + ":" + port;
-        this.updateStatusUrl = this.urlPrefix + updateStatusUrl;
-        this.getLatestStatusUrl = this.urlPrefix + getLatestStatusUrl;
-        this.getStatusUrl = this.urlPrefix + getStatusUrl;
+        String urlPrefix = scheme + "://" + host + ":" + port;
+        this.updateStatusUrl = urlPrefix + updateStatusUrl;
+        this.getLatestStatusUrl = urlPrefix + getLatestStatusUrl;
+        this.getStatusUrl = urlPrefix + getStatusUrl;
     }
 
     @Override
