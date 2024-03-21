@@ -99,7 +99,6 @@ jobs:
       port: ${BAIS_PORT:2222}
       user: ${BAIS_XEROX_USER:userName101}
       azure-deployment: false
-      remote-directory: print
       private-key: /mnt/secrets/juror/bais-xerox-key
       session-wait-timeout: 10000
       pool-size: 10
@@ -108,7 +107,14 @@ jobs:
   payment:
     ftp-directory: /Users/benedwards/Desktop/JurorTest/ftp_payment
     sftp:
-      host: "abc"
+      host: ${BAIS_HOST:localhost}
+      port: ${BAIS_PORT:2222}
+      user: ${BAIS_SSCL_USER:userName101}
+      azure-deployment: false
+      private-key: /mnt/secrets/juror/bais-sscl-key
+      session-wait-timeout: 10000
+      pool-size: 10
+      allow-unknown-keys: true
   housekeeping:
     juror-digital:
       retention-threshold: 1
