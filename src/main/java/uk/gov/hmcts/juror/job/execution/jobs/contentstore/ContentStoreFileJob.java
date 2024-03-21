@@ -63,6 +63,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
         this.procedureArguments = procedureArguments.clone();
         this.fileNameRegex = fileNameRegex;
         this.sftpClass = sftpClass;
+        new File(this.getFtpDirectory().getAbsolutePath()).mkdir();
         addRules(
             Rules.requireDirectory(this.getFtpDirectory())
         );
