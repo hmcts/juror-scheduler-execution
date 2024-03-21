@@ -86,6 +86,8 @@ public abstract class ContentStoreFileJob extends LinearJob {
             totalFiles.set(contentStoreList.size());
             AtomicInteger count = new AtomicInteger(1);
 
+            new File(this.getFtpDirectory().getAbsolutePath()).mkdir();
+
             contentStoreList.forEach(contentStore -> {
                 try {
                     log.info(fileType + ": Generating file " + count.getAndIncrement() + "/" + totalFiles.get() + ": "

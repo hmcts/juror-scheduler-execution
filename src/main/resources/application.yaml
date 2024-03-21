@@ -93,7 +93,7 @@ jobs:
     database:
       schema: juror_mod
   print:
-    ftp-directory: /Users/benedwards/Desktop/JurorTest/ftp_print
+    ftp-directory: /tmp/ftp_print
     sftp:
       host: ${BAIS_HOST:localhost}
       port: ${BAIS_PORT:2222}
@@ -105,7 +105,7 @@ jobs:
       allow-unknown-keys: true
     print-file-row-limit: 7
   payment:
-    ftp-directory: /Users/benedwards/Desktop/JurorTest/ftp_payment
+    ftp-directory: /tmp/ftp_payment
     sftp:
       host: ${BAIS_HOST:localhost}
       port: ${BAIS_PORT:2222}
@@ -169,6 +169,6 @@ defaults:
   database:
     username: ${DB_USERNAME:system}
     password: ${DB_PASSWORD:postgres}
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/juror}
+    url: ${DB_URL:}
     schema: "juror_mod"
 
