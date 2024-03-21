@@ -494,6 +494,13 @@ class DatabaseServiceImplTest {
     @DisplayName("DatabaseConfig getEffectiveDatabaseConfig(DatabaseConfig config)")
     class GetEffectiveDatabaseConfig {
 
+        void assertDefaultConfig(DatabaseConfig actual, DatabaseConfig expected) {
+            assertThat(actual.getSchema()).isEqualTo(expected.getSchema());
+            assertThat(actual.getUrl()).isEqualTo(expected.getUrl());
+            assertThat(actual.getUsername()).isEqualTo(expected.getUsername());
+            assertThat(actual.getPassword()).isEqualTo(expected.getPassword());
+        }
+
         @Test
         void positiveProvidedIsNull() {
             assertThat(databaseService.getEffectiveDatabaseConfig(null)).isEqualTo(defaultDatabaseConfig);
@@ -501,56 +508,52 @@ class DatabaseServiceImplTest {
 
         @Test
         void positiveProvidedIsEmpty() {
-            assertThat(databaseService.getEffectiveDatabaseConfig(new DatabaseConfig()))
-                .isEqualTo(defaultDatabaseConfig);
+            assertDefaultConfig(databaseService.getEffectiveDatabaseConfig(new DatabaseConfig()),
+                defaultDatabaseConfig);
         }
 
         @Test
         void positiveMissingSchema() {
             config.setSchema(null);
-            assertThat(databaseService.getEffectiveDatabaseConfig(config))
-                .isEqualTo(DatabaseConfig.builder()
-                    .schema(defaultDatabaseConfig.getSchema())
-                    .url(config.getUrl())
-                    .username(config.getUsername())
-                    .password(config.getPassword())
-                    .build());
+            assertDefaultConfig(databaseService.getEffectiveDatabaseConfig(config), DatabaseConfig.builder()
+                .schema(defaultDatabaseConfig.getSchema())
+                .url(config.getUrl())
+                .username(config.getUsername())
+                .password(config.getPassword())
+                .build());
         }
 
         @Test
         void positiveMissingUrl() {
             config.setUrl(null);
-            assertThat(databaseService.getEffectiveDatabaseConfig(config))
-                .isEqualTo(DatabaseConfig.builder()
-                    .schema(config.getSchema())
-                    .url(defaultDatabaseConfig.getUrl())
-                    .username(config.getUsername())
-                    .password(config.getPassword())
-                    .build());
+            assertDefaultConfig(databaseService.getEffectiveDatabaseConfig(config), DatabaseConfig.builder()
+                .schema(config.getSchema())
+                .url(defaultDatabaseConfig.getUrl())
+                .username(config.getUsername())
+                .password(config.getPassword())
+                .build());
         }
 
         @Test
         void positiveMissingUsername() {
             config.setUsername(null);
-            assertThat(databaseService.getEffectiveDatabaseConfig(config))
-                .isEqualTo(DatabaseConfig.builder()
-                    .schema(config.getSchema())
-                    .url(config.getUrl())
-                    .username(defaultDatabaseConfig.getUsername())
-                    .password(config.getPassword())
-                    .build());
+            assertDefaultConfig(databaseService.getEffectiveDatabaseConfig(config), DatabaseConfig.builder()
+                .schema(config.getSchema())
+                .url(config.getUrl())
+                .username(defaultDatabaseConfig.getUsername())
+                .password(config.getPassword())
+                .build());
         }
 
         @Test
         void positiveMissingPassword() {
             config.setPassword(null);
-            assertThat(databaseService.getEffectiveDatabaseConfig(config))
-                .isEqualTo(DatabaseConfig.builder()
-                    .schema(config.getSchema())
-                    .url(config.getUrl())
-                    .username(config.getUsername())
-                    .password(defaultDatabaseConfig.getPassword())
-                    .build());
+            assertDefaultConfig(databaseService.getEffectiveDatabaseConfig(config), DatabaseConfig.builder()
+                .schema(config.getSchema())
+                .url(config.getUrl())
+                .username(config.getUsername())
+                .password(defaultDatabaseConfig.getPassword())
+                .build());
         }
     }
 }
