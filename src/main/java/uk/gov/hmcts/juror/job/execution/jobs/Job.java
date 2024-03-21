@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 import uk.gov.hmcts.juror.job.execution.rules.Rule;
@@ -67,11 +66,9 @@ public abstract class Job {
         try {
             return resultFunction.apply(metaData);
         } catch (InternalServerException exception) {
-            String message = ExceptionUtils.getRootCauseMessage(exception);
             log.error("Internal Server error when executing Job: " + getName(), exception);
             return new Result(Status.FAILED_UNEXPECTED_EXCEPTION,
-                "Internal Server exception raised: " + message,
-                exception);
+                "Internal Server exception raised", exception);
         } catch (Exception exception) {
             log.error("Unexpected error when executing Job: " + getName(), exception);
             return new Result(Status.FAILED_UNEXPECTED_EXCEPTION,

@@ -12,9 +12,10 @@ import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Clob;
-import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -132,15 +133,16 @@ public class DatabaseFieldConvertorTest {
         @Test
         void positiveLocalDateConvertorTest() throws Exception {
             final String columnName = "testLocalDate";
-            Date date = mock(Date.class);
-            LocalDate expectedValue = LocalDate.now();
-            when(date.toLocalDate()).thenReturn(expectedValue);
+            Timestamp timestamp = mock(Timestamp.class);
+            LocalDateTime expectedValue = LocalDateTime.now();
+            when(timestamp.toLocalDateTime()).thenReturn(expectedValue);
             DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setLocalDate");
             ResultSet resultSet = mock(ResultSet.class);
-            when(resultSet.getObject(columnName, Date.class)).thenReturn(date);
-            assertEquals(expectedValue, DatabaseFieldConvertor.CONVERTERS.get(LocalDate.class).apply(databaseColumn,
-                resultSet), "Should return expected value");
-            verify(resultSet, times(1)).getObject(columnName, Date.class);
+            when(resultSet.getObject(columnName, Timestamp.class)).thenReturn(timestamp);
+            assertEquals(expectedValue.toLocalDate(),
+                DatabaseFieldConvertor.CONVERTERS.get(LocalDate.class).apply(databaseColumn,
+                    resultSet), "Should return expected value");
+            verify(resultSet, times(1)).getObject(columnName, Timestamp.class);
             verifyNoMoreInteractions(resultSet);
         }
 
@@ -149,10 +151,10 @@ public class DatabaseFieldConvertorTest {
             final String columnName = "testLocalDate";
             DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setLocalDate");
             ResultSet resultSet = mock(ResultSet.class);
-            when(resultSet.getObject(columnName, Date.class)).thenReturn(null);
+            when(resultSet.getObject(columnName, Timestamp.class)).thenReturn(null);
             assertNull(DatabaseFieldConvertor.CONVERTERS.get(LocalDate.class).apply(databaseColumn,
                 resultSet), "Should return expected value");
-            verify(resultSet, times(1)).getObject(columnName, Date.class);
+            verify(resultSet, times(1)).getObject(columnName, Timestamp.class);
             verifyNoMoreInteractions(resultSet);
         }
 

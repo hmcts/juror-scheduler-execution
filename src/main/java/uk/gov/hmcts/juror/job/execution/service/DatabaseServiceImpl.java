@@ -2,6 +2,7 @@ package uk.gov.hmcts.juror.job.execution.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.database.DatabaseFieldConvertor;
@@ -24,6 +25,13 @@ import java.util.function.Consumer;
 @Slf4j
 public class DatabaseServiceImpl implements DatabaseService {
 
+    private final DatabaseConfig defaultDatabaseConfig;
+
+    @Autowired
+    public DatabaseServiceImpl(DatabaseConfig defaultDatabaseConfig) {
+        this.defaultDatabaseConfig = defaultDatabaseConfig;
+    }
+
     @Override
     public void execute(DatabaseConfig config, Consumer<Connection> connectionConsumer) {
         try (Connection connection = getConnection(config)) {
@@ -34,12 +42,33 @@ public class DatabaseServiceImpl implements DatabaseService {
         }
     }
 
+    DatabaseConfig getEffectiveDatabaseConfig(DatabaseConfig config) {
+        if (config == null) {
+            return defaultDatabaseConfig;
+        }
+        if (config.getSchema() == null) {
+            config.setSchema(defaultDatabaseConfig.getSchema());
+        }
+        if (config.getUrl() == null) {
+            config.setUrl(defaultDatabaseConfig.getUrl());
+        }
+        if (config.getUsername() == null) {
+            config.setUsername(defaultDatabaseConfig.getUsername());
+        }
+        if (config.getPassword() == null) {
+            config.setPassword(defaultDatabaseConfig.getPassword());
+        }
+        return config;
+    }
+
     private Connection getConnection(DatabaseConfig databaseConfig) throws SQLException {
-        Connection connection = DriverManager.getConnection(databaseConfig.getUrl(),
-            databaseConfig.getUsername(),
-            databaseConfig.getPassword());
+        DatabaseConfig actualConfig = getEffectiveDatabaseConfig(databaseConfig);
+
+        Connection connection = DriverManager.getConnection(actualConfig.getUrl(),
+            actualConfig.getUsername(),
+            actualConfig.getPassword());
         try {
-            connection.setSchema(databaseConfig.getSchema());
+            connection.setSchema(actualConfig.getSchema());
         } catch (Exception exception) {
             connection.close();
             log.error("Failed to set database schema", exception);

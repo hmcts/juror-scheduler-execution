@@ -7,8 +7,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Clob;
-import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,8 +44,8 @@ public final class DatabaseFieldConvertor {
 
         CONVERTERS.put(LocalDate.class,
             (databaseColumn, resultSet) -> {
-                Date date = getResultSetObject(resultSet, databaseColumn.name(), Date.class);
-                return date == null ? null : date.toLocalDate();
+                Timestamp timestamp = getResultSetObject(resultSet, databaseColumn.name(), Timestamp.class);
+                return timestamp == null ? null : timestamp.toLocalDateTime().toLocalDate();
             });
     }
 

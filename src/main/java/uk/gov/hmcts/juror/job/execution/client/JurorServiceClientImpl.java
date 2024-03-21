@@ -25,9 +25,13 @@ public class JurorServiceClientImpl extends AbstractRemoteRestClient implements 
     @Autowired
     protected JurorServiceClientImpl(
         @ClientType("JurorService") RestTemplateBuilder restTemplateBuilder,
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.juror-service.scheme}") String scheme,
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.juror-service.host}") String host,
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.juror-service.port}") String port,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.juror-service.url}") String url) {
         super(restTemplateBuilder);
-        this.url = url;
+        String urlPrefix = scheme + "://" + host + ":" + port;
+        this.url = urlPrefix + url;
     }
 
     @Override
