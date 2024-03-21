@@ -23,7 +23,7 @@ public class PaymentFileJobTest extends ContentStoreFileJobTest {
         this.ftpDirectory = this.config.getFtpDirectory();
         this.databaseConfig = this.config.getDatabase();
         this.fileType = "PAYMENT";
-        this.procedureName = "payment_files_to_clob";
+        this.procedureName = "juror_mod.payment_files_to_clob";
         this.procedureArguments = new Object[]{};
         this.fileNameRegex = "JURY\\d+\\.\\d+.*";
         this.sftpClass = PaymentSftp.class;
