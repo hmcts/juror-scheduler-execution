@@ -20,7 +20,7 @@ public class PaymentFileJob extends ContentStoreFileJob {
             paymentConfig.getFtpDirectory(),
             paymentConfig.getDatabase(),
             "PAYMENT",
-            "payment_files_to_clob_extract",
+            "payment_files_to_clob",
             new Object[0],
             "JURY\\d+\\.\\d+.*",
             PaymentSftp.class);
