@@ -2,7 +2,6 @@ package uk.gov.hmcts.juror.job.execution.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
