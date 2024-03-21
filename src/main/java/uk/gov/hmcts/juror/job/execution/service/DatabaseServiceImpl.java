@@ -81,7 +81,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public void executeStoredProcedure(Connection connection, String procedureName, Object... arguments) {
-        final String sql = "{CALL " + procedureName + "(" + StringUtils.chop("?,".repeat(arguments.length)) + ")}";
+        final String sql = "CALL " + procedureName + "(" + StringUtils.chop("?,".repeat(arguments.length)) + ")";
         log.debug("Attempting to run sql: '" + sql + "' with parameters: " + Arrays.toString(arguments));
         try (CallableStatement callableStatement = connection.prepareCall(sql)) {
             for (int i = 0; i < arguments.length; i++) {

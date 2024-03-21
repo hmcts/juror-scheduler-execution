@@ -26,7 +26,7 @@ public class PrintFileJobTest extends ContentStoreFileJobTest {
         this.ftpDirectory = this.config.getFtpDirectory();
         this.databaseConfig = this.config.getDatabase();
         this.fileType = "PRINT";
-        this.procedureName = "juror_mod.printfiles_to_clob";
+        this.procedureName = "printfiles_to_clob";
         this.procedureArguments = new Object[]{this.config.getPrintFileRowLimit()};
         this.fileNameRegex = "JURY\\d+\\.\\d+.*";
         this.sftpClass = PrintSftp.class;

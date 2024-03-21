@@ -5,18 +5,16 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import uk.gov.hmcts.juror.job.execution.database.DatabaseColumn;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @Accessors(chain = true)
 public class ContentStore {
 
     @DatabaseColumn(name = "REQUEST_ID", setter = "setRequestId")
-    private BigDecimal requestId;
+    private Long requestId;
     @DatabaseColumn(name = "DOCUMENT_ID", setter = "setDocumentId")
     private String documentId;
-    @DatabaseColumn(name = "DATA", isClob = true, setter = "setData")
+    @DatabaseColumn(name = "DATA", setter = "setData")
     private String data;
 }
 
