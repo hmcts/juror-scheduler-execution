@@ -118,7 +118,7 @@ public class ContentStoreFileJobTest {
             + "FROM CONTENT_STORE CS "
             + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
 
-        private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE"
+        private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE "
             + "SET DATE_SENT=current_date "
             + "WHERE REQUEST_ID=? AND FILE_TYPE=?";
 
