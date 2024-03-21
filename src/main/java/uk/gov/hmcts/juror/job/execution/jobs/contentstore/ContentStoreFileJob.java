@@ -63,6 +63,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
         this.procedureArguments = procedureArguments.clone();
         this.fileNameRegex = fileNameRegex;
         this.sftpClass = sftpClass;
+        new File(this.getFtpDirectory().getAbsolutePath()).mkdir();
         addRules(
             Rules.requireDirectory(this.getFtpDirectory())
         );
@@ -85,8 +86,6 @@ public abstract class ContentStoreFileJob extends LinearJob {
 
             totalFiles.set(contentStoreList.size());
             AtomicInteger count = new AtomicInteger(1);
-
-            new File(this.getFtpDirectory().getAbsolutePath()).mkdir();
 
             contentStoreList.forEach(contentStore -> {
                 try {
