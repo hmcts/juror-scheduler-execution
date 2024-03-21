@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode //NOSONAR
 public class DatabaseConfig {
     private String username;
     private String password;
