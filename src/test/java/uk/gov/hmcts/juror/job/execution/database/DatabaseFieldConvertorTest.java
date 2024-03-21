@@ -31,6 +31,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("PMD.LawOfDemeter")
 public class DatabaseFieldConvertorTest {
 
     private DatabaseColumn createDatabaseColumnMock(String name, String setter) {
@@ -118,6 +119,20 @@ public class DatabaseFieldConvertorTest {
         }
 
         @Test
+        void positiveLongConvertorTest() throws Exception {
+            final String columnName = "testInteger";
+            Long expectedValue = 123L;
+            DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setTestInteger");
+            ResultSet resultSet = mock(ResultSet.class);
+            when(resultSet.getObject(columnName, Long.class)).thenReturn(expectedValue);
+            assertEquals(expectedValue, DatabaseFieldConvertor.CONVERTERS.get(Long.class).apply(databaseColumn,
+                resultSet), "Should return expected value");
+            verify(resultSet, times(1)).getObject(columnName, Long.class);
+            verifyNoMoreInteractions(resultSet);
+
+        }
+
+        @Test
         void positiveBigDecimalConvertorTest() throws Exception {
             final String columnName = "testBigDecimal";
             BigDecimal expectedValue = new BigDecimal(1);
@@ -165,7 +180,7 @@ public class DatabaseFieldConvertorTest {
     class StaticConstructorTest {
         @Test
         void positiveConstructorTest() {
-            assertEquals(4, DatabaseFieldConvertor.CONVERTERS.size(),
+            assertEquals(5, DatabaseFieldConvertor.CONVERTERS.size(),
                 "Converters should have 4 entries");
             assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(String.class),
                 "Converters should contain String.class");
@@ -173,6 +188,8 @@ public class DatabaseFieldConvertorTest {
                 "Converters should contain Integer.class");
             assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(BigDecimal.class),
                 "Converters should contain BigDecimal.class");
+            assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(Long.class),
+                "Converters should contain Long.class");
             assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(LocalDate.class),
                 "Converters should contain LocalDate.class");
         }

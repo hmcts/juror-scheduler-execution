@@ -145,11 +145,11 @@ class DatabaseServiceImplTest {
         @Test
         void positiveTypicalWithArguments() throws Exception {
             CallableStatement callableStatement = mock(CallableStatement.class);
-            when(connection.prepareCall("{CALL procedureForTestPurposes(?,?)}")).thenReturn(callableStatement);
+            when(connection.prepareCall("CALL procedureForTestPurposes(?,?)")).thenReturn(callableStatement);
 
             databaseService.executeStoredProcedure(connection, "procedureForTestPurposes", "argument1", "argument2");
 
-            verify(connection, times(1)).prepareCall("{CALL procedureForTestPurposes(?,?)}");
+            verify(connection, times(1)).prepareCall("CALL procedureForTestPurposes(?,?)");
             verify(callableStatement, times(1)).setObject(1, "argument1");
             verify(callableStatement, times(1)).setObject(2, "argument2");
             verify(callableStatement, times(1)).execute();
@@ -160,11 +160,11 @@ class DatabaseServiceImplTest {
         @Test
         void positiveTypicalWithOutArguments() throws Exception {
             CallableStatement callableStatement = mock(CallableStatement.class);
-            when(connection.prepareCall("{CALL procedureForTestPurposes()}")).thenReturn(callableStatement);
+            when(connection.prepareCall("CALL procedureForTestPurposes()")).thenReturn(callableStatement);
 
             databaseService.executeStoredProcedure(connection, "procedureForTestPurposes");
 
-            verify(connection, times(1)).prepareCall("{CALL procedureForTestPurposes()}");
+            verify(connection, times(1)).prepareCall("CALL procedureForTestPurposes()");
             verify(callableStatement, times(1)).execute();
             verify(callableStatement, times(1)).close();
             verifyNoMoreInteractions(connection, callableStatement);
@@ -174,7 +174,7 @@ class DatabaseServiceImplTest {
         void negativeUnexpectedException() throws Exception {
             RuntimeException cause = new RuntimeException("I am the cause");
             CallableStatement callableStatement = mock(CallableStatement.class);
-            when(connection.prepareCall("{CALL procedureForTestPurposes(?)}")).thenReturn(callableStatement);
+            when(connection.prepareCall("CALL procedureForTestPurposes(?)")).thenReturn(callableStatement);
             doThrow(cause).when(callableStatement).execute();
 
             InternalServerException internalServerException =
@@ -187,7 +187,7 @@ class DatabaseServiceImplTest {
                 internalServerException.getMessage(), "Message should be the same");
             assertEquals(cause, internalServerException.getCause(), "Cause should be the same");
 
-            verify(connection, times(1)).prepareCall("{CALL procedureForTestPurposes(?)}");
+            verify(connection, times(1)).prepareCall("CALL procedureForTestPurposes(?)");
             verify(callableStatement, times(1)).setObject(1, "Argument 1");
             verify(callableStatement, times(1)).execute();
             verify(callableStatement, times(1)).close();
@@ -205,7 +205,7 @@ class DatabaseServiceImplTest {
             ))
             .thenReturn(connection);
         CallableStatement callableStatement = mock(CallableStatement.class);
-        when(connection.prepareCall("{CALL procedureForTestPurposes(?,?)}")).thenReturn(callableStatement);
+        when(connection.prepareCall("CALL procedureForTestPurposes(?,?)")).thenReturn(callableStatement);
 
         DatabaseServiceImpl databaseServiceImplSpy = Mockito.spy(databaseService);
         databaseServiceImplSpy.executeStoredProcedure(config, "procedureForTestPurposes", "Argument 1", "Argument 2");

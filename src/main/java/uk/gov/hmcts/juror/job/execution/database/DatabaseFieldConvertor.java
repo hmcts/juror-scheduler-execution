@@ -38,6 +38,8 @@ public final class DatabaseFieldConvertor {
         });
         CONVERTERS.put(Integer.class,
             (databaseColumn, resultSet) -> getResultSetObject(resultSet, databaseColumn.name(), Integer.class));
+        CONVERTERS.put(Long.class,
+            (databaseColumn, resultSet) -> getResultSetObject(resultSet, databaseColumn.name(), Long.class));
 
         CONVERTERS.put(BigDecimal.class,
             (databaseColumn, resultSet) -> getResultSetObject(resultSet, databaseColumn.name(), BigDecimal.class));

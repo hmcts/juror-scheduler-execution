@@ -20,7 +20,7 @@ public class PrintFileJob extends ContentStoreFileJob {
             printConfig.getFtpDirectory(),
             printConfig.getDatabase(),
             "PRINT",
-            "juror_mod.printfiles_to_clob",
+            "printfiles_to_clob",
             new Object[]{printConfig.getPrintFileRowLimit()},
             "JURY\\d+\\.\\d+.*",
             PrintSftp.class);

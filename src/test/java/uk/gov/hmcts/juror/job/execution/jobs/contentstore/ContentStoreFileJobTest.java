@@ -21,7 +21,6 @@ import uk.gov.hmcts.juror.job.execution.util.Sftp;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -119,24 +118,18 @@ public class ContentStoreFileJobTest {
             + "FROM CONTENT_STORE CS "
             + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
 
-        private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE CS "
-            + "SET CS.DATE_SENT=SYSDATE "
-            + "WHERE CS.REQUEST_ID=? AND CS.FILE_TYPE=?";
+        private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE"
+            + "SET DATE_SENT=current_date "
+            + "WHERE REQUEST_ID=? AND FILE_TYPE=?";
 
 
         private List<ContentStore> getStandardContentStoreList() {
             return List.of(
-                new ContentStore().setRequestId(new BigDecimal(
-                        1
-                    )).setData("Data123")
+                new ContentStore().setRequestId(1L).setData("Data123")
                     .setDocumentId("DocId 1"),
-                new ContentStore().setRequestId(new BigDecimal(
-                        2
-                    )).setData("New data")
+                new ContentStore().setRequestId(2L).setData("New data")
                     .setDocumentId("DocId 2"),
-                new ContentStore().setRequestId(new BigDecimal(
-                        3
-                    )).setData("A third piece of data")
+                new ContentStore().setRequestId(3L).setData("A third piece of data")
                     .setDocumentId("DocId 3")
             );
         }
@@ -303,7 +296,8 @@ public class ContentStoreFileJobTest {
         }
 
         @Test
-        @SuppressWarnings("VariableDeclarationUsageDistance")//Required for mocks setup
+        @SuppressWarnings("VariableDeclarationUsageDistance")
+        //Required for mocks setup
         void negative_particular_success() throws IOException {
             try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class);
                  MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
