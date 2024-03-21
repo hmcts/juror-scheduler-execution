@@ -3,6 +3,7 @@ package uk.gov.hmcts.juror.job.execution.config;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@EqualsAndHashCode
 public class DatabaseConfig {
     private String username;
     private String password;
