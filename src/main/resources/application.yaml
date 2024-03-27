@@ -80,6 +80,7 @@ uk:
                   secret: ${JUROR_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
                   claims:
                     login: AUTO
+                    userType: SYSTEM
                     userLevel: "1"
                     daysToExpire: 6
                     passwordWarning: true
