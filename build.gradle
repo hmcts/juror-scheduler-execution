@@ -193,7 +193,7 @@ dependencies {
   implementation 'ch.qos.logback:logback-core:1.5.3'
   //END
 
-  implementation 'com.github.hmcts:juror-spring-support-library:1.1.0'
+  implementation 'com.github.hmcts:juror-spring-support-library:1.1.2'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
