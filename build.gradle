@@ -190,7 +190,7 @@ ext['snakeyaml.version'] = '2.0'
 dependencies {
   //Dependency overrides (Can be removed once other dependencies get updates to resolve security issues)
   implementation 'ch.qos.logback:logback-classic:1.5.4'
-  implementation 'ch.qos.logback:logback-core:1.5.3'
+  implementation 'ch.qos.logback:logback-core:1.5.4'
   //END
 
   implementation 'com.github.hmcts:juror-spring-support-library:1.1.2'
