@@ -172,6 +172,7 @@ public abstract class AbstractSftpTest<S extends Sftp, C extends HasSftpConfig, 
 
         assertEquals(sftpConfig.getRemoteDirectory(), expression.getExpressionString(),
             "Remote directory is not set correctly");
+
     }
 
     protected void validateSessionFactory(SftpConfig config, SessionFactory<SftpClient.DirEntry> sessionFactory) {
