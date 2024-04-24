@@ -14,6 +14,7 @@ import uk.gov.hmcts.juror.job.execution.util.FileUtils;
 import uk.gov.hmcts.juror.job.execution.util.Sftp;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +30,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
 
     private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE "
         + "SET DATE_SENT=current_date "
-        + "WHERE REQUEST_ID=? AND FILE_TYPE=?";
+        + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
 
     private final SftpService sftpService;
     private final DatabaseService databaseService;
@@ -40,7 +41,6 @@ public abstract class ContentStoreFileJob extends LinearJob {
     private final Object[] procedureArguments;
     private final String fileNameRegex;
     private final String fileType;
-
 
     protected ContentStoreFileJob(
         SftpService sftpService,
@@ -69,7 +69,6 @@ public abstract class ContentStoreFileJob extends LinearJob {
         );
     }
 
-
     protected Result generateFiles() {
         Map<String, String> metaData = new ConcurrentHashMap<>();
         AtomicInteger successCount = new AtomicInteger(0);
@@ -95,8 +94,6 @@ public abstract class ContentStoreFileJob extends LinearJob {
                         this.getFtpDirectory().getAbsolutePath() + '/' + contentStore.getDocumentId());
 
                     FileUtils.writeToFile(file, contentStore.getData());
-
-                    databaseService.executeUpdate(connection, UPDATE_SQL_QUERY, contentStore.getRequestId(), fileType);
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     log.error(fileType + ": Failed to generate file for: " + contentStore.getDocumentId(), e);
@@ -139,6 +136,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
             filesToProcess.forEach(file -> {
                 if (sftpService.upload(sftpClass, file)) {
                     FileUtils.deleteFile(file);
+                    updateDateSent(file);
                     successCount.incrementAndGet();
                 } else {
                     metaData.put("FAILED_TO_UPLOAD_FILE_" + failureCount.incrementAndGet(), file.getName());
@@ -166,9 +164,19 @@ public abstract class ContentStoreFileJob extends LinearJob {
 
     @Override
     public ResultSupplier getResultSupplier() {
-        return new ResultSupplier(false, Set.of(
+        return new ResultSupplier(false, List.of(
             metaData -> generateFiles(),
             metaData -> uploadFiles()
         ));
+    }
+
+    private void updateDateSent(File file) {
+        databaseService.execute(getDatabaseConfig(), connection -> {
+            try {
+                databaseService.executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType);
+            } catch (SQLException e) {
+                log.error(fileType + ": Failed to update file: " + file.getName(), e);
+            }
+        });
     }
 }

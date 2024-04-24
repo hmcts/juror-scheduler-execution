@@ -47,8 +47,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "PMD.ExcessiveImports"})
 @Getter
 public class ContentStoreFileJobTest {
 
@@ -118,11 +117,6 @@ public class ContentStoreFileJobTest {
             + "FROM CONTENT_STORE CS "
             + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
 
-        private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE "
-            + "SET DATE_SENT=current_date "
-            + "WHERE REQUEST_ID=? AND FILE_TYPE=?";
-
-
         private List<ContentStore> getStandardContentStoreList() {
             return List.of(
                 new ContentStore().setRequestId(1L).setData("Data123")
@@ -135,7 +129,7 @@ public class ContentStoreFileJobTest {
         }
 
         @Test
-        void positive_typical() throws IOException, SQLException {
+        void positiveTypical() throws IOException, SQLException {
             try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class)) {
                 ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
                 List<ContentStore> contentStoreList = getStandardContentStoreList();
@@ -171,9 +165,6 @@ public class ContentStoreFileJobTest {
 
                 for (ContentStore contentStore : contentStoreList) {
                     fileUtilsMock.verify(() -> FileUtils.writeToFile(any(File.class), eq(contentStore.getData())));
-
-                    verify(databaseService, times(1))
-                        .executeUpdate(connection, UPDATE_SQL_QUERY, contentStore.getRequestId(), fileType);
                 }
                 verifyNoMoreInteractions(databaseService);
                 verifyNoInteractions(sftpService);
@@ -181,7 +172,7 @@ public class ContentStoreFileJobTest {
         }
 
         @Test
-        void negative_has_errors() throws IOException, SQLException {
+        void negativeHasErrors() throws IOException, SQLException {
             try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class)) {
                 ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
                 List<ContentStore> contentStoreList = getStandardContentStoreList();
@@ -232,8 +223,12 @@ public class ContentStoreFileJobTest {
     @DisplayName("protected Result uploadFiles()")
     @Nested
     class UploadFiles {
+        private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE "
+            + "SET DATE_SENT=current_date "
+            + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
+
         @Test
-        void positive_typical() throws IOException {
+        void positiveTypical() throws IOException, SQLException {
             try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class);
                  MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
                 ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
@@ -262,6 +257,8 @@ public class ContentStoreFileJobTest {
                 for (File file : files) {
                     verify(sftpService, times(1)).upload(sftpClass, file);
                     fileUtilsMock.verify(() -> FileUtils.deleteFile(eq(file)), times(1));
+                    verify(databaseService, times(3))
+                        .executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType);
                 }
 
 
@@ -271,7 +268,7 @@ public class ContentStoreFileJobTest {
         }
 
         @Test
-        void positive_no_files_found() throws IOException {
+        void positiveNoFilesFound() throws IOException {
             try (MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
                 FileSearch fileSearch = mock(FileSearch.class);
                 when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
@@ -298,7 +295,7 @@ public class ContentStoreFileJobTest {
         @Test
         @SuppressWarnings("VariableDeclarationUsageDistance")
         //Required for mocks setup
-        void negative_particular_success() throws IOException {
+        void negativeParticularSuccess() throws IOException {
             try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class);
                  MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
                 ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
@@ -348,7 +345,7 @@ public class ContentStoreFileJobTest {
         }
 
         @Test
-        void negative_all_files_failed_to_upload() throws IOException {
+        void negativeAllFilesFailedToUpload() throws IOException {
             try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class);
                  MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
                 ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
