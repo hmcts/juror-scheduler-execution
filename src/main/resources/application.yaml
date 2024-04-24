@@ -104,6 +104,7 @@ jobs:
       session-wait-timeout: 10000
       pool-size: 10
       allow-unknown-keys: true
+      remote-directory: print
     print-file-row-limit: 7
   payment:
     ftp-directory: /tmp/ftp_payment
@@ -116,6 +117,7 @@ jobs:
       session-wait-timeout: 10000
       pool-size: 10
       allow-unknown-keys: true
+      remote-directory: payment
   housekeeping:
     juror-digital:
       retention-threshold: 1
