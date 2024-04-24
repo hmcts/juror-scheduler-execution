@@ -166,7 +166,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
 
     @Override
     public ResultSupplier getResultSupplier() {
-        return new ResultSupplier(false, Set.of(
+        return new ResultSupplier(false, List.of(
             metaData -> generateFiles(),
             metaData -> uploadFiles()
         ));
