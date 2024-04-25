@@ -29,7 +29,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
         + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
 
     private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE "
-        + "SET DATE_SENT=current_date "
+        + "SET DATE_SENT=now() "
         + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
 
     private final SftpService sftpService;

@@ -224,7 +224,7 @@ public class ContentStoreFileJobTest {
     @Nested
     class UploadFiles {
         private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE "
-            + "SET DATE_SENT=current_date "
+            + "SET DATE_SENT=now() "
             + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
 
         @Test
