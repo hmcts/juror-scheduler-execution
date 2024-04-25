@@ -322,7 +322,7 @@ public class ContentStoreFileJobTest {
 
 
                 Job.Result result = contentStoreFileJob.uploadFiles();
-                assertEquals(7, result.getMetaData().size(), "Expect 4 metadata entries");
+                assertEquals(6, result.getMetaData().size(), "Expect 6 metadata entries");
                 assertEquals("test.txt", result.getMetaData().get("FAILED_TO_UPLOAD_FILE_1"),
                     "Expect failed file name");
                 assertEquals("4", result.getMetaData().get("TOTAL_FILES_TO_UPLOAD"),
@@ -378,7 +378,7 @@ public class ContentStoreFileJobTest {
                 when(sftpService.upload(sftpClass, files)).thenReturn(files);
 
                 Job.Result result = contentStoreFileJob.uploadFiles();
-                assertEquals(11, result.getMetaData().size(), "Expect 11 metadata entries");
+                assertEquals(8, result.getMetaData().size(), "Expect 8 metadata entries");
                 assertEquals("3", result.getMetaData().get("TOTAL_FILES_TO_UPLOAD"), "Expect 3 files to be uploaded");
                 assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPLOADED_SUCCESS"),
                     "Expect 0 files to be uploaded successfully");

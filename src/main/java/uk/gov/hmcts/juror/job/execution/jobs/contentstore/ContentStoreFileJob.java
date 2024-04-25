@@ -141,7 +141,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
                     successCount.incrementAndGet();
                 } else {
                     metaData.put("FAILED_TO_UPLOAD_FILE_" + failureCount.incrementAndGet(), file.getName());
-                    metaData.put("FAILED_TO_UPDATE_FILE_" + failedUpdateCount.incrementAndGet(), file.getName());
+                    failedUpdateCount.incrementAndGet();
                 }
                 FileUtils.deleteFile(file);
             });
