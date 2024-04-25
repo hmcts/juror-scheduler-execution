@@ -129,7 +129,7 @@ public class ContentStoreFileJobTest {
         }
 
         @Test
-        void positiveTypical() throws IOException, SQLException {
+        void positiveTypical() throws IOException {
             try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class)) {
                 ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
                 List<ContentStore> contentStoreList = getStandardContentStoreList();
@@ -172,7 +172,7 @@ public class ContentStoreFileJobTest {
         }
 
         @Test
-        void negativeHasErrors() throws IOException, SQLException {
+        void negativeHasErrors() throws IOException {
             try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class)) {
                 ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
                 List<ContentStore> contentStoreList = getStandardContentStoreList();
