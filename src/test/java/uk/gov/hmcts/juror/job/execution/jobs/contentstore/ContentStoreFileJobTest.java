@@ -342,13 +342,13 @@ public class ContentStoreFileJobTest {
 
                 for (File file : workingFiles) {
                     verify(sftpService, times(1)).upload(sftpClass, file);
-                    fileUtilsMock.verify(() -> FileUtils.deleteFile(any()), times(3));
+                    fileUtilsMock.verify(() -> FileUtils.deleteFile(any()), times(4));
                 }
                 verify(sftpService, times(1)).upload(sftpClass, failedFile);
-                fileUtilsMock.verify(() -> FileUtils.deleteFile(failedFile), never());
+                fileUtilsMock.verify(() -> FileUtils.deleteFile(failedFile), times(1));
                 assertEquals(Status.PARTIAL_SUCCESS, result.getStatus());
                 assertEquals(
-                    "1 files failed to upload out of 4 and 1 to update as uploaded",
+                    "1 files failed to upload out of 4 and 1 failed to update as uploaded",
                     result.getMessage(), "Expect failure message");
             }
         }
@@ -394,7 +394,9 @@ public class ContentStoreFileJobTest {
 
                 for (File file : files) {
                     verify(sftpService, times(1)).upload(sftpClass, file);
+                    fileUtilsMock.verify(() -> FileUtils.deleteFile(any()), times(3));
                 }
+
                 fileUtilsMock.verify(() -> FileUtils.deleteFiles(uploadFiles), never());
                 assertEquals(Status.FAILED, result.getStatus());
 

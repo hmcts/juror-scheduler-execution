@@ -140,6 +140,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
                     updateDateSent(file, successUpdateCount, failedUpdateCount, metaData);
                     successCount.incrementAndGet();
                 } else {
+                    FileUtils.deleteFile(file); // to avoid file being overwritten
                     metaData.put("FAILED_TO_UPLOAD_FILE_" + failureCount.incrementAndGet(), file.getName());
                     metaData.put("FAILED_TO_UPDATE_FILE_" + failedUpdateCount.incrementAndGet(), file.getName());
                 }
@@ -154,7 +155,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
                     message = message.concat(" and to update as uploaded");
                 } else {
                     status = Status.PARTIAL_SUCCESS;
-                    message = message.concat(" and " + failedUpdateCount.get() + " to update as uploaded");
+                    message = message.concat(" and " + failedUpdateCount.get() + " failed to update as uploaded");
                 }
             } else {
                 status = Status.SUCCESS;
