@@ -140,10 +140,10 @@ public abstract class ContentStoreFileJob extends LinearJob {
                     updateDateSent(file, successUpdateCount, failedUpdateCount, metaData);
                     successCount.incrementAndGet();
                 } else {
-                    FileUtils.deleteFile(file); // to avoid file being overwritten
                     metaData.put("FAILED_TO_UPLOAD_FILE_" + failureCount.incrementAndGet(), file.getName());
                     metaData.put("FAILED_TO_UPDATE_FILE_" + failedUpdateCount.incrementAndGet(), file.getName());
                 }
+                FileUtils.deleteFile(file);
             });
             log.info(fileType + ": Job completed");
 
@@ -152,10 +152,8 @@ public abstract class ContentStoreFileJob extends LinearJob {
 
                 if (failureCount.get() == totalFilesToUpload) {
                     status = Status.FAILED;
-                    message = message.concat(" and to update as uploaded");
                 } else {
                     status = Status.PARTIAL_SUCCESS;
-                    message = message.concat(" and " + failedUpdateCount.get() + " failed to update as uploaded");
                 }
             } else {
                 status = Status.SUCCESS;
@@ -189,8 +187,6 @@ public abstract class ContentStoreFileJob extends LinearJob {
             } catch (SQLException e) {
                 log.error(fileType + ": Failed to update file: " + file.getName() + " as uploaded", e);
                 metaData.put("FAILED_TO_UPDATE_FILE_" + failedUpdateCount.incrementAndGet(), file.getName());
-            } finally {
-                FileUtils.deleteFile(file);
             }
         });
     }

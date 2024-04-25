@@ -347,8 +347,7 @@ public class ContentStoreFileJobTest {
                 verify(sftpService, times(1)).upload(sftpClass, failedFile);
                 fileUtilsMock.verify(() -> FileUtils.deleteFile(failedFile), times(1));
                 assertEquals(Status.PARTIAL_SUCCESS, result.getStatus());
-                assertEquals(
-                    "1 files failed to upload out of 4 and 1 failed to update as uploaded",
+                assertEquals("1 files failed to upload out of 4",
                     result.getMessage(), "Expect failure message");
             }
         }
@@ -400,14 +399,11 @@ public class ContentStoreFileJobTest {
                 fileUtilsMock.verify(() -> FileUtils.deleteFiles(uploadFiles), never());
                 assertEquals(Status.FAILED, result.getStatus());
 
-
-                assertThat(result.getMessage(),
-                    startsWith("3 files failed to upload out of 3 and to update as uploaded"));
+                assertThat(result.getMessage(), startsWith("3 files failed to upload out of 3"));
                 List<String> failedFilesSorted = Stream.of(
                     result.getMetaData().get("FAILED_TO_UPLOAD_FILE_1"),
                     result.getMetaData().get("FAILED_TO_UPLOAD_FILE_2"),
-                    result.getMetaData().get("FAILED_TO_UPLOAD_FILE_3")
-                ).sorted().toList();
+                    result.getMetaData().get("FAILED_TO_UPLOAD_FILE_3")).sorted().toList();
 
                 assertEquals("Test1.txt", failedFilesSorted.get(0), "Expect Test1.txt to be the first failed file");
                 assertEquals("Test2.txt", failedFilesSorted.get(1), "Expect Test2.txt to be the second failed file");
