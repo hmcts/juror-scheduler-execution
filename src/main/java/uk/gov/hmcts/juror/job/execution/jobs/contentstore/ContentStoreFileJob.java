@@ -119,6 +119,8 @@ public abstract class ContentStoreFileJob extends LinearJob {
         Map<String, String> metaData = new ConcurrentHashMap<>();
         AtomicInteger successCount = new AtomicInteger(0);
         AtomicInteger failureCount = new AtomicInteger(0);
+        AtomicInteger successUpdateCount = new AtomicInteger(0);
+        AtomicInteger failedUpdateCount = new AtomicInteger(0);
         String message;
         Status status;
 
@@ -135,30 +137,37 @@ public abstract class ContentStoreFileJob extends LinearJob {
             log.info(fileType + ": Attempting to upload files");
             filesToProcess.forEach(file -> {
                 if (sftpService.upload(sftpClass, file)) {
-                    FileUtils.deleteFile(file);
-                    updateDateSent(file);
+                    updateDateSent(file, successUpdateCount, failedUpdateCount, metaData);
                     successCount.incrementAndGet();
                 } else {
                     metaData.put("FAILED_TO_UPLOAD_FILE_" + failureCount.incrementAndGet(), file.getName());
+                    metaData.put("FAILED_TO_UPDATE_FILE_" + failedUpdateCount.incrementAndGet(), file.getName());
                 }
             });
             log.info(fileType + ": Job completed");
 
             if (failureCount.get() > 0) {
                 message = failureCount.get() + " files failed to upload out of " + filesToProcess.size();
+
                 if (failureCount.get() == totalFilesToUpload) {
                     status = Status.FAILED;
+                    message = message.concat(" and to update as uploaded");
                 } else {
                     status = Status.PARTIAL_SUCCESS;
+                    message = message.concat(" and " + failedUpdateCount.get() + " to update as uploaded");
                 }
             } else {
                 status = Status.SUCCESS;
                 message = "Successfully uploaded " + totalFilesToUpload + " files";
             }
         }
+
         metaData.put("TOTAL_FILES_TO_UPLOAD", String.valueOf(totalFilesToUpload));
         metaData.put("TOTAL_FILES_UPLOADED_SUCCESS", successCount.toString());
         metaData.put("TOTAL_FILES_UPLOADED_UNSUCCESSFULLY", failureCount.toString());
+        metaData.put("TOTAL_FILES_UPDATED_SUCCESS", successUpdateCount.toString());
+        metaData.put("TOTAL_FILES_UPDATED_UNSUCCESSFULLY", failedUpdateCount.toString());
+
         return new Result(status, message).addMetaData(metaData);
     }
 
@@ -170,12 +179,17 @@ public abstract class ContentStoreFileJob extends LinearJob {
         ));
     }
 
-    private void updateDateSent(File file) {
+    private void updateDateSent(File file, AtomicInteger successUpdateCount, AtomicInteger failedUpdateCount,
+                                Map<String, String> metaData) {
         databaseService.execute(getDatabaseConfig(), connection -> {
             try {
                 databaseService.executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType);
+                successUpdateCount.incrementAndGet();
             } catch (SQLException e) {
-                log.error(fileType + ": Failed to update file: " + file.getName(), e);
+                log.error(fileType + ": Failed to update file: " + file.getName() + " as uploaded", e);
+                metaData.put("FAILED_TO_UPDATE_FILE_" + failedUpdateCount.incrementAndGet(), file.getName());
+            } finally {
+                FileUtils.deleteFile(file);
             }
         });
     }

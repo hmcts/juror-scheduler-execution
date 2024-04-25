@@ -233,23 +233,24 @@ public class ContentStoreFileJobTest {
                  MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
                 ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
                 FileSearch fileSearch = mock(FileSearch.class);
-                fileSearchMock.when(() -> FileSearch.directory(ftpDirectory, true))
-                    .thenReturn(fileSearch);
-
+                fileSearchMock.when(() -> FileSearch.directory(ftpDirectory, true)).thenReturn(fileSearch);
 
                 Set<File> files = new HashSet<>(Set.of(mock(File.class), mock(File.class), mock(File.class)));
                 when(fileSearch.search()).thenReturn(files);
                 when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
                 when(sftpService.upload(eq(sftpClass), any(File.class))).thenReturn(true);
 
-
                 Job.Result result = contentStoreFileJob.uploadFiles();
-                assertEquals(3, result.getMetaData().size(),
-                    "Expect 3 metadata entries");
+                assertEquals(5, result.getMetaData().size(),
+                    "Expect 5 metadata entries");
                 assertEquals("3", result.getMetaData().get("TOTAL_FILES_TO_UPLOAD"),
                     "Expect 3 files to be uploaded");
                 assertEquals("3", result.getMetaData().get("TOTAL_FILES_UPLOADED_SUCCESS"),
                     "Expect 3 files to be uploaded successfully");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_UPDATED_SUCCESS"),
+                    "Expect 3 files to be updated successfully");
+                assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPDATED_UNSUCCESSFULLY"),
+                    "Expect 0 files to be updated unsuccessfully");
                 assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPLOADED_UNSUCCESSFULLY"),
                     "Expect 0 files to be uploaded unsuccessfully");
 
@@ -260,7 +261,6 @@ public class ContentStoreFileJobTest {
                     verify(databaseService, times(3))
                         .executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType);
                 }
-
 
                 assertEquals(Status.SUCCESS, result.getStatus(), "Expect status to be SUCCESS");
                 assertEquals("Successfully uploaded 3 files", result.getMessage(), "Expect success message");
@@ -280,12 +280,16 @@ public class ContentStoreFileJobTest {
                 when(fileSearch.search()).thenReturn(Set.of());
 
                 Job.Result result = contentStoreFileJob.uploadFiles();
-                assertEquals(3, result.getMetaData().size(), "Expect 3 metadata entries");
+                assertEquals(5, result.getMetaData().size(), "Expect 3 metadata entries");
                 assertEquals("0", result.getMetaData().get("TOTAL_FILES_TO_UPLOAD"), "Expect 0 files to be uploaded");
                 assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPLOADED_SUCCESS"),
                     "Expect 0 files to be uploaded successfully");
                 assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPLOADED_UNSUCCESSFULLY"),
                     "Expect 0 files to be uploaded unsuccessfully");
+                assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPDATED_SUCCESS"),
+                    "Expect 0 files to be updated successfully");
+                assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPDATED_UNSUCCESSFULLY"),
+                    "Expect 0 files to be updated unsuccessfully");
                 assertEquals(Status.SUCCESS, result.getStatus(), "Expect status to be SUCCESS");
                 assertEquals("No files found", result.getMessage(), "Expect no files found message");
                 verify(fileSearch, times(1)).setFileNameRegexFilter(fileNameRegex);
@@ -300,9 +304,7 @@ public class ContentStoreFileJobTest {
                  MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
                 ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
                 FileSearch fileSearch = mock(FileSearch.class);
-                fileSearchMock.when(() -> FileSearch.directory(ftpDirectory, true))
-                    .thenReturn(fileSearch);
-
+                fileSearchMock.when(() -> FileSearch.directory(ftpDirectory, true)).thenReturn(fileSearch);
 
                 File failedFile = mock(File.class);
                 when(failedFile.getName()).thenReturn("test.txt");
@@ -320,12 +322,19 @@ public class ContentStoreFileJobTest {
 
 
                 Job.Result result = contentStoreFileJob.uploadFiles();
-                assertEquals(4, result.getMetaData().size(), "Expect 4 metadata entries");
+                assertEquals(7, result.getMetaData().size(), "Expect 4 metadata entries");
                 assertEquals("test.txt", result.getMetaData().get("FAILED_TO_UPLOAD_FILE_1"),
                     "Expect failed file name");
-                assertEquals("4", result.getMetaData().get("TOTAL_FILES_TO_UPLOAD"), "Expect 4 files to be uploaded");
+                assertEquals("4", result.getMetaData().get("TOTAL_FILES_TO_UPLOAD"),
+                    "Expect 4 files to be uploaded");
                 assertEquals("3", result.getMetaData().get("TOTAL_FILES_UPLOADED_SUCCESS"),
                     "Expect 3 files to be uploaded successfully");
+
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_UPDATED_SUCCESS"),
+                    "Expect 3 files to be updated successfully");
+                assertEquals("1", result.getMetaData().get("TOTAL_FILES_UPDATED_UNSUCCESSFULLY"),
+                    "Expect 1 file to be updated unsuccessfully");
+
                 assertEquals("1", result.getMetaData().get("TOTAL_FILES_UPLOADED_UNSUCCESSFULLY"),
                     "Expect 1 files to be uploaded unsuccessfully");
 
@@ -339,7 +348,7 @@ public class ContentStoreFileJobTest {
                 fileUtilsMock.verify(() -> FileUtils.deleteFile(failedFile), never());
                 assertEquals(Status.PARTIAL_SUCCESS, result.getStatus());
                 assertEquals(
-                    "1 files failed to upload out of 4",
+                    "1 files failed to upload out of 4 and 1 to update as uploaded",
                     result.getMessage(), "Expect failure message");
             }
         }
@@ -350,16 +359,13 @@ public class ContentStoreFileJobTest {
                  MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
                 ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
                 FileSearch fileSearch = mock(FileSearch.class);
-                fileSearchMock.when(() -> FileSearch.directory(ftpDirectory, true))
-                    .thenReturn(fileSearch);
-
+                fileSearchMock.when(() -> FileSearch.directory(ftpDirectory, true)).thenReturn(fileSearch);
 
                 Function<String, File> createFileMock = name -> {
                     File file = mock(File.class);
                     when(file.getName()).thenReturn(name);
                     return file;
                 };
-
 
                 Set<File> files = Set.of(
                     createFileMock.apply("Test1.txt"),
@@ -372,15 +378,17 @@ public class ContentStoreFileJobTest {
                 when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
                 when(sftpService.upload(sftpClass, files)).thenReturn(files);
 
-
                 Job.Result result = contentStoreFileJob.uploadFiles();
-                assertEquals(6, result.getMetaData().size(), "Expect 6 metadata entries");
+                assertEquals(11, result.getMetaData().size(), "Expect 11 metadata entries");
                 assertEquals("3", result.getMetaData().get("TOTAL_FILES_TO_UPLOAD"), "Expect 3 files to be uploaded");
                 assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPLOADED_SUCCESS"),
                     "Expect 0 files to be uploaded successfully");
                 assertEquals("3", result.getMetaData().get("TOTAL_FILES_UPLOADED_UNSUCCESSFULLY"),
                     "Expect 3 files to be uploaded unsuccessfully");
-
+                assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPDATED_SUCCESS"),
+                    "Expect 0 files to be updated successfully");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_UPDATED_UNSUCCESSFULLY"),
+                    "Expect 3 files to be updated unsuccessfully");
 
                 verify(fileSearch, times(1)).setFileNameRegexFilter(fileNameRegex);
 
@@ -391,7 +399,8 @@ public class ContentStoreFileJobTest {
                 assertEquals(Status.FAILED, result.getStatus());
 
 
-                assertThat(result.getMessage(), startsWith("3 files failed to upload out of 3"));
+                assertThat(result.getMessage(),
+                    startsWith("3 files failed to upload out of 3 and to update as uploaded"));
                 List<String> failedFilesSorted = Stream.of(
                     result.getMetaData().get("FAILED_TO_UPLOAD_FILE_1"),
                     result.getMetaData().get("FAILED_TO_UPLOAD_FILE_2"),
