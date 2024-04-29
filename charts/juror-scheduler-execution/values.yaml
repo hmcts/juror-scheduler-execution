@@ -31,6 +31,7 @@ java:
         - name: bais-xerox-key
         - name: bais-sscl-user
           alias: BAIS_SSCL_USER
+        - name: bais-sscl-key
   environment:
     SCHEDULER_SERVICE_HOST: juror-scheduler-api.{{ .Values.global.environment }}.platform.hmcts.net
     SCHEDULER_SERVICE_PORT: 443
