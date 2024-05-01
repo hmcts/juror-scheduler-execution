@@ -235,7 +235,14 @@ public class ContentStoreFileJobTest {
                 FileSearch fileSearch = mock(FileSearch.class);
                 fileSearchMock.when(() -> FileSearch.directory(ftpDirectory, true)).thenReturn(fileSearch);
 
-                Set<File> files = new HashSet<>(Set.of(mock(File.class), mock(File.class), mock(File.class)));
+                File file1 = Mockito.mock(File.class);
+                Mockito.when(file1.getName()).thenReturn("sample1.txt");
+                File file2 = Mockito.mock(File.class);
+                Mockito.when(file2.getName()).thenReturn("sample2.txt");
+                File file3 = Mockito.mock(File.class);
+                Mockito.when(file3.getName()).thenReturn("sample3.txt");
+                Set<File> files = new HashSet<>(Set.of(file1, file2, file3));
+
                 when(fileSearch.search()).thenReturn(files);
                 when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
                 when(sftpService.upload(eq(sftpClass), any(File.class))).thenReturn(true);
@@ -256,9 +263,12 @@ public class ContentStoreFileJobTest {
 
                 verify(fileSearch, times(1)).setFileNameRegexFilter(fileNameRegex);
                 for (File file : files) {
-                    verify(sftpService, times(1)).upload(sftpClass, file);
+                    String fileName = file.getName();
+                    when(file.getName()).thenReturn(fileName);
+
                     fileUtilsMock.verify(() -> FileUtils.deleteFile(eq(file)), times(1));
-                    verify(databaseService, times(3))
+                    verify(sftpService, times(1)).upload(sftpClass, file);
+                    verify(databaseService, times(1))
                         .executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType);
                 }
 
@@ -275,15 +285,24 @@ public class ContentStoreFileJobTest {
                 FileSearch fileSearch = mock(FileSearch.class);
                 fileSearchMock.when(() -> FileSearch.directory(ftpDirectory, true)).thenReturn(fileSearch);
 
-                Set<File> files = new HashSet<>(Set.of(mock(File.class), mock(File.class), mock(File.class)));
+                File file1 = Mockito.mock(File.class);
+                Mockito.when(file1.getName()).thenReturn("sample1.txt");
+                File file2 = Mockito.mock(File.class);
+                Mockito.when(file2.getName()).thenReturn("sample2.txt");
+                File file3 = Mockito.mock(File.class);
+                Mockito.when(file3.getName()).thenReturn("sample3.txt");
+                Set<File> files = new HashSet<>(Set.of(file1, file2, file3));
+
                 when(fileSearch.search()).thenReturn(files);
                 when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
                 when(sftpService.upload(eq(sftpClass), any(File.class))).thenReturn(true);
 
                 SQLException sqlException = new SQLException("Forced sql exception");
                 for (File file : files) {
+                    String fileName = file.getName();
+                    when(file.getName()).thenReturn(fileName);
                     fileUtilsMock.when(() ->
-                            databaseService.executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType))
+                            databaseService.executeUpdate(connection, UPDATE_SQL_QUERY, fileName, fileType))
                         .thenThrow(sqlException);
                 }
 
@@ -306,9 +325,9 @@ public class ContentStoreFileJobTest {
                     "Expect 0 files to be uploaded unsuccessfully");
 
                 for (File file : files) {
-                    verify(sftpService, times(1)).upload(sftpClass, file);
                     fileUtilsMock.verify(() -> FileUtils.deleteFile(eq(file)), times(1));
-                    verify(databaseService, times(3))
+                    verify(sftpService, times(1)).upload(sftpClass, file);
+                    verify(databaseService, times(1))
                         .executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType);
                 }
             }
