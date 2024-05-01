@@ -268,6 +268,53 @@ public class ContentStoreFileJobTest {
         }
 
         @Test
+        void updateSqlException() throws IOException, SQLException {
+            try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class);
+                 MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
+                final ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
+                FileSearch fileSearch = mock(FileSearch.class);
+                fileSearchMock.when(() -> FileSearch.directory(ftpDirectory, true)).thenReturn(fileSearch);
+
+                Set<File> files = new HashSet<>(Set.of(mock(File.class), mock(File.class), mock(File.class)));
+                when(fileSearch.search()).thenReturn(files);
+                when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
+                when(sftpService.upload(eq(sftpClass), any(File.class))).thenReturn(true);
+
+                SQLException sqlException = new SQLException("Forced sql exception");
+                for (File file : files) {
+                    fileUtilsMock.when(() ->
+                            databaseService.executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType))
+                        .thenThrow(sqlException);
+                }
+
+                Job.Result result = contentStoreFileJob.uploadFiles();
+                assertEquals(Status.PARTIAL_SUCCESS, result.getStatus());
+                assertEquals("0 files failed to upload out of 3", result.getMessage(),
+                    "0 files failed to upload out of 3");
+
+                assertEquals(8, result.getMetaData().size(),
+                    "Expect 5 metadata entries");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_TO_UPLOAD"),
+                    "Expect 3 files to be uploaded");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_UPLOADED_SUCCESS"),
+                    "Expect 3 files to be uploaded successfully");
+                assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPDATED_SUCCESS"),
+                    "Expect 0 files to be updated successfully");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_UPDATED_UNSUCCESSFULLY"),
+                    "Expect 3 files to be updated unsuccessfully");
+                assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPLOADED_UNSUCCESSFULLY"),
+                    "Expect 0 files to be uploaded unsuccessfully");
+
+                for (File file : files) {
+                    verify(sftpService, times(1)).upload(sftpClass, file);
+                    fileUtilsMock.verify(() -> FileUtils.deleteFile(eq(file)), times(1));
+                    verify(databaseService, times(3))
+                        .executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType);
+                }
+            }
+        }
+
+        @Test
         void positiveNoFilesFound() throws IOException {
             try (MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
                 FileSearch fileSearch = mock(FileSearch.class);
