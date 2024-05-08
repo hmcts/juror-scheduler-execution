@@ -53,7 +53,7 @@ public abstract class Sftp {
 
     public MessageHandler toSftpChannelPrintDestinationHandler() {
         SftpMessageHandler handler = new SftpMessageHandler(sftpSessionFactory());
-        handler.setRemoteDirectoryExpression(new LiteralExpression(this.getConfig().getRemoteDirectory()));
+//        handler.setRemoteDirectoryExpression(new LiteralExpression(this.getConfig().getRemoteDirectory()));
         handler.setLoggingEnabled(true);
         return handler;
     }
