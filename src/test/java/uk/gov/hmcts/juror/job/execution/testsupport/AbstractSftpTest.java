@@ -6,12 +6,15 @@ import org.apache.sshd.sftp.client.SftpClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
+import org.springframework.expression.Expression;
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.integration.file.remote.RemoteFileTemplate;
 import org.springframework.integration.file.remote.handler.FileTransferringMessageHandler;
 import org.springframework.integration.file.remote.session.CachingSessionFactory;
 import org.springframework.integration.file.remote.session.Session;
 import org.springframework.integration.file.remote.session.SessionFactory;
+import org.springframework.integration.handler.ExpressionEvaluatingMessageProcessor;
 import org.springframework.integration.sftp.outbound.SftpMessageHandler;
 import org.springframework.integration.sftp.session.DefaultSftpSessionFactory;
 import org.springframework.integration.sftp.session.SftpRemoteFileTemplate;
@@ -159,6 +162,17 @@ public abstract class AbstractSftpTest<S extends Sftp, C extends HasSftpConfig, 
         validateSessionFactory(sftpConfig, remoteFileTemplate.getSessionFactory());
         assertTrue(sftpMessageHandler.isLoggingEnabled(),
             "Logging enabled is not set correctly");
+
+
+        ExpressionEvaluatingMessageProcessor<String> directoryExpressionProcessor = TestUtil.getFieldValue(
+            ExpressionEvaluatingMessageProcessor.class,
+            RemoteFileTemplate.class, "directoryExpressionProcessor", remoteFileTemplate);
+
+        Expression expression = TestUtil.getFieldValue(Expression.class, "expression", directoryExpressionProcessor);
+
+        assertEquals(sftpConfig.getRemoteDirectory(), expression.getExpressionString(),
+            "Remote directory is not set correctly");
+
     }
 
     protected void validateSessionFactory(SftpConfig config, SessionFactory<SftpClient.DirEntry> sessionFactory) {
