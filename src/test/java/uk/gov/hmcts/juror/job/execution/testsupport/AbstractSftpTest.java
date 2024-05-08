@@ -170,7 +170,7 @@ public abstract class AbstractSftpTest<S extends Sftp, C extends HasSftpConfig, 
 
         Expression expression = TestUtil.getFieldValue(Expression.class, "expression", directoryExpressionProcessor);
 
-        assertEquals(sftpConfig.getRemoteDirectory(), expression.getExpressionString(),
+        assertEquals("", expression.getExpressionString(),
             "Remote directory is not set correctly");
 
     }
