@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.sshd.sftp.client.SftpClient;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.expression.common.LiteralExpression;
 import org.springframework.integration.file.remote.session.CachingSessionFactory;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.sftp.outbound.SftpMessageHandler;
@@ -53,7 +52,7 @@ public abstract class Sftp {
 
     public MessageHandler toSftpChannelPrintDestinationHandler() {
         SftpMessageHandler handler = new SftpMessageHandler(sftpSessionFactory());
-//        handler.setRemoteDirectoryExpression(new LiteralExpression(this.getConfig().getRemoteDirectory()));
+        //handler.setRemoteDirectoryExpression(new LiteralExpression(this.getConfig().getRemoteDirectory()));
         handler.setLoggingEnabled(true);
         return handler;
     }
