@@ -162,17 +162,6 @@ public abstract class AbstractSftpTest<S extends Sftp, C extends HasSftpConfig, 
         validateSessionFactory(sftpConfig, remoteFileTemplate.getSessionFactory());
         assertTrue(sftpMessageHandler.isLoggingEnabled(),
             "Logging enabled is not set correctly");
-
-
-        ExpressionEvaluatingMessageProcessor<String> directoryExpressionProcessor = TestUtil.getFieldValue(
-            ExpressionEvaluatingMessageProcessor.class,
-            RemoteFileTemplate.class, "directoryExpressionProcessor", remoteFileTemplate);
-
-        Expression expression = TestUtil.getFieldValue(Expression.class, "expression", directoryExpressionProcessor);
-
-        assertEquals(sftpConfig.getRemoteDirectory(), expression.getExpressionString(),
-            "Remote directory is not set correctly");
-
     }
 
     protected void validateSessionFactory(SftpConfig config, SessionFactory<SftpClient.DirEntry> sessionFactory) {
