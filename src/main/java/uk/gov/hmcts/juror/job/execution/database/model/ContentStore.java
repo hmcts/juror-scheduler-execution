@@ -16,5 +16,7 @@ public class ContentStore {
     private String documentId;
     @DatabaseColumn(name = "DATA", setter = "setData")
     private String data;
+    @DatabaseColumn(name = "FAILED", setter = "setFailed")
+    private boolean failed;
 }
 

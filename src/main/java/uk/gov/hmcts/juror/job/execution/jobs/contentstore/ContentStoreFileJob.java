@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class ContentStoreFileJob extends LinearJob {
     private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA "
         + "FROM CONTENT_STORE CS "
-        + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL and CS.FAILED = ?";
+        + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
 
     private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE "
         + "SET DATE_SENT=now() "
@@ -76,7 +76,12 @@ public abstract class ContentStoreFileJob extends LinearJob {
         AtomicInteger failureCount = new AtomicInteger(0);
         AtomicInteger totalFiles = new AtomicInteger(0);
 
-        final String isFailed = metaData.getQueryParams().get("onlyRunFailed");
+        final Boolean isFailed;
+        if(metaData.getQueryParams().containsKey("onlyRunFailed")) {
+            isFailed = Boolean.parseBoolean(metaData.getQueryParams().get("onlyRunFailed"));
+        } else {
+            isFailed = null;
+        }
 
         databaseService.execute(getDatabaseConfig(), connection -> {
             log.info(fileType + ": Updating Content-Store");
@@ -84,7 +89,10 @@ public abstract class ContentStoreFileJob extends LinearJob {
             log.info(fileType + ": Getting Items to generate");
             List<ContentStore> contentStoreList =
                 databaseService.executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY,
-                    fileType, isFailed);
+                    fileType)
+                    .stream()
+                    .filter(contentStore -> isFailed == null || contentStore.isFailed() == isFailed)
+                    .toList();
 
             totalFiles.set(contentStoreList.size());
             AtomicInteger count = new AtomicInteger(1);
