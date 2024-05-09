@@ -21,6 +21,8 @@ import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.checks.pnc.batch.PncBatchJob;
 import uk.gov.hmcts.juror.job.execution.service.contracts.JobService;
 
+import java.util.Map;
+
 
 @RestController()
 @RequestMapping(value = "/job", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -42,11 +44,12 @@ public class JobController {
         @RequestParam(name = "job_name")
         @NotNull String jobName,
         @RequestHeader(value = "job_key", required = false) String jobKey,
-        @RequestHeader(value = "task_id", required = false) Long taskId
+        @RequestHeader(value = "task_id", required = false) Long taskId,
+        @RequestParam Map<String, String> allRequestParams
     ) {
         //Two calls to JobService are required to allow async to work
         Job job = this.jobService.getJob(jobName);
-        this.jobService.trigger(job, new MetaData(jobKey, taskId));
+        this.jobService.trigger(job, new MetaData(jobKey, taskId, allRequestParams));
         return ResponseEntity.accepted().build();
     }
 

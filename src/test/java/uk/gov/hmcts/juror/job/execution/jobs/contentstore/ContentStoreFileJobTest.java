@@ -143,7 +143,7 @@ public class ContentStoreFileJobTest {
                         FileUtils.createFile(any()))
                     .thenReturn(mock(File.class));
 
-                Job.Result result = contentStoreFileJob.generateFiles();
+                Job.Result result = contentStoreFileJob.generateFiles(metaData);
                 assertEquals(Status.SUCCESS, result.getStatus(), "Expect status to be SUCCESS");
                 assertNull(result.getMessage(), "Expect no message");
                 assertNull(result.getThrowable(), "Expect no throwable");
@@ -187,7 +187,7 @@ public class ContentStoreFileJobTest {
                         FileUtils.createFile(any()))
                     .thenThrow(expectedException);
 
-                Job.Result result = contentStoreFileJob.generateFiles();
+                Job.Result result = contentStoreFileJob.generateFiles(metaData);
                 assertEquals(Status.PARTIAL_SUCCESS, result.getStatus());
                 assertEquals("3 files failed to generate out of 3.", result.getMessage(),
                     "Expect message to contain the number of failed files");
