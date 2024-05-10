@@ -54,7 +54,6 @@ public abstract class Sftp {
     public MessageHandler toSftpChannelPrintDestinationHandler() {
         SftpMessageHandler handler = new SftpMessageHandler(sftpSessionFactory());
         handler.setRemoteDirectoryExpression(new LiteralExpression(""));
-        handler.setUseTemporaryFileName(false);
         handler.setLoggingEnabled(true);
         return handler;
     }
