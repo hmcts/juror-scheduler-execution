@@ -41,15 +41,15 @@ public class JobController {
     @PutMapping("/trigger")
     @PreAuthorize("hasAuthority('" + PermissionConstants.TRIGGER + "')")
     public ResponseEntity<Void> triggerJob(
-        @RequestParam(name = "job_name")
-        @NotNull String jobName,
         @RequestHeader(value = "job_key", required = false) String jobKey,
         @RequestHeader(value = "task_id", required = false) Long taskId,
-        @RequestParam Map<String, String> allRequestParams
+        @RequestParam(name = "job_name") @NotNull String jobName,
+        @RequestParam Map<String, String> requestParams
     ) {
         //Two calls to JobService are required to allow async to work
+        System.out.println("Job call " + requestParams);
         Job job = this.jobService.getJob(jobName);
-        this.jobService.trigger(job, new MetaData(jobKey, taskId, allRequestParams));
+        this.jobService.trigger(job, new MetaData(jobKey, taskId, requestParams));
         return ResponseEntity.accepted().build();
     }
 

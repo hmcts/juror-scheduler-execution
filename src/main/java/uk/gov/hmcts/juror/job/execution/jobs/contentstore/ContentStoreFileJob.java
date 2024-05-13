@@ -25,12 +25,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Getter
 public abstract class ContentStoreFileJob extends LinearJob {
-    private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA "
+    private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA, "
+        + "CS.FAILED_FILE_TRANSFER "
         + "FROM CONTENT_STORE CS "
-        + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
+        + "WHERE CS.FILE_TYPE=? "
+        + "AND CS.DATE_SENT is NULL";
 
     private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE "
-        + "SET DATE_SENT=now() "
+        + "SET DATE_SENT=now(), FAILED_FILE_TRANSFER=false "
+        + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
+
+    private static final String UPDATE_SQL_FAILED_QUERY = "UPDATE CONTENT_STORE "
+        + "SET CS.FAILED_FILE_TRANSFER=true "
         + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
 
     private final SftpService sftpService;
@@ -77,8 +83,8 @@ public abstract class ContentStoreFileJob extends LinearJob {
         AtomicInteger totalFiles = new AtomicInteger(0);
 
         final Boolean isFailed;
-        if(metaData.getQueryParams().containsKey("onlyRunFailed")) {
-            isFailed = Boolean.parseBoolean(metaData.getQueryParams().get("onlyRunFailed"));
+        if (metaData.getRequestParams().containsKey("onlyRunFailed")) {
+            isFailed = Boolean.parseBoolean(metaData.getRequestParams().get("onlyRunFailed"));
         } else {
             isFailed = null;
         }
@@ -87,11 +93,14 @@ public abstract class ContentStoreFileJob extends LinearJob {
             log.info(fileType + ": Updating Content-Store");
             databaseService.executeStoredProcedure(connection, getProcedureName(), getProcedureArguments());
             log.info(fileType + ": Getting Items to generate");
+
+            List<ContentStore> contentStores =
+                databaseService.executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType);
+
             List<ContentStore> contentStoreList =
-                databaseService.executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY,
-                    fileType)
+                databaseService.executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType)
                     .stream()
-                    .filter(contentStore -> isFailed == null || contentStore.isFailed() == isFailed)
+                    .filter(contentStore -> isFailed == null || contentStore.getFailedFileTransfer() == isFailed)
                     .toList();
 
             totalFiles.set(contentStoreList.size());
@@ -151,6 +160,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
                     updateDateSent(file, successUpdateCount, failedUpdateCount, metaData);
                     successCount.incrementAndGet();
                 } else {
+                    setToFailed(file);
                     metaData.put("FAILED_TO_UPLOAD_FILE_" + failureCount.incrementAndGet(), file.getName());
                     failedUpdateCount.incrementAndGet();
                 }
@@ -198,6 +208,16 @@ public abstract class ContentStoreFileJob extends LinearJob {
             } catch (SQLException e) {
                 log.error(fileType + ": Failed to update file: " + file.getName() + " as uploaded", e);
                 metaData.put("FAILED_TO_UPDATE_FILE_" + failedUpdateCount.incrementAndGet(), "file.getName()");
+            }
+        });
+    }
+
+    private void setToFailed(File file) {
+        databaseService.execute(getDatabaseConfig(), connection -> {
+            try {
+                databaseService.executeUpdate(connection, UPDATE_SQL_FAILED_QUERY, file.getName(), fileType);
+            } catch (SQLException e) {
+                log.error(fileType + ": Failed to set failed file transfer flag: " + file.getName(), e);
             }
         });
     }

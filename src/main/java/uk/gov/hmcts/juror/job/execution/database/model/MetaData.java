@@ -15,5 +15,5 @@ public class MetaData {
     private final String jobKey;
     private final Long taskId;
 
-    private Map<String, String> queryParams;
+    private Map<String, String> requestParams;
 }
