@@ -47,7 +47,6 @@ public class JobController {
         @RequestParam Map<String, String> requestParams
     ) {
         //Two calls to JobService are required to allow async to work
-        System.out.println("Job call " + requestParams);
         Job job = this.jobService.getJob(jobName);
         this.jobService.trigger(job, new MetaData(jobKey, taskId, requestParams));
         return ResponseEntity.accepted().build();

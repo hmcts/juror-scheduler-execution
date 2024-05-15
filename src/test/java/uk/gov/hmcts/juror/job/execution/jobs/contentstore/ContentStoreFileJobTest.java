@@ -2,8 +2,6 @@ package uk.gov.hmcts.juror.job.execution.jobs.contentstore;
 
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -121,9 +119,11 @@ public class ContentStoreFileJobTest {
     @DisplayName("protected Result generateFiles()")
     @Nested
     class GenerateFiles {
-        private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA "
+        private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA, "
+            + "CS.FAILED_FILE_TRANSFER "
             + "FROM CONTENT_STORE CS "
-            + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
+            + "WHERE CS.FILE_TYPE=? "
+            + "AND CS.DATE_SENT is NULL";
 
         private List<ContentStore> getStandardContentStoreList() {
             return List.of(
@@ -255,17 +255,16 @@ public class ContentStoreFileJobTest {
                     "onlyRunFailed", "false");
 
                 Job.Result result = contentStoreFileJob.generateFiles(new MetaData(VALID_JOB_KEY,
-                    VALID_TASK_ID_LONG,
-                    requestParams));
+                    VALID_TASK_ID_LONG, requestParams));
 
                 assertEquals(Status.SUCCESS, result.getStatus(), "Expect status to be SUCCESS");
                 assertNull(result.getMessage(), "Expect no message");
                 assertNull(result.getThrowable(), "Expect no throwable");
                 assertEquals(3, result.getMetaData().size(), "Expect 3 metadata entries");
-                assertEquals("2", result.getMetaData().get("TOTAL_FILES_TO_GENERATED"),
-                    "Expect 2 files to be generated");
-                assertEquals("2", result.getMetaData().get("TOTAL_FILES_GENERATED_SUCCESS"),
-                    "Expect 1 files to be generated successfully");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_TO_GENERATED"),
+                    "Expect 3 files to be generated");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_GENERATED_SUCCESS"),
+                    "Expect 3 files to be generated successfully");
                 assertEquals("0", result.getMetaData().get("TOTAL_FILES_GENERATED_UNSUCCESSFULLY"),
                     "Expect 0 files to be generated unsuccessfully");
                 verify(databaseService, times(1))
@@ -277,7 +276,7 @@ public class ContentStoreFileJobTest {
                 verify(databaseService, times(1))
                     .executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType);
 
-                fileUtilsMock.verify(() -> FileUtils.writeToFile(any(File.class), any(String.class)), times(2));
+                fileUtilsMock.verify(() -> FileUtils.writeToFile(any(File.class), any(String.class)), times(3));
 
                 verifyNoMoreInteractions(databaseService);
                 verifyNoInteractions(sftpService);
@@ -308,10 +307,10 @@ public class ContentStoreFileJobTest {
                 assertNull(result.getMessage(), "Expect no message");
                 assertNull(result.getThrowable(), "Expect no throwable");
                 assertEquals(3, result.getMetaData().size(), "Expect 3 metadata entries");
-                assertEquals("2", result.getMetaData().get("TOTAL_FILES_TO_GENERATED"),
-                    "Expect 2 files to be generated");
-                assertEquals("2", result.getMetaData().get("TOTAL_FILES_GENERATED_SUCCESS"),
-                    "Expect 1 files to be generated successfully");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_TO_GENERATED"),
+                    "Expect 3 files to be generated");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_GENERATED_SUCCESS"),
+                    "Expect 3 files to be generated successfully");
                 assertEquals("0", result.getMetaData().get("TOTAL_FILES_GENERATED_UNSUCCESSFULLY"),
                     "Expect 0 files to be generated unsuccessfully");
                 verify(databaseService, times(1))
@@ -323,7 +322,7 @@ public class ContentStoreFileJobTest {
                 verify(databaseService, times(1))
                     .executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType);
 
-                fileUtilsMock.verify(() -> FileUtils.writeToFile(any(File.class), any(String.class)), times(2));
+                fileUtilsMock.verify(() -> FileUtils.writeToFile(any(File.class), any(String.class)), times(3));
 
                 verifyNoMoreInteractions(databaseService);
                 verifyNoInteractions(sftpService);

@@ -82,11 +82,11 @@ public abstract class ContentStoreFileJob extends LinearJob {
         AtomicInteger failureCount = new AtomicInteger(0);
         AtomicInteger totalFiles = new AtomicInteger(0);
 
-        final Boolean isFailed;
+        final Boolean onlyRunFailed;
         if (metaData.getRequestParams().containsKey("onlyRunFailed")) {
-            isFailed = Boolean.parseBoolean(metaData.getRequestParams().get("onlyRunFailed"));
+            onlyRunFailed = Boolean.parseBoolean(metaData.getRequestParams().get("onlyRunFailed"));
         } else {
-            isFailed = null;
+            onlyRunFailed = null;
         }
 
         databaseService.execute(getDatabaseConfig(), connection -> {
@@ -94,14 +94,15 @@ public abstract class ContentStoreFileJob extends LinearJob {
             databaseService.executeStoredProcedure(connection, getProcedureName(), getProcedureArguments());
             log.info(fileType + ": Getting Items to generate");
 
-            List<ContentStore> contentStores =
+            List<ContentStore> contentStoreList =
                 databaseService.executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType);
 
-            List<ContentStore> contentStoreList =
-                databaseService.executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType)
+            // check the flag - only run failed transfers, otherwise run all (failed and new)
+            if (Boolean.TRUE.equals(onlyRunFailed)) {
+                contentStoreList = contentStoreList
                     .stream()
-                    .filter(contentStore -> isFailed == null || contentStore.getFailedFileTransfer() == isFailed)
-                    .toList();
+                    .filter(contentStore -> contentStore.getFailedFileTransfer() == onlyRunFailed).toList();
+            }
 
             totalFiles.set(contentStoreList.size());
             AtomicInteger count = new AtomicInteger(1);

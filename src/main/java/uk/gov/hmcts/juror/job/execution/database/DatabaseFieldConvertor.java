@@ -36,19 +36,20 @@ public final class DatabaseFieldConvertor {
                 return getResultSetObject(resultSet, databaseColumn.name(), String.class);
             }
         });
+
         CONVERTERS.put(Integer.class,
             (databaseColumn, resultSet) -> getResultSetObject(resultSet, databaseColumn.name(), Integer.class));
         CONVERTERS.put(Long.class,
             (databaseColumn, resultSet) -> getResultSetObject(resultSet, databaseColumn.name(), Long.class));
-
         CONVERTERS.put(BigDecimal.class,
             (databaseColumn, resultSet) -> getResultSetObject(resultSet, databaseColumn.name(), BigDecimal.class));
-
         CONVERTERS.put(LocalDate.class,
             (databaseColumn, resultSet) -> {
                 Timestamp timestamp = getResultSetObject(resultSet, databaseColumn.name(), Timestamp.class);
                 return timestamp == null ? null : timestamp.toLocalDateTime().toLocalDate();
             });
+        CONVERTERS.put(Boolean.class,
+            (databaseColumn, resultSet) -> getResultSetObject(resultSet, databaseColumn.name(), Boolean.class));
     }
 
     static <T> T getResultSetObject(ResultSet resultSet, String columnName, Class<T> type) {
