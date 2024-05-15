@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Map;
+
 @Getter
 @AllArgsConstructor
 @ToString
@@ -12,4 +14,6 @@ import lombok.ToString;
 public class MetaData {
     private final String jobKey;
     private final Long taskId;
+
+    private Map<String, String> requestParams;
 }

@@ -16,5 +16,7 @@ public class ContentStore {
     private String documentId;
     @DatabaseColumn(name = "DATA", setter = "setData")
     private String data;
+    @DatabaseColumn(name = "FAILED_FILE_TRANSFER", setter = "setFailedFileTransfer")
+    private Boolean failedFileTransfer;
 }
 

@@ -63,6 +63,7 @@ public class JobControllerTest {
     class Trigger extends ControllerTest {
         static final String POST_TRIGGER_URL = CONTROLLER_BASEURL + "/trigger";
         static final String JOB_NAME_KEY = "job_name";
+        static final String ONLY_RUN_FAILED_KEY = "only_run_failed";
         static final String JOB_KEY_HEADER_KEY = "job_key";
         static final String TASK_ID_HEADER_KEY = "task_id";
 
@@ -71,10 +72,10 @@ public class JobControllerTest {
         }
 
 
-        protected SuccessRequestArgument createSuccessArgument(String name, Map<String, String> queryParams,
+        protected SuccessRequestArgument createSuccessArgument(String name, Map<String, String> requestParams,
                                                                Map<String, String> headers) {
             Job job = mock(Job.class);
-            String jobKey = queryParams.get(JOB_NAME_KEY);
+            String jobKey = requestParams.get(JOB_NAME_KEY);
             String taskIdStr = headers.get(TASK_ID_HEADER_KEY);
             Long taskId = (taskIdStr == null ? null : Long.valueOf(taskIdStr));
 
@@ -87,14 +88,14 @@ public class JobControllerTest {
                     resultActions -> {
                         verify(jobService, times(1)).getJob(jobKey);
                         verify(jobService, times(1)).trigger(job,
-                            new MetaData(headers.get(JOB_KEY_HEADER_KEY), taskId));
+                            new MetaData(headers.get(JOB_KEY_HEADER_KEY), taskId, requestParams));
 
                     }, null);
             if (!headers.isEmpty()) {
                 successRequestArgument.getHeaders().putAll(headers);
             }
-            if (!queryParams.isEmpty()) {
-                successRequestArgument.getQueryParams().putAll(queryParams);
+            if (!requestParams.isEmpty()) {
+                successRequestArgument.getQueryParams().putAll(requestParams);
             }
             return successRequestArgument;
         }
@@ -105,6 +106,12 @@ public class JobControllerTest {
                 createSuccessArgument("Typical", Map.of(JOB_NAME_KEY, "JobName"),
                     Map.of(JOB_KEY_HEADER_KEY, "JobKeyHeader",
                         TASK_ID_HEADER_KEY, "1")),
+                createSuccessArgument("Run failed jobs only (sftp)",
+                    Map.of(JOB_NAME_KEY, "JobName", ONLY_RUN_FAILED_KEY, "true"),
+                    Map.of(JOB_KEY_HEADER_KEY, "JobKeyHeader", TASK_ID_HEADER_KEY, "1")),
+                createSuccessArgument("Run full job (create and sftp files)",
+                    Map.of(JOB_NAME_KEY, "JobName", ONLY_RUN_FAILED_KEY, "false"),
+                    Map.of(JOB_KEY_HEADER_KEY, "JobKeyHeader", TASK_ID_HEADER_KEY, "1")),
                 createSuccessArgument("Without Task Id", Map.of(JOB_NAME_KEY, "JobName"),
                     Map.of(JOB_KEY_HEADER_KEY, "JobKeyHeader")),
                 createSuccessArgument("Without Job Key", Map.of(JOB_NAME_KEY, "JobName"),

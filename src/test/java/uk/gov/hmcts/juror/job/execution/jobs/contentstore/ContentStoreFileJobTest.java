@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.springframework.util.FileSystemUtils;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.ContentStore;
+import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
@@ -26,6 +27,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -46,6 +48,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.juror.job.execution.testsupport.TestConstants.REQUEST_PARAMS;
+import static uk.gov.hmcts.juror.job.execution.testsupport.TestConstants.VALID_JOB_KEY;
+import static uk.gov.hmcts.juror.job.execution.testsupport.TestConstants.VALID_TASK_ID;
+import static uk.gov.hmcts.juror.job.execution.testsupport.TestConstants.VALID_TASK_ID_LONG;
 
 @SuppressWarnings({"unchecked", "PMD.ExcessiveImports"})
 @Getter
@@ -113,14 +119,27 @@ public class ContentStoreFileJobTest {
     @DisplayName("protected Result generateFiles()")
     @Nested
     class GenerateFiles {
-        private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA "
+        private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA, "
+            + "CS.FAILED_FILE_TRANSFER "
             + "FROM CONTENT_STORE CS "
-            + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
+            + "WHERE CS.FILE_TYPE=? "
+            + "AND CS.DATE_SENT is NULL";
 
         private List<ContentStore> getStandardContentStoreList() {
             return List.of(
                 new ContentStore().setRequestId(1L).setData("Data123")
                     .setDocumentId("DocId 1"),
+                new ContentStore().setRequestId(2L).setData("New data")
+                    .setDocumentId("DocId 2"),
+                new ContentStore().setRequestId(3L).setData("A third piece of data")
+                    .setDocumentId("DocId 3")
+            );
+        }
+
+        private List<ContentStore> getFailedContentStoreList() {
+            return List.of(
+                new ContentStore().setRequestId(1L).setData("Data123")
+                    .setDocumentId("DocId 1").setFailedFileTransfer(true),
                 new ContentStore().setRequestId(2L).setData("New data")
                     .setDocumentId("DocId 2"),
                 new ContentStore().setRequestId(3L).setData("A third piece of data")
@@ -143,7 +162,8 @@ public class ContentStoreFileJobTest {
                         FileUtils.createFile(any()))
                     .thenReturn(mock(File.class));
 
-                Job.Result result = contentStoreFileJob.generateFiles();
+                Job.Result result = contentStoreFileJob.generateFiles(new MetaData(VALID_JOB_KEY,
+                    VALID_TASK_ID_LONG, REQUEST_PARAMS));
                 assertEquals(Status.SUCCESS, result.getStatus(), "Expect status to be SUCCESS");
                 assertNull(result.getMessage(), "Expect no message");
                 assertNull(result.getThrowable(), "Expect no throwable");
@@ -166,6 +186,144 @@ public class ContentStoreFileJobTest {
                 for (ContentStore contentStore : contentStoreList) {
                     fileUtilsMock.verify(() -> FileUtils.writeToFile(any(File.class), eq(contentStore.getData())));
                 }
+
+                verifyNoMoreInteractions(databaseService);
+                verifyNoInteractions(sftpService);
+            }
+        }
+
+        @Test
+        void onlyRunFailedIsTrue() throws IOException {
+            try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class)) {
+                ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
+
+                when(databaseService.executePreparedStatement(connection,
+                    ContentStore.class,
+                    SELECT_SQL_QUERY,
+                    fileType)).thenReturn(getFailedContentStoreList());
+
+                fileUtilsMock.when(() -> FileUtils.createFile(any())).thenReturn(mock(File.class));
+
+                Map<String, String> requestParams = Map.of("jobKey", VALID_JOB_KEY,
+                    "taskId", VALID_TASK_ID,
+                    "onlyRunFailed", "true");
+
+                Job.Result result = contentStoreFileJob.generateFiles(new MetaData(VALID_JOB_KEY,
+                    VALID_TASK_ID_LONG,
+                    requestParams));
+
+                assertEquals(Status.SUCCESS, result.getStatus(), "Expect status to be SUCCESS");
+                assertNull(result.getMessage(), "Expect no message");
+                assertNull(result.getThrowable(), "Expect no throwable");
+                assertEquals(3, result.getMetaData().size(), "Expect 3 metadata entries");
+                assertEquals("1", result.getMetaData().get("TOTAL_FILES_TO_GENERATED"),
+                    "Expect 1 files to be generated");
+                assertEquals("1", result.getMetaData().get("TOTAL_FILES_GENERATED_SUCCESS"),
+                    "Expect 1 files to be generated successfully");
+                assertEquals("0", result.getMetaData().get("TOTAL_FILES_GENERATED_UNSUCCESSFULLY"),
+                    "Expect 0 files to be generated unsuccessfully");
+                verify(databaseService, times(1))
+                    .execute(eq(databaseConfig), any());
+
+                verify(databaseService, times(1))
+                    .executeStoredProcedure(connection, procedureName, procedureArguments);
+
+                verify(databaseService, times(1))
+                    .executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType);
+
+                fileUtilsMock.verify(() -> FileUtils.writeToFile(any(File.class), any(String.class)), times(1));
+
+                verifyNoMoreInteractions(databaseService);
+                verifyNoInteractions(sftpService);
+            }
+        }
+
+        @Test
+        void onlyRunFailedIsFalse() throws IOException {
+            try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class)) {
+                ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
+
+                when(databaseService.executePreparedStatement(connection,
+                    ContentStore.class,
+                    SELECT_SQL_QUERY,
+                    fileType)).thenReturn(getFailedContentStoreList());
+
+                fileUtilsMock.when(() -> FileUtils.createFile(any())).thenReturn(mock(File.class));
+
+                Map<String, String> requestParams = Map.of("jobKey", VALID_JOB_KEY,
+                    "taskId", VALID_TASK_ID,
+                    "onlyRunFailed", "false");
+
+                Job.Result result = contentStoreFileJob.generateFiles(new MetaData(VALID_JOB_KEY,
+                    VALID_TASK_ID_LONG, requestParams));
+
+                assertEquals(Status.SUCCESS, result.getStatus(), "Expect status to be SUCCESS");
+                assertNull(result.getMessage(), "Expect no message");
+                assertNull(result.getThrowable(), "Expect no throwable");
+                assertEquals(3, result.getMetaData().size(), "Expect 3 metadata entries");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_TO_GENERATED"),
+                    "Expect 3 files to be generated");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_GENERATED_SUCCESS"),
+                    "Expect 3 files to be generated successfully");
+                assertEquals("0", result.getMetaData().get("TOTAL_FILES_GENERATED_UNSUCCESSFULLY"),
+                    "Expect 0 files to be generated unsuccessfully");
+                verify(databaseService, times(1))
+                    .execute(eq(databaseConfig), any());
+
+                verify(databaseService, times(1))
+                    .executeStoredProcedure(connection, procedureName, procedureArguments);
+
+                verify(databaseService, times(1))
+                    .executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType);
+
+                fileUtilsMock.verify(() -> FileUtils.writeToFile(any(File.class), any(String.class)), times(3));
+
+                verifyNoMoreInteractions(databaseService);
+                verifyNoInteractions(sftpService);
+            }
+        }
+
+        @Test
+        void onlyRunFailedIsBlank() throws IOException {
+            try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class)) {
+                ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
+
+                when(databaseService.executePreparedStatement(connection,
+                    ContentStore.class,
+                    SELECT_SQL_QUERY,
+                    fileType)).thenReturn(getFailedContentStoreList());
+
+                fileUtilsMock.when(() -> FileUtils.createFile(any())).thenReturn(mock(File.class));
+
+                Map<String, String> requestParams = Map.of("jobKey", VALID_JOB_KEY,
+                    "taskId", VALID_TASK_ID,
+                    "onlyRunFailed", "");
+
+                Job.Result result = contentStoreFileJob.generateFiles(new MetaData(VALID_JOB_KEY,
+                    VALID_TASK_ID_LONG,
+                    requestParams));
+
+                assertEquals(Status.SUCCESS, result.getStatus(), "Expect status to be SUCCESS");
+                assertNull(result.getMessage(), "Expect no message");
+                assertNull(result.getThrowable(), "Expect no throwable");
+                assertEquals(3, result.getMetaData().size(), "Expect 3 metadata entries");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_TO_GENERATED"),
+                    "Expect 3 files to be generated");
+                assertEquals("3", result.getMetaData().get("TOTAL_FILES_GENERATED_SUCCESS"),
+                    "Expect 3 files to be generated successfully");
+                assertEquals("0", result.getMetaData().get("TOTAL_FILES_GENERATED_UNSUCCESSFULLY"),
+                    "Expect 0 files to be generated unsuccessfully");
+                verify(databaseService, times(1))
+                    .execute(eq(databaseConfig), any());
+
+                verify(databaseService, times(1))
+                    .executeStoredProcedure(connection, procedureName, procedureArguments);
+
+                verify(databaseService, times(1))
+                    .executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType);
+
+                fileUtilsMock.verify(() -> FileUtils.writeToFile(any(File.class), any(String.class)), times(3));
+
                 verifyNoMoreInteractions(databaseService);
                 verifyNoInteractions(sftpService);
             }
@@ -187,7 +345,8 @@ public class ContentStoreFileJobTest {
                         FileUtils.createFile(any()))
                     .thenThrow(expectedException);
 
-                Job.Result result = contentStoreFileJob.generateFiles();
+                Job.Result result = contentStoreFileJob.generateFiles(new MetaData(VALID_JOB_KEY,
+                    VALID_TASK_ID_LONG, REQUEST_PARAMS));
                 assertEquals(Status.PARTIAL_SUCCESS, result.getStatus());
                 assertEquals("3 files failed to generate out of 3.", result.getMessage(),
                     "Expect message to contain the number of failed files");
@@ -224,7 +383,11 @@ public class ContentStoreFileJobTest {
     @Nested
     class UploadFiles {
         private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE "
-            + "SET DATE_SENT=now() "
+            + "SET DATE_SENT=now(), FAILED_FILE_TRANSFER=false "
+            + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
+
+        private static final String UPDATE_SQL_FAILED_QUERY = "UPDATE CONTENT_STORE "
+            + "SET CS.FAILED_FILE_TRANSFER=true "
             + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
 
         @Test
@@ -307,7 +470,7 @@ public class ContentStoreFileJobTest {
                     "0 files failed to upload out of 3");
 
                 assertEquals(8, result.getMetaData().size(),
-                    "Expect 5 metadata entries");
+                    "Expect 8 metadata entries");
                 assertEquals("3", result.getMetaData().get("TOTAL_FILES_TO_UPLOAD"),
                     "Expect 3 files to be uploaded");
                 assertEquals("3", result.getMetaData().get("TOTAL_FILES_UPLOADED_SUCCESS"),
@@ -324,6 +487,57 @@ public class ContentStoreFileJobTest {
                     verify(sftpService, times(1)).upload(sftpClass, file);
                     verify(databaseService, times(1))
                         .executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType);
+                }
+            }
+        }
+
+        @Test
+        void setToFailedSqlException() throws IOException, SQLException {
+            try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class);
+                 MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
+                final ContentStoreFileJob contentStoreFileJob = getContentStoreFileJob();
+                FileSearch fileSearch = mock(FileSearch.class);
+                fileSearchMock.when(() -> FileSearch.directory(ftpDirectory, true)).thenReturn(fileSearch);
+
+                File file1 = mock(File.class);
+                when(file1.getName()).thenReturn("sample1.txt");
+                File file2 = mock(File.class);
+                when(file2.getName()).thenReturn("sample2.txt");
+                Set<File> files = new HashSet<>(Set.of(file1, file2));
+
+                when(fileSearch.search()).thenReturn(files);
+                when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
+                when(sftpService.upload(eq(sftpClass), any(File.class))).thenReturn(false);
+
+                SQLException sqlException = new SQLException("Forced sql exception");
+                for (File file : files) {
+                    fileUtilsMock.when(() -> databaseService.executeUpdate(connection,
+                            UPDATE_SQL_FAILED_QUERY, file.getName(), fileType)).thenThrow(sqlException);
+                }
+
+                Job.Result result = contentStoreFileJob.uploadFiles();
+                assertEquals(Status.FAILED, result.getStatus());
+                assertEquals("2 files failed to upload out of 2", result.getMessage(),
+                    "2 files failed to upload out of 2");
+
+                assertEquals(7, result.getMetaData().size(),
+                    "Expect 7 metadata entries");
+                assertEquals("2", result.getMetaData().get("TOTAL_FILES_TO_UPLOAD"),
+                    "Expect 2 files to be uploaded");
+                assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPLOADED_SUCCESS"),
+                    "Expect 0 files to be uploaded successfully");
+                assertEquals("0", result.getMetaData().get("TOTAL_FILES_UPDATED_SUCCESS"),
+                    "Expect 0 files to be updated successfully");
+                assertEquals("2", result.getMetaData().get("TOTAL_FILES_UPDATED_UNSUCCESSFULLY"),
+                    "Expect 2 files to be updated unsuccessfully");
+                assertEquals("2", result.getMetaData().get("TOTAL_FILES_UPLOADED_UNSUCCESSFULLY"),
+                    "Expect 2 files to be uploaded unsuccessfully");
+
+                for (File file : files) {
+                    fileUtilsMock.verify(() -> FileUtils.deleteFile(eq(file)), times(1));
+                    verify(sftpService, times(1)).upload(sftpClass, file);
+                    verify(databaseService, times(1))
+                        .executeUpdate(connection, UPDATE_SQL_FAILED_QUERY, file.getName(), fileType);
                 }
             }
         }

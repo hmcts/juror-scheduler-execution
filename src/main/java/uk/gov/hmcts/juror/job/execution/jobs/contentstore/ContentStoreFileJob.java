@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.ContentStore;
+import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.jobs.LinearJob;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 import uk.gov.hmcts.juror.job.execution.rules.Rules;
@@ -24,12 +25,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Getter
 public abstract class ContentStoreFileJob extends LinearJob {
-    private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA "
+    private static final String SELECT_SQL_QUERY = "SELECT CS.REQUEST_ID, CS.DOCUMENT_ID, CS.DATA, "
+        + "CS.FAILED_FILE_TRANSFER "
         + "FROM CONTENT_STORE CS "
-        + "WHERE CS.FILE_TYPE=? AND CS.DATE_SENT is NULL";
+        + "WHERE CS.FILE_TYPE=? "
+        + "AND CS.DATE_SENT is NULL";
 
     private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE "
-        + "SET DATE_SENT=now() "
+        + "SET DATE_SENT=now(), FAILED_FILE_TRANSFER=false "
+        + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
+
+    private static final String UPDATE_SQL_FAILED_QUERY = "UPDATE CONTENT_STORE "
+        + "SET CS.FAILED_FILE_TRANSFER=true "
         + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
 
     private final SftpService sftpService;
@@ -69,19 +76,33 @@ public abstract class ContentStoreFileJob extends LinearJob {
         );
     }
 
-    protected Result generateFiles() {
-        Map<String, String> metaData = new ConcurrentHashMap<>();
+    protected Result generateFiles(MetaData metaData) {
+        Map<String, String> resultMetaData = new ConcurrentHashMap<>();
         AtomicInteger successCount = new AtomicInteger(0);
         AtomicInteger failureCount = new AtomicInteger(0);
         AtomicInteger totalFiles = new AtomicInteger(0);
+
+        final Boolean onlyRunFailed;
+        if (metaData.getRequestParams().containsKey("onlyRunFailed")) {
+            onlyRunFailed = Boolean.parseBoolean(metaData.getRequestParams().get("onlyRunFailed"));
+        } else {
+            onlyRunFailed = null;
+        }
 
         databaseService.execute(getDatabaseConfig(), connection -> {
             log.info(fileType + ": Updating Content-Store");
             databaseService.executeStoredProcedure(connection, getProcedureName(), getProcedureArguments());
             log.info(fileType + ": Getting Items to generate");
+
             List<ContentStore> contentStoreList =
-                databaseService.executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY,
-                    fileType);
+                databaseService.executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType);
+
+            // check the flag - only run failed transfers, otherwise run all (failed and new)
+            if (Boolean.TRUE.equals(onlyRunFailed)) {
+                contentStoreList = contentStoreList
+                    .stream()
+                    .filter(contentStore -> contentStore.getFailedFileTransfer() == onlyRunFailed).toList();
+            }
 
             totalFiles.set(contentStoreList.size());
             AtomicInteger count = new AtomicInteger(1);
@@ -97,21 +118,21 @@ public abstract class ContentStoreFileJob extends LinearJob {
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     log.error(fileType + ": Failed to generate file for: " + contentStore.getDocumentId(), e);
-                    metaData.put("FAILED_TO_GENERATE_FILE_" + failureCount.incrementAndGet(),
+                    resultMetaData.put("FAILED_TO_GENERATE_FILE_" + failureCount.incrementAndGet(),
                         contentStore.getDocumentId());
                 }
             });
         });
-        metaData.put("TOTAL_FILES_TO_GENERATED", String.valueOf(totalFiles));
-        metaData.put("TOTAL_FILES_GENERATED_SUCCESS", successCount.toString());
-        metaData.put("TOTAL_FILES_GENERATED_UNSUCCESSFULLY", failureCount.toString());
+        resultMetaData.put("TOTAL_FILES_TO_GENERATED", String.valueOf(totalFiles));
+        resultMetaData.put("TOTAL_FILES_GENERATED_SUCCESS", successCount.toString());
+        resultMetaData.put("TOTAL_FILES_GENERATED_UNSUCCESSFULLY", failureCount.toString());
         if (failureCount.get() > 0) {
             return Result.partialSuccess(
                     failureCount.get() + " files failed to generate out of " + totalFiles.get() + ".")
-                .addMetaData(metaData);
+                .addMetaData(resultMetaData);
         } else {
             return Result.passed()
-                .addMetaData(metaData);
+                .addMetaData(resultMetaData);
         }
     }
 
@@ -140,6 +161,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
                     updateDateSent(file, successUpdateCount, failedUpdateCount, metaData);
                     successCount.incrementAndGet();
                 } else {
+                    setToFailed(file);
                     metaData.put("FAILED_TO_UPLOAD_FILE_" + failureCount.incrementAndGet(), file.getName());
                     failedUpdateCount.incrementAndGet();
                 }
@@ -173,7 +195,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
     @Override
     public ResultSupplier getResultSupplier() {
         return new ResultSupplier(false, List.of(
-            metaData -> generateFiles(),
+            this::generateFiles,
             metaData -> uploadFiles()
         ));
     }
@@ -187,6 +209,16 @@ public abstract class ContentStoreFileJob extends LinearJob {
             } catch (SQLException e) {
                 log.error(fileType + ": Failed to update file: " + file.getName() + " as uploaded", e);
                 metaData.put("FAILED_TO_UPDATE_FILE_" + failedUpdateCount.incrementAndGet(), "file.getName()");
+            }
+        });
+    }
+
+    private void setToFailed(File file) {
+        databaseService.execute(getDatabaseConfig(), connection -> {
+            try {
+                databaseService.executeUpdate(connection, UPDATE_SQL_FAILED_QUERY, file.getName(), fileType);
+            } catch (SQLException e) {
+                log.error(fileType + ": Failed to set failed file transfer flag: " + file.getName(), e);
             }
         });
     }

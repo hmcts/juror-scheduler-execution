@@ -180,8 +180,8 @@ public class DatabaseFieldConvertorTest {
     class StaticConstructorTest {
         @Test
         void positiveConstructorTest() {
-            assertEquals(5, DatabaseFieldConvertor.CONVERTERS.size(),
-                "Converters should have 4 entries");
+            assertEquals(6, DatabaseFieldConvertor.CONVERTERS.size(),
+                "Converters should have 6 entries");
             assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(String.class),
                 "Converters should contain String.class");
             assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(Integer.class),
@@ -192,6 +192,8 @@ public class DatabaseFieldConvertorTest {
                 "Converters should contain Long.class");
             assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(LocalDate.class),
                 "Converters should contain LocalDate.class");
+            assertTrue(DatabaseFieldConvertor.CONVERTERS.containsKey(Boolean.class),
+                "Converters should contain Boolean.class");
         }
     }
 
