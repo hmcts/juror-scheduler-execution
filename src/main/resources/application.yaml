@@ -137,7 +137,7 @@ jobs:
       smtp:
         username: cgi_juror_checks@justice.gov.uk
       database:
-        schema: JUROR_DIGITAL_USER
+        schema: juror_dashboard
       deferrals-no-months: 11
       excusals-no-months: 11
       response-times-and-non-respond-no-months: 6
