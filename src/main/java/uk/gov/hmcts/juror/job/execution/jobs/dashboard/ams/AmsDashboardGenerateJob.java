@@ -63,11 +63,13 @@ public class AmsDashboardGenerateJob extends ParallelJob {
     Result generateDashboardFile(DashboardData dashboardData) {
         try {
             String dashboardCsv = dashboardData.toCsv(clock);
-            FileUtils.writeToFile(config.getDashboardCsvLocation(), dashboardCsv);
+            log.info("[BEGIN DASHBOARD]");
+            log.info(dashboardCsv);
+            log.info("[END DASHBOARD]");
             return Result.passed();
         } catch (Exception e) {
-            log.error("Failed to create dashboard csv file", e);
-            return Result.failed("Failed to create dashboard csv", e);
+            log.error("Failed to output dashboard csv", e);
+            return Result.failed("Failed to output dashboard csv", e);
         }
     }
 }

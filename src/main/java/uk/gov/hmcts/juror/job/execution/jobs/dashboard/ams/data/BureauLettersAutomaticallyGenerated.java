@@ -1,21 +1,37 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
 import lombok.extern.slf4j.Slf4j;
-import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
+import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
-import uk.gov.hmcts.juror.job.execution.jobs.letter.LetterJob;
+import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @SuppressWarnings("PMD.LawOfDemeter")
 public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
-    final SchedulerServiceClient schedulerServiceClient;
+    private static final String BUREAU_AUTO_GEN_LETTERS_SQL = """
+        select
+        	coalesce(sum(case when jh.history_code = 'RDIS' then 1 else 0 end),0) withdrawal,
+        	coalesce(sum(case when jh.history_code = 'RRES' then 1 else 0 end),0) confirmation
+        from juror_mod.juror_history jh
+        where jh.user_id = 'AUTO' and jh.date_created = current_date;
+        """;
+    final DatabaseService databaseService;
+    final DatabaseConfig databaseConfig;
+    final Clock clock;
 
     protected BureauLettersAutomaticallyGenerated(DashboardData dashboardData,
-                                                  SchedulerServiceClient schedulerServiceClient) {
-        super(dashboardData, "Bureau Letters Automatically Generated", "Type", "Count");
-        this.schedulerServiceClient = schedulerServiceClient;
+                                                  DatabaseService databaseService,
+                                                  DatabaseConfig databaseConfig,
+                                                  Clock clock) {
+        super(dashboardData, "Bureau Letters Automatically Generated", "Withdrawal", "Confirmation");
+        this.databaseService = databaseService;
+        this.databaseConfig = databaseConfig;
+        this.clock = clock;
     }
 
     public void addRow(String type, String count) {
@@ -24,39 +40,36 @@ public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
 
 
     public Job.Result populate() {
-        LocalDateTime confirmLetterLastChangedTime = addBureauLettersAutomaticallyGeneratedValue("CONFIRMATION",
-            "CONFIRM_LETTER");
-        LocalDateTime withdrawLetterLastChangedTime = addBureauLettersAutomaticallyGeneratedValue("WITHDRAW_LETTER",
-            "WITHDRAW_LETTER");
+        final String errorText = "ERROR";
+        AtomicReference<Job.Result> result = new AtomicReference<>(null);
+        try {
+            databaseService.execute(databaseConfig, connection -> {
+                List<BureauLettersAutomaticallyGeneratedDB> response =
+                    databaseService.executePreparedStatement(connection, BureauLettersAutomaticallyGeneratedDB.class,
+                        BUREAU_AUTO_GEN_LETTERS_SQL);
 
-        LocalDateTime lastUpdatedAt = getLatestDate(confirmLetterLastChangedTime, withdrawLetterLastChangedTime);
-        if (lastUpdatedAt == null) {
-            lastUpdatedAt = LocalDateTime.MIN;
-        }
-        populateTimestamp(dashboardData, "Bureau Letters Automatically Generated", lastUpdatedAt);
-        if (confirmLetterLastChangedTime == null || withdrawLetterLastChangedTime == null) {
+                if (response == null || response.isEmpty()) {
+                    addRow(errorText, errorText);
+                    result.set(Job.Result.failed("No response from database"));
+                } else {
+                    response.forEach(this::addRow);
+                }
+            });
+        } catch (Exception e) {
+            addRow(errorText, errorText);
             return Job.Result.failed("Failed to get Confirmation letter or withdraw letter information");
-
         }
-        return Job.Result.passed();
+
+        populateTimestamp(dashboardData, "Bureau Letters Automatically Generated", LocalDateTime.now(clock));
+        if (result.get() == null) {
+            return Job.Result.passed();
+        } else {
+            return result.get();
+        }
     }
 
-    LocalDateTime addBureauLettersAutomaticallyGeneratedValue(String type,
-                                                              String jobKey) {
-        try {
-            SchedulerServiceClient.TaskResponse task =
-                schedulerServiceClient.getLatestTask(jobKey);
-            if (task != null) {
-                addRow(
-                    type,
-                    task.getMetaData().getOrDefault(LetterJob.TOTAL_LETTERS_GENERATED_META_DATA_KEY, "ERROR")
-                );
-                return task.getLastUpdatedAt();
-            }
-        } catch (Exception e) {
-            log.error("Failed to get latest task for jobKey: " + jobKey, e);
-        }
-        addRow(type, "ERROR");
-        return null;
+    private void addRow(BureauLettersAutomaticallyGeneratedDB bureauLettersAutomaticallyGeneratedDB) {
+        this.addRow("WITHDRAWAL", bureauLettersAutomaticallyGeneratedDB.getWithdrawal().toString());
+        this.addRow("CONFIRMATION", bureauLettersAutomaticallyGeneratedDB.getConfirmation().toString());
     }
 }

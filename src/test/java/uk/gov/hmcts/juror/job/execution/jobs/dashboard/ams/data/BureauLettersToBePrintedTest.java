@@ -6,6 +6,7 @@ import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.Clock;
 import java.time.Instant;
@@ -78,7 +79,7 @@ class BureauLettersToBePrintedTest {
         BureauLettersToBePrintedDB bureauLettersToBePrintedDB = new BureauLettersToBePrintedDB();
         bureauLettersToBePrintedDB.setType("someType");
         bureauLettersToBePrintedDB.setDescription("someDescription");
-        bureauLettersToBePrintedDB.setCount(1L);
+        bureauLettersToBePrintedDB.setCount(new BigDecimal(1));
 
         doNothing().when(bureauLettersToBePrinted)
             .addEntry("someType", "someDescription", "someCount");

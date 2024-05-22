@@ -31,7 +31,7 @@ public class DashboardData {
                          AmsDashboardConfig config, Clock clock) {
 
         this.bureauLettersAutomaticallyGenerated =
-            new BureauLettersAutomaticallyGenerated(this, schedulerServiceClient);
+            new BureauLettersAutomaticallyGenerated(this, databaseService, config.getDatabase(), clock);
         this.bureauLettersToBePrinted =
             new BureauLettersToBePrinted(this, databaseService, config.getDatabase(), clock);
         this.pncCheck = new PncCheck(this, schedulerServiceClient);

@@ -8,7 +8,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
-import uk.gov.hmcts.juror.job.execution.config.SftpConfig;
+import uk.gov.hmcts.juror.job.execution.config.SmtpConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.DashboardData;
@@ -57,7 +57,12 @@ public class AmsDashboardGenerateJobTest {
     public static AmsDashboardConfig createConfig() {
         AmsDashboardConfig config = new AmsDashboardConfig();
         config.setDatabase(mock(DatabaseConfig.class));
-        config.setSftp(mock(SftpConfig.class));
+        config.setSmtp(mock(SmtpConfig.class));
+        config.setEmailRecipients(
+            new String[]{
+                RandomStringUtils.randomAlphabetic(10),
+                RandomStringUtils.randomAlphabetic(10),
+                RandomStringUtils.randomAlphabetic(10)});
         config.setPncCertificateLocation(mock(File.class));
         config.setDashboardCsvLocation(mock(File.class));
         config.setPncCertificatePassword(RandomStringUtils.randomAlphabetic(10));
@@ -126,7 +131,7 @@ public class AmsDashboardGenerateJobTest {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }, times(1));
+        }, times(0));
     }
 
     @Test
@@ -136,7 +141,7 @@ public class AmsDashboardGenerateJobTest {
         when(dashboardData.toCsv(clock)).thenThrow(cause);
 
         Job.Result result = amsDashboardGenerateJob.generateDashboardFile(dashboardData);
-        assertEquals(Job.Result.failed("Failed to create dashboard csv", cause),
+        assertEquals(Job.Result.failed("Failed to output dashboard csv", cause),
             result, "Result should be failed with exception and message");
 
         assertSame(cause, result.getThrowable(), "Exception should be the same as the cause");
