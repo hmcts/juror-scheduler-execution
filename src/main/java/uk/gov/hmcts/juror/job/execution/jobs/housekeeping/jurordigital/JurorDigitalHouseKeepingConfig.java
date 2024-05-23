@@ -19,5 +19,5 @@ public class JurorDigitalHouseKeepingConfig implements HasDatabaseConfig {
     private DatabaseConfig database;
 
     @NotNull
-    private int retentionThreshold;
+    private int maxTimeout;
 }
