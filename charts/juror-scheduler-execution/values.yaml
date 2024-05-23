@@ -32,6 +32,10 @@ java:
         - name: bais-sscl-user
           alias: BAIS_SSCL_USER
         - name: bais-sscl-key
+        - name: pnckeystore
+          alias: PNC_KEYSTORE
+        - name: pncstore-password
+          alias: PNCSTORE_PASSWORD
   environment:
     SCHEDULER_SERVICE_HOST: juror-scheduler-api.{{ .Values.global.environment }}.platform.hmcts.net
     SCHEDULER_SERVICE_PORT: 443
