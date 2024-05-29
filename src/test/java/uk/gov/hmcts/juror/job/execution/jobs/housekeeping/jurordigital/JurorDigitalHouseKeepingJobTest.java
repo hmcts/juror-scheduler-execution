@@ -7,7 +7,7 @@ import uk.gov.hmcts.juror.job.execution.testsupport.AbstractStoredProcedureJobTe
 class JurorDigitalHouseKeepingJobTest
     extends AbstractStoredProcedureJobTest<JurorDigitalHouseKeepingJob, JurorDigitalHouseKeepingConfig> {
 
-    private static final String PROCEDURE_NAME = "juror_digital_housekeeping.perform_deletions";
+    private static final String PROCEDURE_NAME = "juror_mod.housekeeping_digital_process";
 
     protected JurorDigitalHouseKeepingJobTest() {
         super(PROCEDURE_NAME);
@@ -22,12 +22,12 @@ class JurorDigitalHouseKeepingJobTest
     @Override
     public JurorDigitalHouseKeepingConfig createConfig() {
         JurorDigitalHouseKeepingConfig config = new JurorDigitalHouseKeepingConfig();
-        config.setRetentionThreshold(RandomUtils.nextInt());
+        config.setMaxTimeout(RandomUtils.nextInt());
         return config;
     }
 
     @Override
     protected Object[] getProcedureArguments(JurorDigitalHouseKeepingConfig config) {
-        return new Object[]{config.getRetentionThreshold()};
+        return new Object[]{config.getMaxTimeout()};
     }
 }
