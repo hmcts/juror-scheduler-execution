@@ -105,7 +105,7 @@ jobs:
       pool-size: 10
       allow-unknown-keys: true
       remote-directory: /
-    print-file-row-limit: 7
+    print-file-row-limit: 2000
   payment:
     ftp-directory: /tmp/ftp_payment
     sftp:
