@@ -7,7 +7,7 @@ import uk.gov.hmcts.juror.job.execution.testsupport.AbstractStoredProcedureJobTe
 class JurorDigitalHouseKeepingJobTest
     extends AbstractStoredProcedureJobTest<JurorDigitalHouseKeepingJob, JurorDigitalHouseKeepingConfig> {
 
-    private static final String PROCEDURE_NAME = "juror_digital_housekeeping.perform_deletions";
+    private static final String PROCEDURE_NAME = "juror_mod.housekeeping_digital_process";
 
     protected JurorDigitalHouseKeepingJobTest() {
         super(PROCEDURE_NAME);
