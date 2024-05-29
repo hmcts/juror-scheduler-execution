@@ -9,6 +9,6 @@ import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 public class PoolTransferJob extends StoredProcedureJob {
     @Autowired
     public PoolTransferJob(DatabaseService databaseService, PoolTransferConfig config) {
-        super(databaseService, config.getDatabase(), "pool_transfer.transfer_pool_details");
+        super(databaseService, config.getDatabase(), "juror_mod.transfer_pool_details");
     }
 }
