@@ -17,9 +17,7 @@ import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 import uk.gov.hmcts.juror.job.execution.rules.Rule;
 import uk.gov.hmcts.juror.job.execution.rules.Rules;
-import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 import uk.gov.hmcts.juror.job.execution.util.FileUtils;
-import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,10 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -58,7 +54,6 @@ class DashboardMorningChecksJobTest {
     private Clock clock;
     private SchedulerServiceClient schedulerServiceClient;
     private ObjectMapper objectMapper;
-    private SmtpService smtpService;
     private DashboardMorningChecksJob dashboardMorningChecksJob;
 
     private MockedStatic<FileUtils> fileUtilsMock;
@@ -69,9 +64,8 @@ class DashboardMorningChecksJobTest {
         config = createConfig();
         schedulerServiceClient = mock(SchedulerServiceClient.class);
         objectMapper = mock(ObjectMapper.class);
-        smtpService = mock(SmtpService.class);
         dashboardMorningChecksJob =
-            new DashboardMorningChecksJob(config, schedulerServiceClient, smtpService, objectMapper, clock);
+            new DashboardMorningChecksJob(config, schedulerServiceClient, objectMapper, clock);
     }
 
     @AfterEach
@@ -85,10 +79,6 @@ class DashboardMorningChecksJobTest {
         DashboardMorningChecksConfig config = new DashboardMorningChecksConfig();
         config.setArchiveFolder(mock(File.class));
         config.setAttachmentFile(mock(File.class));
-        config.setEmailRecipients(new String[]{
-            RandomStringUtils.randomAlphabetic(10),
-            RandomStringUtils.randomAlphabetic(10),
-            RandomStringUtils.randomAlphabetic(10)});
         return config;
     }
 
@@ -100,8 +90,6 @@ class DashboardMorningChecksJobTest {
             "DashboardMorningChecksJob constructor should set schedulerServiceClient");
         assertEquals(objectMapper, dashboardMorningChecksJob.getObjectMapper(),
             "DashboardMorningChecksJob constructor should set objectMapper");
-        assertEquals(smtpService, dashboardMorningChecksJob.getSmtpService(),
-            "DashboardMorningChecksJob constructor should set smtpService");
         assertEquals(clock, dashboardMorningChecksJob.getClock(),
             "DashboardMorningChecksJob constructor should set clock");
 
@@ -152,10 +140,6 @@ class DashboardMorningChecksJobTest {
                 + "bgcolor='Silver'><b><font size=2 face='Caliri'>Result</font></b></td></tr></table><br><br><ul></ul"
                 + "></body></html>";
 
-        verify(smtpService, times(1)).sendEmail(config.getSmtp(),
-            "JUROR Daily Checks: SUCCESS",
-            expectedHttpResponse,
-            config.getEmailRecipients());
         verify(dashboardMorningChecksJob).archivePreviousCheckFile(any());
         verify(dashboardMorningChecksJob).checkScheduledJobsRan(any());
 
@@ -370,7 +354,7 @@ class DashboardMorningChecksJobTest {
         void beforeEach() {
 
             TestDashboardMorningChecksJob testDashboardMorningChecksJob =
-                new TestDashboardMorningChecksJob(config, schedulerServiceClient, smtpService, objectMapper, clock);
+                new TestDashboardMorningChecksJob(config, schedulerServiceClient, objectMapper, clock);
             support = testDashboardMorningChecksJob.getSupport();
             dashboardMorningChecksJob = testDashboardMorningChecksJob;
         }
@@ -451,58 +435,12 @@ class DashboardMorningChecksJobTest {
         }
 
         @Test
-        void positiveSaveAndSendEmail() throws IOException {
-            support = spy(support);
-            Job.Result result = Job.Result.passed();
-            String htmlResponse = "SomeHtmlResponse";
-            doReturn(htmlResponse).when(support).buildHtml();
-            doNothing().when(support).saveToFile(htmlResponse);
-            doNothing().when(support).email(result, htmlResponse);
-
-
-            support.saveToFileAndEmail(result);
-
-            verify(support, times(1)).saveToFile(htmlResponse);
-            verify(support, times(1)).email(result, htmlResponse);
-        }
-
-        @Test
-        void negativeSaveAndSendEmailUnexpectedException() throws IOException {
-            support = spy(support);
-            Job.Result result = Job.Result.passed();
-            String htmlResponse = "SomeHtmlResponse";
-            RuntimeException cause = new RuntimeException("I am the cause");
-            doReturn(htmlResponse).when(support).buildHtml();
-            doThrow(cause).when(support).saveToFile(htmlResponse);
-
-            InternalServerException exception = assertThrows(InternalServerException.class,
-                () -> support.saveToFileAndEmail(result), "Should throw InternalServerException");
-
-            assertEquals("Failed to save and email dashboard morning checks", exception.getMessage(),
-                "Exception message should match");
-            assertSame(cause, exception.getCause(), "Exception cause should match");
-        }
-
-        @Test
         void positiveSave() throws IOException {
             fileUtilsMock = Mockito.mockStatic(FileUtils.class);
             String htmlResponse = "Some Response";
             support.saveToFile(htmlResponse);
             fileUtilsMock.verify(() -> FileUtils.writeToFile(config.getAttachmentFile(), htmlResponse),
                 times(1));
-        }
-
-        @Test
-        void positiveEmail() {
-            Job.Result result = Job.Result.passed();
-            String htmlResponse = "Some Response";
-
-            support.email(result, htmlResponse);
-
-            verify(smtpService, times(1)).sendEmail(config.getSmtp(),
-                "JUROR Daily Checks: SUCCESS",
-                htmlResponse,
-                config.getEmailRecipients());
         }
 
         @Test
@@ -584,9 +522,8 @@ class DashboardMorningChecksJobTest {
 
             protected TestDashboardMorningChecksJob(DashboardMorningChecksConfig config,
                                                     SchedulerServiceClient schedulerServiceClient,
-                                                    SmtpService smtpService,
                                                     ObjectMapper objectMapper, Clock clock) {
-                super(config, schedulerServiceClient, smtpService, objectMapper, clock);
+                super(config, schedulerServiceClient, objectMapper, clock);
             }
 
             public Support getSupport() {

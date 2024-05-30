@@ -1,6 +1,5 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -10,10 +9,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.config.SftpConfig;
-import uk.gov.hmcts.juror.job.execution.config.SmtpConfig;
 import uk.gov.hmcts.juror.job.execution.config.contracts.HasDatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.config.contracts.HasSftpConfig;
-import uk.gov.hmcts.juror.job.execution.config.contracts.HasSmtpConfig;
 
 import java.io.File;
 
@@ -21,22 +18,13 @@ import java.io.File;
 @ConfigurationProperties(prefix = "jobs.dashboard.ams")
 @Getter
 @Setter
-public class AmsDashboardConfig implements HasDatabaseConfig, HasSftpConfig, HasSmtpConfig {
-
+public class AmsDashboardConfig implements HasDatabaseConfig, HasSftpConfig {
 
     @NestedConfigurationProperty
     private DatabaseConfig database;
 
     @NestedConfigurationProperty
     private SftpConfig sftp;
-
-    @NestedConfigurationProperty
-    private SmtpConfig smtp;
-
-    @NotNull
-    @Email
-    @NotBlank
-    private String[] emailRecipients;
 
     @NotNull
     private File pncCertificateLocation;
@@ -49,5 +37,4 @@ public class AmsDashboardConfig implements HasDatabaseConfig, HasSftpConfig, Has
 
     @NotBlank
     private String pncCertificateAlias;
-
 }

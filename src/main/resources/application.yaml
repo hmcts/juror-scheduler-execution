@@ -133,9 +133,6 @@ jobs:
         schema: HK
   stats:
     performance:
-      email-recipients: [ mojasloccssupsjuror@cgi.com ]
-      smtp:
-        username: cgi_juror_checks@justice.gov.uk
       database:
         schema: juror_dashboard
       deferrals-no-months: 11

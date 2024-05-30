@@ -8,7 +8,6 @@ import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.jobs.ParallelJob;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.DashboardData;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
-import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 import uk.gov.hmcts.juror.job.execution.util.FileUtils;
 
 import java.time.Clock;
@@ -23,16 +22,13 @@ public class AmsDashboardGenerateJob extends ParallelJob {
     private final DatabaseService databaseService;
     private final AmsDashboardConfig config;
     private final Clock clock;
-    private final SmtpService smtpService;
 
     @Autowired
     public AmsDashboardGenerateJob(SchedulerServiceClient schedulerServiceClient,
                                    DatabaseService databaseService,
-                                   SmtpService smtpService,
                                    AmsDashboardConfig config, Clock clock) {
         super();
         this.schedulerServiceClient = schedulerServiceClient;
-        this.smtpService = smtpService;
         this.databaseService = databaseService;
         this.config = config;
         this.clock = clock;
@@ -41,7 +37,7 @@ public class AmsDashboardGenerateJob extends ParallelJob {
     @Override
     public List<ResultSupplier> getResultSuppliers() {
         DashboardData dashboardData =
-            new DashboardData(schedulerServiceClient, databaseService, smtpService, config, clock);
+            new DashboardData(schedulerServiceClient, databaseService, config, clock);
         return List.of(
             new ResultSupplier(
                 true,
