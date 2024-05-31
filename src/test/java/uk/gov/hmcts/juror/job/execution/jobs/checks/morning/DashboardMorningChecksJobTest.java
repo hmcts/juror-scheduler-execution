@@ -103,7 +103,6 @@ class DashboardMorningChecksJobTest {
             "DashboardMorningChecksJob constructor should set rules");
     }
 
-
     @Test
     void positiveGetResultSupplier() {
         fileUtilsMock = Mockito.mockStatic(FileUtils.class);
@@ -128,23 +127,8 @@ class DashboardMorningChecksJobTest {
         assertEquals(Status.SUCCESS, result2.getStatus(), "Result should be success");
         assertEquals("Message 2", result2.getMessage(), "Result should match");
 
-
-        resultSupplier.getPostRunChecks().accept(Job.Result.passed("Message 3"));
-
-        final String expectedHttpResponse =
-            "<!DOCTYPE html><html lang='en'><head><meta http-equiv='Content-Type' content='text/html; "
-                + "charset=iso-8859-1'></head><body><table border=0 cellpadding=2 width='70%' cellspacing=0 width=50%"
-                + " style='{border: 1px solid #000000;}'><tr><td width='20%' bgcolor='Silver' style='{border-right: "
-                + "1px solid #000000 ;}'>&nbsp</td><td bgcolor='Silver'style='{border-right: 1px solid #000000;"
-                + "}'><b><font size=2 face='Caliri'>Morning Check Details</font></b></td><td width='10%' "
-                + "bgcolor='Silver'><b><font size=2 face='Caliri'>Result</font></b></td></tr></table><br><br><ul></ul"
-                + "></body></html>";
-
         verify(dashboardMorningChecksJob).archivePreviousCheckFile(any());
         verify(dashboardMorningChecksJob).checkScheduledJobsRan(any());
-
-        fileUtilsMock.verify(() -> FileUtils.writeToFile(config.getAttachmentFile(), expectedHttpResponse),
-            times(1));
     }
 
     @Test

@@ -11,7 +11,6 @@ import uk.gov.hmcts.juror.job.execution.jobs.LinearJob;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 import uk.gov.hmcts.juror.job.execution.rules.Rules;
 import uk.gov.hmcts.juror.job.execution.util.FileUtils;
-import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +50,6 @@ public class DashboardMorningChecksJob extends LinearJob {
         );
     }
 
-
     @Override
     public ResultSupplier getResultSupplier() {
         final Support support = new Support();
@@ -59,8 +57,7 @@ public class DashboardMorningChecksJob extends LinearJob {
             List.of(
                 metaData -> archivePreviousCheckFile(support),
                 metaData -> checkScheduledJobsRan(support)
-            ),
-            support::buildHtmlAndSaveToFile
+            )
         );
     }
 
@@ -128,7 +125,6 @@ public class DashboardMorningChecksJob extends LinearJob {
         }
     }
 
-
     @Getter
     public class Support {
         private final String logDateTimeStr;
@@ -171,16 +167,6 @@ public class DashboardMorningChecksJob extends LinearJob {
 
         public void addTableRow(String title, String message, TableItem.Status status) {
             this.tableItems.add(new TableItem(title, message, status));
-        }
-
-        public void buildHtmlAndSaveToFile(Result result) {
-            try {
-                String htmlResponse = buildHtml();
-                saveToFile(htmlResponse);
-            } catch (Exception e) {
-                log.error("Failed to save dashboard morning checks", e);
-                throw new InternalServerException("Failed to save dashboard morning checks", e);
-            }
         }
 
         void saveToFile(String htmlResponse) throws IOException {
