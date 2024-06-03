@@ -14,12 +14,10 @@ import java.time.ZoneId;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -28,9 +26,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 class BureauLettersAutomaticallyGeneratedTest {
-
-    //TODO - update tests to check the database service, config and clock
-
     private DatabaseService databaseService;
     private DatabaseConfig databaseConfig;
     private Clock clock;
@@ -50,7 +45,6 @@ class BureauLettersAutomaticallyGeneratedTest {
     @Test
     void positiveConstructorTest() {
         assertSame(dashboardData, bureauLettersAutomaticallyGenerated.dashboardData);
-        //assertSame(schedulerServiceClient, bureauLettersAutomaticallyGenerated.schedulerServiceClient);
         assertEquals("Bureau Letters Automatically Generated", bureauLettersAutomaticallyGenerated.title,
 
             "Expected title to be Bureau Letters Automatically Generated");
@@ -145,32 +139,24 @@ class BureauLettersAutomaticallyGeneratedTest {
         LocalDateTime lastUpdatedAt = LocalDateTime.now();
 
         SchedulerServiceClient.TaskResponse taskResponse = mock(SchedulerServiceClient.TaskResponse.class);
-//        when(schedulerServiceClient.getLatestTask("CONFIRM_LETTER"))
-//            .thenReturn(taskResponse);
         when(taskResponse.getLastUpdatedAt()).thenReturn(lastUpdatedAt);
         when(taskResponse.getMetaData()).thenReturn(Map.of(
             "LETTERS_AUTOMATICALLY_GENERATED", "1"
         ));
         doNothing().when(bureauLettersAutomaticallyGenerated).addRow(any(), any());
 
-//        verify(schedulerServiceClient, times(1)).getLatestTask("CONFIRM_LETTER");
         verify(taskResponse, times(1)).getLastUpdatedAt();
         verify(taskResponse, times(1)).getMetaData();
         verify(bureauLettersAutomaticallyGenerated, times(1)).addRow("CONFIRMATION", "1");
 
-        verify(bureauLettersAutomaticallyGenerated, times(1))
-            .addBureauLettersAutomaticallyGeneratedValue("CONFIRMATION", "CONFIRM_LETTER");
         verifyNoMoreInteractions(bureauLettersAutomaticallyGenerated);
     }
 
     @Test
     void negativeAddBureauLettersAutomaticallyGeneratedValueNullTaskResponse() {
 
-//        when(schedulerServiceClient.getLatestTask("CONFIRM_LETTER"))
-//            .thenReturn(null);
         doNothing().when(bureauLettersAutomaticallyGenerated).addRow(any(), any());
 
-//        verify(schedulerServiceClient, times(1)).getLatestTask("CONFIRM_LETTER");
         verify(bureauLettersAutomaticallyGenerated, times(1))
             .addRow("CONFIRMATION", "ERROR");
 
@@ -183,12 +169,9 @@ class BureauLettersAutomaticallyGeneratedTest {
         LocalDateTime lastUpdatedAt = LocalDateTime.now();
 
         SchedulerServiceClient.TaskResponse taskResponse = mock(SchedulerServiceClient.TaskResponse.class);
-//        when(schedulerServiceClient.getLatestTask("CONFIRM_LETTER"))
-//            .thenReturn(taskResponse);
         when(taskResponse.getLastUpdatedAt()).thenReturn(lastUpdatedAt);
         doNothing().when(bureauLettersAutomaticallyGenerated).addRow(any(), any());
 
-//        verify(schedulerServiceClient, times(1)).getLatestTask("CONFIRM_LETTER");
         verify(taskResponse, times(1)).getLastUpdatedAt();
         verify(taskResponse, times(1)).getMetaData();
         verify(bureauLettersAutomaticallyGenerated, times(1)).addRow("CONFIRMATION", "ERROR");

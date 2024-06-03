@@ -14,11 +14,11 @@ import java.util.concurrent.atomic.AtomicReference;
 @SuppressWarnings("PMD.LawOfDemeter")
 public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
     private static final String BUREAU_AUTO_GEN_LETTERS_SQL = """
-        select
-        	coalesce(sum(case when jh.history_code = 'RDIS' then 1 else 0 end),0) withdrawal,
-        	coalesce(sum(case when jh.history_code = 'RRES' then 1 else 0 end),0) confirmation
-        from juror_mod.juror_history jh
-        where jh.user_id = 'AUTO' and jh.date_created = current_date;
+    select
+        coalesce(sum(case when jh.history_code = 'RDIS' then 1 else 0 end),0) withdrawal,
+        coalesce(sum(case when jh.history_code = 'RRES' then 1 else 0 end),0) confirmation
+    from juror_mod.juror_history jh
+    where jh.user_id = 'AUTO' and jh.date_created = current_date;
         """;
     final DatabaseService databaseService;
     final DatabaseConfig databaseConfig;
@@ -38,6 +38,10 @@ public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
         addEntry(type, count);
     }
 
+    private void addRow(BureauLettersAutomaticallyGeneratedDB bureauLettersAutomaticallyGeneratedDB) {
+        this.addRow("WITHDRAWAL", bureauLettersAutomaticallyGeneratedDB.getWithdrawal().toString());
+        this.addRow("CONFIRMATION", bureauLettersAutomaticallyGeneratedDB.getConfirmation().toString());
+    }
 
     public Job.Result populate() {
         final String errorText = "ERROR";
@@ -66,10 +70,5 @@ public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
         } else {
             return result.get();
         }
-    }
-
-    private void addRow(BureauLettersAutomaticallyGeneratedDB bureauLettersAutomaticallyGeneratedDB) {
-        this.addRow("WITHDRAWAL", bureauLettersAutomaticallyGeneratedDB.getWithdrawal().toString());
-        this.addRow("CONFIRMATION", bureauLettersAutomaticallyGeneratedDB.getConfirmation().toString());
     }
 }

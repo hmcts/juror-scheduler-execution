@@ -225,6 +225,8 @@ class CertificatesTest {
 
         keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
             config.getPncCertificatePassword().toCharArray()), times(1));
+
+        verifyNoMoreInteractions(smtpService);
     }
 
     @Test

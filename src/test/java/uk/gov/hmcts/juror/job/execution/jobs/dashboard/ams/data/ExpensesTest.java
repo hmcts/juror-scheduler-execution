@@ -6,6 +6,7 @@ import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.Clock;
 import java.time.Instant;
@@ -94,7 +95,7 @@ class ExpensesTest {
         }).when(databaseService).execute(eq(databaseConfig), any());
 
         ExpensesDB expensesDB = new ExpensesDB();
-        expensesDB.setAmount("123");
+        expensesDB.setAmount(new BigDecimal(123));
         expensesDB.setDate("someDate");
         List<ExpensesDB> expensesDbList = List.of(expensesDB);
         doReturn(expensesDbList).when(databaseService)

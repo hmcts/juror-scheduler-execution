@@ -8,7 +8,7 @@ import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.jobs.ParallelJob;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.DashboardData;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
-import uk.gov.hmcts.juror.job.execution.util.FileUtils;
+import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 
 import java.time.Clock;
 import java.util.List;
@@ -37,7 +37,7 @@ public class AmsDashboardGenerateJob extends ParallelJob {
     @Override
     public List<ResultSupplier> getResultSuppliers() {
         DashboardData dashboardData =
-            new DashboardData(schedulerServiceClient, databaseService, config, clock);
+            new DashboardData(schedulerServiceClient, databaseService, null, config, clock);
         return List.of(
             new ResultSupplier(
                 true,
