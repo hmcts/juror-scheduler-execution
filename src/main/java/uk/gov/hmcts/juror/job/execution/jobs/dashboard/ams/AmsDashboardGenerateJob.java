@@ -8,7 +8,6 @@ import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.jobs.ParallelJob;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.DashboardData;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
-import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 
 import java.time.Clock;
 import java.util.List;

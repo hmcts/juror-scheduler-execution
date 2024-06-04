@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 @SuppressWarnings("PMD.LawOfDemeter")
 public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
-    private static final String BUREAU_AUTO_GEN_LETTERS_SQL = """
+    static final String BUREAU_AUTO_GEN_LETTERS_SQL = """
     select
         coalesce(sum(case when jh.history_code = 'RDIS' then 1 else 0 end),0) withdrawal,
         coalesce(sum(case when jh.history_code = 'RRES' then 1 else 0 end),0) confirmation
@@ -38,7 +38,7 @@ public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
         addEntry(type, count);
     }
 
-    private void addRow(BureauLettersAutomaticallyGeneratedDB bureauLettersAutomaticallyGeneratedDB) {
+    public void addRow(BureauLettersAutomaticallyGeneratedDB bureauLettersAutomaticallyGeneratedDB) {
         this.addRow("WITHDRAWAL", bureauLettersAutomaticallyGeneratedDB.getWithdrawal().toString());
         this.addRow("CONFIRMATION", bureauLettersAutomaticallyGeneratedDB.getConfirmation().toString());
     }
@@ -53,14 +53,16 @@ public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
                         BUREAU_AUTO_GEN_LETTERS_SQL);
 
                 if (response == null || response.isEmpty()) {
-                    addRow(errorText, errorText);
+                    addRow("Withdrawal", errorText);
+                    addRow("Confirmation", errorText);
                     result.set(Job.Result.failed("No response from database"));
                 } else {
                     response.forEach(this::addRow);
                 }
             });
         } catch (Exception e) {
-            addRow(errorText, errorText);
+            addRow("Withdrawal", errorText);
+            addRow("Confirmation", errorText);
             return Job.Result.failed("Failed to get Confirmation letter or withdraw letter information");
         }
 

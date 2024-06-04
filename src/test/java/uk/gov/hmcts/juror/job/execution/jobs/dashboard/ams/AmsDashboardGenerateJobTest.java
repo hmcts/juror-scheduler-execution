@@ -49,8 +49,8 @@ public class AmsDashboardGenerateJobTest {
         this.databaseService = mock(DatabaseService.class);
         this.config = createConfig();
         this.clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
-        this.amsDashboardGenerateJob = spy(new AmsDashboardGenerateJob(schedulerServiceClient, databaseService, config,
-            clock));
+        this.amsDashboardGenerateJob = spy(new AmsDashboardGenerateJob(schedulerServiceClient, databaseService,
+            config, clock));
     }
 
     public static AmsDashboardConfig createConfig() {

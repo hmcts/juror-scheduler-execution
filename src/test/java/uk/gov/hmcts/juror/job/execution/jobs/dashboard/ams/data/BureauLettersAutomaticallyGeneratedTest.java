@@ -7,16 +7,20 @@ import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
+import java.sql.Connection;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -51,8 +55,8 @@ class BureauLettersAutomaticallyGeneratedTest {
         assertEquals(2, bureauLettersAutomaticallyGenerated.columCount,
             "Expected column count to be 2");
         assertEquals(2, bureauLettersAutomaticallyGenerated.rows.get(0).length);
-        assertEquals("Type", bureauLettersAutomaticallyGenerated.rows.get(0)[0]);
-        assertEquals("Count", bureauLettersAutomaticallyGenerated.rows.get(0)[1]);
+        assertEquals("Withdrawal", bureauLettersAutomaticallyGenerated.rows.get(0)[0]);
+        assertEquals("Confirmation", bureauLettersAutomaticallyGenerated.rows.get(0)[1]);
     }
 
     @Test
@@ -63,131 +67,135 @@ class BureauLettersAutomaticallyGeneratedTest {
     }
 
     @Test
-    void positivePopulateFirstIsNewest() {
-        LocalDateTime confirmationLetterLastUpdatedAt = LocalDateTime.now();
-        LocalDateTime withdrawLetterLastUpdatedAt = confirmationLetterLastUpdatedAt.minusSeconds(1);
-        doNothing().when(bureauLettersAutomaticallyGenerated).populateTimestamp(eq(dashboardData), any(),
-            any(LocalDateTime.class));
-
-        assertEquals(Job.Result.passed(), bureauLettersAutomaticallyGenerated.populate(),
-            "Expected result success to be returned");
-
-        verify(bureauLettersAutomaticallyGenerated, times(1)).populateTimestamp(dashboardData,
-            "Bureau Letters Automatically Generated", confirmationLetterLastUpdatedAt);
-    }
-
-    @Test
-    void positivePopulateSecondIsNewest() {
-        LocalDateTime confirmationLetterLastUpdatedAt = LocalDateTime.now();
-        LocalDateTime withdrawLetterLastUpdatedAt = confirmationLetterLastUpdatedAt.plusSeconds(1);
-        doNothing().when(bureauLettersAutomaticallyGenerated)
-            .populateTimestamp(eq(dashboardData), any(), any(LocalDateTime.class));
-
-        assertEquals(Job.Result.passed(), bureauLettersAutomaticallyGenerated.populate(),
-            "Expected result success to be returned");
-
-        verify(bureauLettersAutomaticallyGenerated, times(1)).populateTimestamp(dashboardData,
-            "Bureau Letters Automatically Generated", withdrawLetterLastUpdatedAt);
-    }
-
-    @Test
-    void positivePopulateConfirmationNull() {
-        LocalDateTime withdrawLetterLastUpdatedAt = LocalDateTime.now();
-
-        doNothing().when(bureauLettersAutomaticallyGenerated)
-            .populateTimestamp(eq(dashboardData), any(), any(LocalDateTime.class));
-
-        assertEquals(Job.Result.failed("Failed to get Confirmation letter or withdraw letter information"),
-            bureauLettersAutomaticallyGenerated.populate(),
-            "Expected result success to be returned");
-
-        verify(bureauLettersAutomaticallyGenerated, times(1)).populateTimestamp(dashboardData,
-            "Bureau Letters Automatically Generated", withdrawLetterLastUpdatedAt);
-    }
-
-    @Test
-    void positivePopulateWithdrawNull() {
-        LocalDateTime confirmationLetterLastUpdatedAt = LocalDateTime.now();
-
-        doNothing().when(bureauLettersAutomaticallyGenerated)
-            .populateTimestamp(eq(dashboardData), any(), any(LocalDateTime.class));
-
-        assertEquals(Job.Result.failed("Failed to get Confirmation letter or withdraw letter information"),
-            bureauLettersAutomaticallyGenerated.populate(),
-            "Expected result success to be returned");
-
-        verify(bureauLettersAutomaticallyGenerated, times(1)).populateTimestamp(dashboardData,
-            "Bureau Letters Automatically Generated", confirmationLetterLastUpdatedAt);
-    }
-
-    @Test
-    void positivePopulateBothNull() {
-
-        doNothing().when(bureauLettersAutomaticallyGenerated)
-            .populateTimestamp(eq(dashboardData), any(), any(LocalDateTime.class));
-
-        assertEquals(Job.Result.failed("Failed to get Confirmation letter or withdraw letter information"),
-            bureauLettersAutomaticallyGenerated.populate(),
-            "Expected result success to be returned");
-
-        verify(bureauLettersAutomaticallyGenerated, times(1)).populateTimestamp(dashboardData,
-            "Bureau Letters Automatically Generated", LocalDateTime.MIN);
-    }
-
-    @Test
     void positiveAddBureauLettersAutomaticallyGeneratedValue() {
-        LocalDateTime lastUpdatedAt = LocalDateTime.now();
+        Connection connection = mock(Connection.class);
+        doAnswer(invocation -> {
+            Consumer<Connection> connectionConsumer = invocation.getArgument(1);
+            connectionConsumer.accept(connection);
+            return null;
+        }).when(databaseService).execute(eq(databaseConfig), any());
 
-        SchedulerServiceClient.TaskResponse taskResponse = mock(SchedulerServiceClient.TaskResponse.class);
-        when(taskResponse.getLastUpdatedAt()).thenReturn(lastUpdatedAt);
-        when(taskResponse.getMetaData()).thenReturn(Map.of(
-            "LETTERS_AUTOMATICALLY_GENERATED", "1"
-        ));
         doNothing().when(bureauLettersAutomaticallyGenerated).addRow(any(), any());
+        doNothing().when(bureauLettersAutomaticallyGenerated)
+            .populateTimestamp(eq(dashboardData), any(), any(LocalDateTime.class));
+        List<BureauLettersAutomaticallyGeneratedDB> responses = List.of(
+            mock(BureauLettersAutomaticallyGeneratedDB.class),
+            mock(BureauLettersAutomaticallyGeneratedDB.class),
+            mock(BureauLettersAutomaticallyGeneratedDB.class)
+        );
 
-        verify(taskResponse, times(1)).getLastUpdatedAt();
-        verify(taskResponse, times(1)).getMetaData();
-        verify(bureauLettersAutomaticallyGenerated, times(1)).addRow("CONFIRMATION", "1");
+        when(databaseService.executePreparedStatement(connection, BureauLettersAutomaticallyGeneratedDB.class,
+            BureauLettersAutomaticallyGenerated.BUREAU_AUTO_GEN_LETTERS_SQL))
+            .thenReturn(responses);
 
-        verifyNoMoreInteractions(bureauLettersAutomaticallyGenerated);
+        assertEquals(Job.Result.passed(),
+            bureauLettersAutomaticallyGenerated.populate(),
+            "Expected result to be passed");
+
+        for (BureauLettersAutomaticallyGeneratedDB bureauLettersAutomaticallyGeneratedDB : responses) {
+            verify(bureauLettersAutomaticallyGenerated, times(1))
+                .addRow(bureauLettersAutomaticallyGeneratedDB);
+        }
+
+        verify(bureauLettersAutomaticallyGenerated, times(1)).populateTimestamp(dashboardData,
+            "Bureau Letters Automatically Generated", LocalDateTime.now(clock));
     }
 
-    @Test
-    void negativeAddBureauLettersAutomaticallyGeneratedValueNullTaskResponse() {
 
-        doNothing().when(bureauLettersAutomaticallyGenerated).addRow(any(), any());
+    @Test
+    void negativePopulateEmptyResponse() {
+        Connection connection = mock(Connection.class);
+        doAnswer(invocation -> {
+            Consumer<Connection> connectionConsumer = invocation.getArgument(1);
+            connectionConsumer.accept(connection);
+            return null;
+        }).when(databaseService).execute(eq(databaseConfig), any());
+
+        doNothing().when(bureauLettersAutomaticallyGenerated).addRow(any());
+        doNothing().when(bureauLettersAutomaticallyGenerated).populateTimestamp(any(), any(), any(LocalDateTime.class));
+        List<BureauLettersAutomaticallyGeneratedDB> responses = List.of();
+
+        when(databaseService.executePreparedStatement(connection, BureauLettersAutomaticallyGeneratedDB.class,
+            bureauLettersAutomaticallyGenerated.BUREAU_AUTO_GEN_LETTERS_SQL))
+            .thenReturn(responses);
+
+        assertEquals(Job.Result.failed("No response from database"),
+            bureauLettersAutomaticallyGenerated.populate(),
+            "Expected result to be passed");
 
         verify(bureauLettersAutomaticallyGenerated, times(1))
-            .addRow("CONFIRMATION", "ERROR");
+            .addRow("Withdrawal", "ERROR");
+        verify(bureauLettersAutomaticallyGenerated, times(1))
+            .addRow("Confirmation", "ERROR");
 
-        verifyNoMoreInteractions(bureauLettersAutomaticallyGenerated);
 
-    }
-
-    @Test
-    void negativeAddBureauLettersAutomaticallyGeneratedValueTaskResponseMissingLettersGeneratedMetaData() {
-        LocalDateTime lastUpdatedAt = LocalDateTime.now();
-
-        SchedulerServiceClient.TaskResponse taskResponse = mock(SchedulerServiceClient.TaskResponse.class);
-        when(taskResponse.getLastUpdatedAt()).thenReturn(lastUpdatedAt);
-        doNothing().when(bureauLettersAutomaticallyGenerated).addRow(any(), any());
-
-        verify(taskResponse, times(1)).getLastUpdatedAt();
-        verify(taskResponse, times(1)).getMetaData();
-        verify(bureauLettersAutomaticallyGenerated, times(1)).addRow("CONFIRMATION", "ERROR");
-        verifyNoMoreInteractions(bureauLettersAutomaticallyGenerated);
+        verify(bureauLettersAutomaticallyGenerated, times(1)).populateTimestamp(dashboardData,
+            "Bureau Letters Automatically Generated", LocalDateTime.now(clock));
 
     }
 
     @Test
-    void negativeAddBureauLettersAutomaticallyGeneratedValueUnexpectedException() {
+    void negativePopulateNullResponse() {
+        Connection connection = mock(Connection.class);
+        doAnswer(invocation -> {
+            Consumer<Connection> connectionConsumer = invocation.getArgument(1);
+            connectionConsumer.accept(connection);
+            return null;
+        }).when(databaseService).execute(eq(databaseConfig), any());
+
+        doNothing().when(bureauLettersAutomaticallyGenerated).addRow(any());
+        doNothing().when(bureauLettersAutomaticallyGenerated).populateTimestamp(any(), any(), any(LocalDateTime.class));
+
+        when(databaseService.executePreparedStatement(connection, BureauLettersAutomaticallyGeneratedDB.class,
+            bureauLettersAutomaticallyGenerated.BUREAU_AUTO_GEN_LETTERS_SQL))
+            .thenReturn(null);
+
+        Job.Result result = bureauLettersAutomaticallyGenerated.populate();
+
+        assertEquals(Job.Result.failed("No response from database"),
+            result,
+            "Expected result to be failed");
+
+        verify(bureauLettersAutomaticallyGenerated, times(1))
+            .addRow("Withdrawal", "ERROR");
+        verify(bureauLettersAutomaticallyGenerated, times(1))
+            .addRow("Confirmation", "ERROR");
+
+        verify(bureauLettersAutomaticallyGenerated, times(1)).populateTimestamp(dashboardData,
+            "Bureau Letters Automatically Generated", LocalDateTime.now(clock));
+
+    }
+
+    @Test
+    void negativePopulateUnexpectedException() {
         RuntimeException cause = new RuntimeException("I am the cause");
-        doNothing().when(bureauLettersAutomaticallyGenerated).addRow(any(), any());
+        Connection connection = mock(Connection.class);
+        doAnswer(invocation -> {
+            Consumer<Connection> connectionConsumer = invocation.getArgument(1);
+            connectionConsumer.accept(connection);
+            return null;
+        }).when(databaseService).execute(eq(databaseConfig), any());
+
+        doNothing().when(bureauLettersAutomaticallyGenerated).addRow(any());
+        doNothing().when(bureauLettersAutomaticallyGenerated).populateTimestamp(any(), any(), any(LocalDateTime.class));
+
+        when(databaseService.executePreparedStatement(connection, BureauLettersAutomaticallyGeneratedDB.class,
+            BureauLettersAutomaticallyGenerated.BUREAU_AUTO_GEN_LETTERS_SQL))
+            .thenThrow(cause);
+
+        Job.Result result = bureauLettersAutomaticallyGenerated.populate();
+
+        assertEquals(Job.Result.failed("Failed to get Confirmation letter or withdraw letter information"),
+            result,
+            "Expected result to be failed");
 
         verify(bureauLettersAutomaticallyGenerated, times(1))
-            .addRow("CONFIRMATION", "ERROR");
+            .addRow("Withdrawal", "ERROR");
+        verify(bureauLettersAutomaticallyGenerated, times(1))
+            .addRow("Confirmation", "ERROR");
 
-        verifyNoMoreInteractions(bureauLettersAutomaticallyGenerated);
+        verify(bureauLettersAutomaticallyGenerated, times(0)).populateTimestamp(dashboardData,
+            "Bureau Letters Automatically Generated", LocalDateTime.now(clock));
     }
 
 }
