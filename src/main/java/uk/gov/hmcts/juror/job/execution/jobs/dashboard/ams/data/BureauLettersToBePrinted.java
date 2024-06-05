@@ -12,37 +12,37 @@ import java.util.concurrent.atomic.AtomicReference;
 @SuppressWarnings("PMD.LawOfDemeter")
 public class BureauLettersToBePrinted extends DashboardDataEntry {
     public static final String BUREAU_LETTERS_TO_BE_PRINTED_SQL = """
-        select tfa.form_type type,
-                    (case when tfa.form_type ='5221' then 'SUMMONS ENGLISH'
-                    when tfa.form_type ='5221C' then 'SUMMONS BI-LINGUAL'
-                    when tfa.form_type ='5224' then 'WITHDRAWAL ENGLISH'
-                    when tfa.form_type ='5224A' then 'CONFIRMATION ENGLISH'
-                    when tfa.form_type ='5224AC' then 'CONFIRMATION WELSH'
-                    when tfa.form_type ='5224C' then 'WITHDRAWAL WELSH'
-                    when tfa.form_type ='5225' then 'EXCUSAL ENGLISH'
-                    when tfa.form_type ='5225C' then 'EXCUSAL WELSH'
-                    when tfa.form_type ='5226' then 'NON-EXCUSAL ENGLISH'
-                    when tfa.form_type ='5226A' then 'NON-DEFER ENGLISH'
-                    when tfa.form_type ='5226AC' then 'NON-DEFER WELSH'
-                    when tfa.form_type ='5226C' then 'NON-EXCUSAL WELSH'
-                    when tfa.form_type ='5227' then 'REQUEST ENGLISH'
-                    when tfa.form_type ='5227C' then 'REQUEST WELSH'
-                    when tfa.form_type ='5228' then 'NON-RESPONDED ENGLISH'
-                    when tfa.form_type ='5228C' then 'NON-RESPONDED WELSH'
-                    when tfa.form_type ='5229' then 'POSTPONE ENGLISH'
-                    when tfa.form_type ='5229A' then 'DEFERRED ENGLISH'
-                    when tfa.form_type ='5229AC' then 'DEFERRED WELSH'
-                    when tfa.form_type ='5229C' then 'POSTPONE WELSH' else 'UNKNOWN' end) description,
-                    coalesce(sum(form_counts.number_of_items),0) "count"
-                    from juror_mod.t_form_attr tfa left outer join (
-                        SELECT form_type,
-                        count(juror_no) AS number_of_items
-                        FROM juror_mod.bulk_print_data bpd
-                        where creation_date >= current_date - case when to_char(current_date, 'dy') = 'tue' then 3 else 1 end
-                        GROUP BY form_type, (to_date(creation_date::text, 'YYYY-MM-DD'::text))) form_counts
-                    on tfa.form_type = form_counts.form_type
-                    group by tfa.form_type, tfa.dir_name
-                    order by 1;
+select tfa.form_type type,
+            (case when tfa.form_type ='5221' then 'SUMMONS ENGLISH'
+            when tfa.form_type ='5221C' then 'SUMMONS BI-LINGUAL'
+            when tfa.form_type ='5224' then 'WITHDRAWAL ENGLISH'
+            when tfa.form_type ='5224A' then 'CONFIRMATION ENGLISH'
+            when tfa.form_type ='5224AC' then 'CONFIRMATION WELSH'
+            when tfa.form_type ='5224C' then 'WITHDRAWAL WELSH'
+            when tfa.form_type ='5225' then 'EXCUSAL ENGLISH'
+            when tfa.form_type ='5225C' then 'EXCUSAL WELSH'
+            when tfa.form_type ='5226' then 'NON-EXCUSAL ENGLISH'
+            when tfa.form_type ='5226A' then 'NON-DEFER ENGLISH'
+            when tfa.form_type ='5226AC' then 'NON-DEFER WELSH'
+            when tfa.form_type ='5226C' then 'NON-EXCUSAL WELSH'
+            when tfa.form_type ='5227' then 'REQUEST ENGLISH'
+            when tfa.form_type ='5227C' then 'REQUEST WELSH'
+            when tfa.form_type ='5228' then 'NON-RESPONDED ENGLISH'
+            when tfa.form_type ='5228C' then 'NON-RESPONDED WELSH'
+            when tfa.form_type ='5229' then 'POSTPONE ENGLISH'
+            when tfa.form_type ='5229A' then 'DEFERRED ENGLISH'
+            when tfa.form_type ='5229AC' then 'DEFERRED WELSH'
+            when tfa.form_type ='5229C' then 'POSTPONE WELSH' else 'UNKNOWN' end) description,
+            coalesce(sum(form_counts.number_of_items),0) "count"
+            from juror_mod.t_form_attr tfa left outer join (
+                SELECT form_type,
+                count(juror_no) AS number_of_items
+                FROM juror_mod.bulk_print_data bpd
+                where creation_date >= current_date - case when to_char(current_date, 'dy') = 'tue' then 3 else 1 end
+                GROUP BY form_type, (to_date(creation_date::text, 'YYYY-MM-DD'::text))) form_counts
+            on tfa.form_type = form_counts.form_type
+            group by tfa.form_type, tfa.dir_name
+            order by 1;
         """;
     final DatabaseService databaseService;
     final DatabaseConfig databaseConfig;
