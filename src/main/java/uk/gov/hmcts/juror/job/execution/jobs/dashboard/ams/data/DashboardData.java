@@ -27,8 +27,8 @@ public class DashboardData {
 
     private final List<DashboardDataEntry> dashboardDataEntries;
 
-    public DashboardData(SchedulerServiceClient schedulerServiceClient, DatabaseService databaseService,
-                         AmsDashboardConfig config, Clock clock) {
+    public DashboardData(SchedulerServiceClient schedulerServiceClient,
+                         DatabaseService databaseService, AmsDashboardConfig config, Clock clock) {
 
         this.bureauLettersAutomaticallyGenerated =
             new BureauLettersAutomaticallyGenerated(this, databaseService, config.getDatabase(), clock);

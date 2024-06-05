@@ -36,7 +36,7 @@ public class AmsDashboardGenerateJob extends ParallelJob {
     @Override
     public List<ResultSupplier> getResultSuppliers() {
         DashboardData dashboardData =
-            new DashboardData(schedulerServiceClient, databaseService, null, config, clock);
+            new DashboardData(schedulerServiceClient, databaseService, config, clock);
         return List.of(
             new ResultSupplier(
                 true,

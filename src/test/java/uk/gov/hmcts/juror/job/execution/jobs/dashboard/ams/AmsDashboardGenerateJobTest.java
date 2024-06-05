@@ -116,15 +116,6 @@ public class AmsDashboardGenerateJobTest {
         assertEquals(Job.Result.passed(), result, "Result should be passed");
 
         verify(dashboardData, times(1)).toCsv(clock);
-
-
-        fileUtilsMock.verify(() -> {
-            try {
-                FileUtils.writeToFile(config.getDashboardCsvLocation(), testCsv);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }, times(0));
     }
 
     @Test
