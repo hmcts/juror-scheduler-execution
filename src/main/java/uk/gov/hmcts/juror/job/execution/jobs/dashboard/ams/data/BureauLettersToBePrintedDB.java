@@ -5,8 +5,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import uk.gov.hmcts.juror.job.execution.database.DatabaseColumn;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -16,5 +14,5 @@ public class BureauLettersToBePrintedDB {
     @DatabaseColumn(name = "description", setter = "setDescription")
     public String description;
     @DatabaseColumn(name = "count", setter = "setCount")
-    public BigDecimal count;
+    public Long count;
 }
