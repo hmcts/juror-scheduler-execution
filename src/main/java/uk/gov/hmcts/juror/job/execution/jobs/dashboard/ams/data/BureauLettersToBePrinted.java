@@ -33,7 +33,7 @@ select tfa.form_type type,
             when tfa.form_type ='5229A' then 'DEFERRED ENGLISH'
             when tfa.form_type ='5229AC' then 'DEFERRED WELSH'
             when tfa.form_type ='5229C' then 'POSTPONE WELSH' else 'UNKNOWN' end) description,
-            coalesce(sum(form_counts.number_of_items),0) "count"
+            coalesce(sum(form_counts.number_of_items),0)::bigint "count"
             from juror_mod.t_form_attr tfa left outer join (
                 SELECT form_type,
                 count(juror_no) AS number_of_items
