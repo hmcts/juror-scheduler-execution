@@ -30,7 +30,7 @@ public class PerformanceStatsJob extends ParallelJob {
                 Set.of(metaData -> runRunProcedure("auto_processed"))),
             new ResultSupplier(false,
                 Set.of(
-                    metaData -> runRunProcedure("response_times_and_non_respond",
+                    metaData -> runRunProcedure("response_times_and_not_responded",
                         this.config.getResponseTimesAndNonRespondNoMonths()),
                     metaData -> runRunProcedure("unprocessed_responses"),
                     metaData -> runRunProcedure("welsh_online_responses",
