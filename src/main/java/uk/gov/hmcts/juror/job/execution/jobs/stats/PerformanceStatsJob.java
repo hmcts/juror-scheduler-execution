@@ -27,19 +27,19 @@ public class PerformanceStatsJob extends ParallelJob {
     public List<ResultSupplier> getResultSuppliers() {
         return List.of(
             new ResultSupplier(false,
-                Set.of(metaData -> runRunProcedure("refresh_stats_data.auto_processed"))),
+                Set.of(metaData -> runRunProcedure("auto_processed"))),
             new ResultSupplier(false,
                 Set.of(
-                    metaData -> runRunProcedure("refresh_stats_data.response_times_and_non_respond",
+                    metaData -> runRunProcedure("response_times_and_non_respond",
                         this.config.getResponseTimesAndNonRespondNoMonths()),
-                    metaData -> runRunProcedure("refresh_stats_data.unprocessed_responses"),
-                    metaData -> runRunProcedure("refresh_stats_data.welsh_online_responses",
+                    metaData -> runRunProcedure("unprocessed_responses"),
+                    metaData -> runRunProcedure("welsh_online_responses",
                         this.config.getWelshOnlineResponsesNoMonths()),
-                    metaData -> runRunProcedure("refresh_stats_data.thirdparty_online",
+                    metaData -> runRunProcedure("thirdparty_online",
                         this.config.getThirdpartyOnlineNoMonths()),
-                    metaData -> runRunProcedure("refresh_stats_data.deferrals",
+                    metaData -> runRunProcedure("deferrals",
                         this.config.getDeferralsNoMonths()),
-                    metaData -> runRunProcedure("refresh_stats_data.excusals",
+                    metaData -> runRunProcedure("excusals",
                         this.config.getExcusalsNoMonths())
                 )
             )
