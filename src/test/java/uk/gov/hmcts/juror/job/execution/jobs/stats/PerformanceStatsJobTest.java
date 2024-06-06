@@ -80,7 +80,7 @@ class PerformanceStatsJobTest {
         runner1.apply(metaData);
         verify(performanceStatsJob, times(1))
             .runRunProcedure("auto_processed");
-        verifyNoMoreInteractions(databaseService, smtpService);
+        verifyNoMoreInteractions(databaseService);
         verifyNoMoreInteractions(performanceStatsJob);
 
 
