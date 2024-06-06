@@ -79,7 +79,7 @@ class PerformanceStatsJobTest {
         Function<MetaData, Job.Result> runner1 = resultSupplier1.getResultRunners().iterator().next();
         runner1.apply(metaData);
         verify(performanceStatsJob, times(1))
-            .runRunProcedure("refresh_stats_data.auto_processed");
+            .runRunProcedure("auto_processed");
         verifyNoMoreInteractions(databaseService);
         verifyNoMoreInteractions(performanceStatsJob);
 
@@ -94,21 +94,21 @@ class PerformanceStatsJobTest {
             runner.apply(metaData);
         }
         verify(performanceStatsJob, times(1))
-            .runRunProcedure("refresh_stats_data.response_times_and_non_respond",
+            .runRunProcedure("response_times_and_not_responded",
                 this.config.getResponseTimesAndNonRespondNoMonths());
         verify(performanceStatsJob, times(1))
-            .runRunProcedure("refresh_stats_data.unprocessed_responses");
+            .runRunProcedure("unprocessed_responses");
         verify(performanceStatsJob, times(1))
-            .runRunProcedure("refresh_stats_data.welsh_online_responses",
+            .runRunProcedure("welsh_online_responses",
                 this.config.getWelshOnlineResponsesNoMonths());
         verify(performanceStatsJob, times(1))
-            .runRunProcedure("refresh_stats_data.thirdparty_online",
+            .runRunProcedure("thirdparty_online",
                 this.config.getThirdpartyOnlineNoMonths());
         verify(performanceStatsJob, times(1))
-            .runRunProcedure("refresh_stats_data.deferrals",
+            .runRunProcedure("deferrals",
                 this.config.getDeferralsNoMonths());
         verify(performanceStatsJob, times(1))
-            .runRunProcedure("refresh_stats_data.excusals",
+            .runRunProcedure("excusals",
                 this.config.getExcusalsNoMonths());
 
         verifyNoMoreInteractions(databaseService);
