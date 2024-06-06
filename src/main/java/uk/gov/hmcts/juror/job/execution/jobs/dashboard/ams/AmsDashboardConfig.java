@@ -8,9 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
-import uk.gov.hmcts.juror.job.execution.config.SftpConfig;
 import uk.gov.hmcts.juror.job.execution.config.contracts.HasDatabaseConfig;
-import uk.gov.hmcts.juror.job.execution.config.contracts.HasSftpConfig;
 
 import java.io.File;
 
@@ -18,13 +16,11 @@ import java.io.File;
 @ConfigurationProperties(prefix = "jobs.dashboard.ams")
 @Getter
 @Setter
-public class AmsDashboardConfig implements HasDatabaseConfig, HasSftpConfig {
+public class AmsDashboardConfig implements HasDatabaseConfig {
+
 
     @NestedConfigurationProperty
     private DatabaseConfig database;
-
-    @NestedConfigurationProperty
-    private SftpConfig sftp;
 
     @NotNull
     private File pncCertificateLocation;

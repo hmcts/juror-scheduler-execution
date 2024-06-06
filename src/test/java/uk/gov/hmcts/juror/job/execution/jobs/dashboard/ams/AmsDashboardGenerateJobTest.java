@@ -8,7 +8,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
-import uk.gov.hmcts.juror.job.execution.config.SftpConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.DashboardData;
@@ -16,7 +15,6 @@ import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 import uk.gov.hmcts.juror.job.execution.util.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -50,14 +48,13 @@ public class AmsDashboardGenerateJobTest {
         this.databaseService = mock(DatabaseService.class);
         this.config = createConfig();
         this.clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
-        this.amsDashboardGenerateJob = spy(new AmsDashboardGenerateJob(schedulerServiceClient, databaseService, config,
-            clock));
+        this.amsDashboardGenerateJob = spy(new AmsDashboardGenerateJob(schedulerServiceClient, databaseService,
+            config, clock));
     }
 
     public static AmsDashboardConfig createConfig() {
         AmsDashboardConfig config = new AmsDashboardConfig();
         config.setDatabase(mock(DatabaseConfig.class));
-        config.setSftp(mock(SftpConfig.class));
         config.setPncCertificateLocation(mock(File.class));
         config.setDashboardCsvLocation(mock(File.class));
         config.setPncCertificatePassword(RandomStringUtils.randomAlphabetic(10));
@@ -118,15 +115,6 @@ public class AmsDashboardGenerateJobTest {
         assertEquals(Job.Result.passed(), result, "Result should be passed");
 
         verify(dashboardData, times(1)).toCsv(clock);
-
-
-        fileUtilsMock.verify(() -> {
-            try {
-                FileUtils.writeToFile(config.getDashboardCsvLocation(), testCsv);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }, times(1));
     }
 
     @Test
@@ -136,7 +124,7 @@ public class AmsDashboardGenerateJobTest {
         when(dashboardData.toCsv(clock)).thenThrow(cause);
 
         Job.Result result = amsDashboardGenerateJob.generateDashboardFile(dashboardData);
-        assertEquals(Job.Result.failed("Failed to create dashboard csv", cause),
+        assertEquals(Job.Result.failed("Failed to output dashboard csv", cause),
             result, "Result should be failed with exception and message");
 
         assertSame(cause, result.getThrowable(), "Exception should be the same as the cause");

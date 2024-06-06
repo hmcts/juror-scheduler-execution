@@ -5,15 +5,13 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import uk.gov.hmcts.juror.job.execution.database.DatabaseColumn;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @Accessors(chain = true)
-public class ExpensesDB {
+public class BureauLettersAutomaticallyGeneratedDB {
+    @DatabaseColumn(name = "withdrawal", setter = "setWithdrawal")
+    public Long withdrawal;
 
-    @DatabaseColumn(name = "date", setter = "setDate")
-    public String date;
-    @DatabaseColumn(name = "amount", setter = "setAmount")
-    public BigDecimal amount;
+    @DatabaseColumn(name = "confirmation", setter = "setConfirmation")
+    public Long confirmation;
 }

@@ -94,11 +94,9 @@ class AutoSysTest {
         verify(dashboardData.getErrorsOvernight(), times(1))
             .addRow("SSUPVL03", "None");
 
-        verify(autoSys, times(1)).populate("CONFIRM_LETTER");
         verify(autoSys, times(1)).populate("PAYMENT_JOB");
         verify(autoSys, times(1)).populate("PRINT_JOB");
         verify(autoSys, times(1)).populate("POOL_TRANSFER");
-        verify(autoSys, times(1)).populate("WITHDRAW_LETTER");
         verify(autoSys, times(1)).populate("PNC_CHECK_BULK");
         verify(autoSys, times(1)).populate();
     }
@@ -139,11 +137,9 @@ class AutoSysTest {
         verify(dashboardData.getErrorsOvernight(), times(1))
             .addRow("SSUPVL03", "ERROR");
 
-        verify(autoSys, times(1)).populate("CONFIRM_LETTER");
         verify(autoSys, times(1)).populate("PAYMENT_JOB");
         verify(autoSys, times(1)).populate("PRINT_JOB");
         verify(autoSys, times(1)).populate("POOL_TRANSFER");
-        verify(autoSys, times(1)).populate("WITHDRAW_LETTER");
         verify(autoSys, times(1)).populate("PNC_CHECK_BULK");
         verify(autoSys, times(1)).populate();
     }
@@ -160,11 +156,9 @@ class AutoSysTest {
         when(lastUpdatedTaskResponse.getLastUpdatedAt()).thenReturn(lastUpdatedAt);
         when(lastUpdatedTaskResponse.getStatus()).thenReturn(Status.SUCCESS);
 
-        doReturn(taskResponse).when(autoSys).populate("CONFIRM_LETTER");
         doReturn(taskResponse).when(autoSys).populate("PAYMENT_JOB");
         doReturn(null).when(autoSys).populate("PRINT_JOB");
         doReturn(lastUpdatedTaskResponse).when(autoSys).populate("POOL_TRANSFER");
-        doReturn(taskResponse).when(autoSys).populate("WITHDRAW_LETTER");
         doReturn(taskResponse).when(autoSys).populate("PNC_CHECK_BULK");
 
         doNothing().when(autoSys).populateTimestamp(any(), any(), any(LocalDateTime.class));
@@ -179,11 +173,9 @@ class AutoSysTest {
         verify(dashboardData.getErrorsOvernight(), times(1))
             .addRow("SSUPVL03", "ERROR");
 
-        verify(autoSys, times(1)).populate("CONFIRM_LETTER");
         verify(autoSys, times(1)).populate("PAYMENT_JOB");
         verify(autoSys, times(1)).populate("PRINT_JOB");
         verify(autoSys, times(1)).populate("POOL_TRANSFER");
-        verify(autoSys, times(1)).populate("WITHDRAW_LETTER");
         verify(autoSys, times(1)).populate("PNC_CHECK_BULK");
         verify(autoSys, times(1)).populate();
 

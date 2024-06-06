@@ -43,9 +43,6 @@ class DashboardDataTest {
             dashboardData.getBureauLettersAutomaticallyGenerated();
         assertSame(dashboardData, bureauLettersAutomaticallyGenerated.dashboardData,
             "DashboardData should be the same");
-        assertSame(schedulerServiceClient, bureauLettersAutomaticallyGenerated.schedulerServiceClient,
-            "schedulerServiceClient should be the same");
-
 
         BureauLettersToBePrinted bureauLettersToBePrinted = dashboardData.getBureauLettersToBePrinted();
         assertSame(dashboardData, bureauLettersToBePrinted.dashboardData,
@@ -141,10 +138,11 @@ class DashboardDataTest {
         when(dashboardData.getDashboardDataEntries()).thenReturn(dashboardDataEntries);
 
         String csv = dashboardData.toCsv(clock);
-        assertEquals("13/11/2023 03:35:30\n"
-            + "TestTitle,Test,123\n"
-            + "SomeOtherTitle,Test,123\n"
-            + "NewTitle,Test,123", csv, "csv should be the same");
+        assertEquals("""
+            13/11/2023 03:35:30
+            TestTitle,Test,123
+            SomeOtherTitle,Test,123
+            NewTitle,Test,123""", csv, "csv should be the same");
 
 
     }

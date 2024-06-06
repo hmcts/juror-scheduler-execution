@@ -12,15 +12,17 @@ import java.util.concurrent.atomic.AtomicReference;
 @SuppressWarnings("PMD.LawOfDemeter")
 public class Expenses extends DashboardDataEntry {
     public static final String EXPENSES_SQL = """
-        select to_char(Nvl(max(trunc(creation_date)),trunc(sysdate-1)),'DD/MM/YYYY') date,
-        Nvl(sum(expense_total),0) amount
-        from aramis_payments
-        where con_file_ref in
-        (select document_id from content_store
-         where trunc(date_sent) is not null
-         and date_on_q_for_send >= trunc(sysdate-1)
-         and file_type = 'PAYMENT')
-        and creation_date >= trunc(sysdate-1)
+        select to_char(coalesce(max(pd.creation_date), current_date  - '1 day'::interval),'DD/MM/YYYY') date,
+         coalesce (sum(expense_total),0) amount
+         from juror_mod.payment_data pd
+         where expense_file_name in
+         (select document_id
+         from juror_mod.content_store cs
+         where cs.date_sent is not null
+         and cs.date_on_q_for_send >= current_date - '1 day'::interval
+         and cs.file_type = 'PAYMENT')
+         and pd.creation_date >= current_date - '1 day'::interval
+         group by pd.creation_date
         """;
     final DatabaseService databaseService;
     final DatabaseConfig databaseConfig;
@@ -52,7 +54,7 @@ public class Expenses extends DashboardDataEntry {
                 } else {
                     ExpensesDB expensesDB = response.get(0);
                     addRow(
-                        expensesDB.getDate(), expensesDB.getAmount()
+                        expensesDB.getDate(), expensesDB.getAmount().toString()
                     );
                 }
             });

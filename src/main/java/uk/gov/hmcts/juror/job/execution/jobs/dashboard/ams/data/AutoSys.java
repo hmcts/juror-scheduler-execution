@@ -13,11 +13,9 @@ import java.util.Set;
 @SuppressWarnings("PMD.LawOfDemeter")
 public class AutoSys extends DashboardDataEntry {
     private static final Set<String> JOB_KEYS_TO_TRACK = Set.of(
-        "CONFIRM_LETTER",
         "PAYMENT_JOB",
         "PRINT_JOB",
         "POOL_TRANSFER",
-        "WITHDRAW_LETTER",
         "PNC_CHECK_BULK"
     );
     final SchedulerServiceClient schedulerServiceClient;

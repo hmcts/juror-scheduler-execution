@@ -8,7 +8,6 @@ import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.jobs.ParallelJob;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.DashboardData;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
-import uk.gov.hmcts.juror.job.execution.util.FileUtils;
 
 import java.time.Clock;
 import java.util.List;
@@ -63,11 +62,11 @@ public class AmsDashboardGenerateJob extends ParallelJob {
     Result generateDashboardFile(DashboardData dashboardData) {
         try {
             String dashboardCsv = dashboardData.toCsv(clock);
-            FileUtils.writeToFile(config.getDashboardCsvLocation(), dashboardCsv);
+            log.info(dashboardCsv);
             return Result.passed();
         } catch (Exception e) {
-            log.error("Failed to create dashboard csv file", e);
-            return Result.failed("Failed to create dashboard csv", e);
+            log.error("Failed to output dashboard csv", e);
+            return Result.failed("Failed to output dashboard csv", e);
         }
     }
 }
