@@ -4,7 +4,6 @@ import lombok.Getter;
 import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardConfig;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
-import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -29,7 +28,6 @@ public class DashboardData {
     private final List<DashboardDataEntry> dashboardDataEntries;
 
     public DashboardData(SchedulerServiceClient schedulerServiceClient, DatabaseService databaseService,
-                         SmtpService smtpService,
                          AmsDashboardConfig config, Clock clock) {
 
         this.bureauLettersAutomaticallyGenerated =
@@ -38,7 +36,7 @@ public class DashboardData {
             new BureauLettersToBePrinted(this, databaseService, config.getDatabase(), clock);
         this.pncCheck = new PncCheck(this, schedulerServiceClient);
         this.expenses = new Expenses(this, databaseService, config.getDatabase(), clock);
-        this.certificates = new Certificates(this, config, smtpService, clock);
+        this.certificates = new Certificates(this, config, clock);
         this.autoSys = new AutoSys(this, schedulerServiceClient, clock);
         this.errorsOvernight = new ErrorsOvernight(this);
         this.houseKeeping = new HouseKeeping(this, schedulerServiceClient, clock);

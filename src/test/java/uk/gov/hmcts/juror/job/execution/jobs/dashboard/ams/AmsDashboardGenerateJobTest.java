@@ -9,12 +9,10 @@ import org.mockito.Mockito;
 import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.config.SftpConfig;
-import uk.gov.hmcts.juror.job.execution.config.SmtpConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.DashboardData;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
-import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 import uk.gov.hmcts.juror.job.execution.util.FileUtils;
 
 import java.io.File;
@@ -41,7 +39,6 @@ public class AmsDashboardGenerateJobTest {
     private DatabaseService databaseService;
     private AmsDashboardConfig config;
     private Clock clock;
-    private SmtpService smtpService;
 
     private AmsDashboardGenerateJob amsDashboardGenerateJob;
 
@@ -53,21 +50,14 @@ public class AmsDashboardGenerateJobTest {
         this.databaseService = mock(DatabaseService.class);
         this.config = createConfig();
         this.clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
-        this.smtpService = mock(SmtpService.class);
-        this.amsDashboardGenerateJob = spy(new AmsDashboardGenerateJob(schedulerServiceClient, databaseService,
-            smtpService, config, clock));
+        this.amsDashboardGenerateJob = spy(new AmsDashboardGenerateJob(schedulerServiceClient, databaseService, config,
+            clock));
     }
 
     public static AmsDashboardConfig createConfig() {
         AmsDashboardConfig config = new AmsDashboardConfig();
         config.setDatabase(mock(DatabaseConfig.class));
         config.setSftp(mock(SftpConfig.class));
-        config.setSmtp(mock(SmtpConfig.class));
-        config.setEmailRecipients(
-            new String[]{
-                RandomStringUtils.randomAlphabetic(10),
-                RandomStringUtils.randomAlphabetic(10),
-                RandomStringUtils.randomAlphabetic(10)});
         config.setPncCertificateLocation(mock(File.class));
         config.setDashboardCsvLocation(mock(File.class));
         config.setPncCertificatePassword(RandomStringUtils.randomAlphabetic(10));
@@ -88,7 +78,6 @@ public class AmsDashboardGenerateJobTest {
         assertSame(databaseService, amsDashboardGenerateJob.getDatabaseService());
         assertSame(config, amsDashboardGenerateJob.getConfig());
         assertSame(clock, amsDashboardGenerateJob.getClock());
-        assertSame(smtpService, amsDashboardGenerateJob.getSmtpService());
     }
 
     @Test

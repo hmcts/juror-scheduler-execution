@@ -10,9 +10,7 @@ import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.jobs.LinearJob;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 import uk.gov.hmcts.juror.job.execution.rules.Rules;
-import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 import uk.gov.hmcts.juror.job.execution.util.FileUtils;
-import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,26 +33,22 @@ public class DashboardMorningChecksJob extends LinearJob {
 
     private final SchedulerServiceClient schedulerServiceClient;
     private final ObjectMapper objectMapper;
-    private final SmtpService smtpService;
 
 
     @Autowired
     protected DashboardMorningChecksJob(DashboardMorningChecksConfig config,
                                         SchedulerServiceClient schedulerServiceClient,
-                                        SmtpService smtpService,
                                         ObjectMapper objectMapper,
                                         Clock clock) {
         super();
         this.config = config;
         this.clock = clock;
         this.objectMapper = objectMapper;
-        this.smtpService = smtpService;
         this.schedulerServiceClient = schedulerServiceClient;
         addRules(
             Rules.requireDirectory(this.config.getArchiveFolder())
         );
     }
-
 
     @Override
     public ResultSupplier getResultSupplier() {
@@ -63,8 +57,7 @@ public class DashboardMorningChecksJob extends LinearJob {
             List.of(
                 metaData -> archivePreviousCheckFile(support),
                 metaData -> checkScheduledJobsRan(support)
-            ),
-            support::saveToFileAndEmail
+            )
         );
     }
 
@@ -132,7 +125,6 @@ public class DashboardMorningChecksJob extends LinearJob {
         }
     }
 
-
     @Getter
     public class Support {
         private final String logDateTimeStr;
@@ -177,26 +169,8 @@ public class DashboardMorningChecksJob extends LinearJob {
             this.tableItems.add(new TableItem(title, message, status));
         }
 
-        public void saveToFileAndEmail(Result result) {
-            try {
-                String htmlResponse = buildHtml();
-                saveToFile(htmlResponse);
-                email(result, htmlResponse);
-            } catch (Exception e) {
-                log.error("Failed to save and email dashboard morning checks", e);
-                throw new InternalServerException("Failed to save and email dashboard morning checks", e);
-            }
-        }
-
         void saveToFile(String htmlResponse) throws IOException {
             FileUtils.writeToFile(config.getAttachmentFile(), htmlResponse);
-        }
-
-        void email(Result result, String htmlResponse) {
-            smtpService.sendEmail(config.getSmtp(),
-                "JUROR Daily Checks: " + result.getStatus().name(),
-                htmlResponse,
-                config.getEmailRecipients());
         }
 
         public String buildHtml() {

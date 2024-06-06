@@ -6,7 +6,6 @@ import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardGenerateJobTest;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
-import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -26,7 +25,6 @@ class DashboardDataTest {
     private DashboardData dashboardData;
     private SchedulerServiceClient schedulerServiceClient;
     private DatabaseService databaseService;
-    private SmtpService smtpService;
     private AmsDashboardConfig config;
     private Clock clock;
 
@@ -35,9 +33,8 @@ class DashboardDataTest {
         this.clock = Clock.fixed(Instant.ofEpochMilli(1699889730353L), ZoneId.systemDefault());
         this.schedulerServiceClient = mock(SchedulerServiceClient.class);
         this.databaseService = mock(DatabaseService.class);
-        this.smtpService = mock(SmtpService.class);
         this.config = AmsDashboardGenerateJobTest.createConfig();
-        this.dashboardData = new DashboardData(schedulerServiceClient, databaseService, smtpService, config, clock);
+        this.dashboardData = new DashboardData(schedulerServiceClient, databaseService, config, clock);
     }
 
     @Test
@@ -82,8 +79,6 @@ class DashboardDataTest {
             "DashboardData should be the same");
         assertSame(config, certificates.config,
             "config should be the same");
-        assertSame(smtpService, certificates.smtpService,
-            "smtpService should be the same");
         assertSame(clock, certificates.clock,
             "clock should be the same");
 

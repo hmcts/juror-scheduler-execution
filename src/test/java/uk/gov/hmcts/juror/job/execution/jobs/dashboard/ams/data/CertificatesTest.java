@@ -8,7 +8,6 @@ import org.mockito.Mockito;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardGenerateJobTest;
-import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -31,14 +30,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 class CertificatesTest {
 
     private AmsDashboardConfig config;
     private Clock clock;
-    private SmtpService smtpService;
     private DashboardData dashboardData;
     private Certificates certificates;
 
@@ -48,9 +45,8 @@ class CertificatesTest {
     void beforeEach() {
         this.config = AmsDashboardGenerateJobTest.createConfig();
         this.clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
-        this.smtpService = mock(SmtpService.class);
         this.dashboardData = mock(DashboardData.class);
-        this.certificates = spy(new Certificates(dashboardData, config, smtpService, clock));
+        this.certificates = spy(new Certificates(dashboardData, config, clock));
 
     }
 
@@ -66,7 +62,6 @@ class CertificatesTest {
         assertSame(dashboardData, certificates.dashboardData,
             "Expected databaseService to be set");
         assertSame(config, certificates.config, "Expected databaseConfig to be set");
-        assertSame(smtpService, certificates.smtpService, "Expected smtp service to be set");
         assertSame(clock, certificates.clock, "Expected clock to be set");
 
         assertEquals("Certificates", certificates.title,
@@ -140,8 +135,6 @@ class CertificatesTest {
 
         keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
             config.getPncCertificatePassword().toCharArray()), times(1));
-
-        verifyNoMoreInteractions(smtpService);
     }
 
     @Test
@@ -169,8 +162,6 @@ class CertificatesTest {
 
         keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
             config.getPncCertificatePassword().toCharArray()), times(1));
-
-        verifyNoMoreInteractions(smtpService);
     }
 
     @Test
@@ -202,8 +193,6 @@ class CertificatesTest {
 
         keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
             config.getPncCertificatePassword().toCharArray()), times(1));
-
-        verifyNoMoreInteractions(smtpService);
     }
 
     @Test
@@ -236,13 +225,6 @@ class CertificatesTest {
 
         keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
             config.getPncCertificatePassword().toCharArray()), times(1));
-
-        verify(smtpService, times(1)).sendEmail(config.getSmtp(),
-            "PNC Certificate Expires soon",
-            "The PNC Certificate is due to expire at " + expiryDate + ". Please update the certificate.",
-            config.getEmailRecipients());
-
-        verifyNoMoreInteractions(smtpService);
     }
 
     @Test
@@ -274,9 +256,6 @@ class CertificatesTest {
 
         keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
             config.getPncCertificatePassword().toCharArray()), times(1));
-
-        verifyNoMoreInteractions(smtpService);
-
     }
 
 }

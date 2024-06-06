@@ -1,10 +1,8 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardConfig;
-import uk.gov.hmcts.juror.job.execution.service.contracts.SmtpService;
 
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -16,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Locale;
 
-
 @Slf4j
 @SuppressWarnings("PMD.LawOfDemeter")
 public class Certificates extends DashboardDataEntry {
@@ -24,15 +21,12 @@ public class Certificates extends DashboardDataEntry {
         new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.getDefault());
     final AmsDashboardConfig config;
     final Clock clock;
-    final SmtpService smtpService;
 
     public Certificates(DashboardData dashboardData,
                         AmsDashboardConfig config,
-                        SmtpService smtpService,
                         Clock clock) {
         super(dashboardData, "Certificates", "Name", "Expiry Date", "Status");
         this.config = config;
-        this.smtpService = smtpService;
         this.clock = clock;
     }
 
@@ -53,7 +47,6 @@ public class Certificates extends DashboardDataEntry {
             return DATE_FORMATTER.format(date);
         }
     }
-
 
     public Job.Result populate() {
         try {
@@ -82,13 +75,6 @@ public class Certificates extends DashboardDataEntry {
                 expiryDate,
                 status
             );
-            if (expiryDate != null && expiryDate.after(DateUtils.addDays(Date.from(clock.instant()), -30))
-                && config.getSmtp() != null) {
-                smtpService.sendEmail(config.getSmtp(),
-                    "PNC Certificate Expires soon",
-                    "The PNC Certificate is due to expire at " + expiryDate + ". Please update the certificate.",
-                    config.getEmailRecipients());
-            }
             populateTimestamp(dashboardData, "Certificates", LocalDateTime.now(clock));
             if (message == null) {
                 return Job.Result.passed();
