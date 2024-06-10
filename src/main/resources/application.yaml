@@ -162,9 +162,8 @@ jobs:
         session-wait-timeout: 10000
         pool-size: 10
         allow-unknown-keys: true
-      pnc-certificate-location: tbc
-      pnc-certificate-password: tbc
-      pnc-certificate-alias: tbc
+      pnc-certificate-location: /mnt/secrets/juror/pnckeystore
+      pnc-certificate-password: ${PNCSTORE_PASSWORD}
 defaults:
   database:
     username: ${DB_USERNAME:system}

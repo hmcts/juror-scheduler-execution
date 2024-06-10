@@ -33,7 +33,6 @@ java:
           alias: BAIS_SSCL_USER
         - name: bais-sscl-key
         - name: pnckeystore
-          alias: PNC_KEYSTORE
         - name: pncstore-password
           alias: PNCSTORE_PASSWORD
   environment:
