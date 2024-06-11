@@ -1,11 +1,20 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardConfig;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -47,6 +56,19 @@ public class Certificates extends DashboardDataEntry {
             return DATE_FORMATTER.format(date);
         }
     }
+    private KeyStore loadKeyStore(final File file, final char... password)
+        throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+        if (this.config.getPncCertificateBase64Encoded()) {
+            fileContent = Base64.decodeBase64(fileContent);
+        }
+        final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        try (InputStream inputStream = new ByteArrayInputStream(fileContent)) {
+            keyStore.load(inputStream, password);
+        }
+        return keyStore;
+    }
 
     public Job.Result populate() {
         try {
@@ -54,9 +76,9 @@ public class Certificates extends DashboardDataEntry {
             String message = null;
             Date expiryDate = null;
             String status = "OK";
-            KeyStore keyStore = KeyStore
-                .getInstance(config.getPncCertificateLocation(),
-                    config.getPncCertificatePassword().toCharArray());
+
+            KeyStore keyStore = loadKeyStore(config.getPncCertificateLocation(),
+                config.getPncCertificatePassword().toCharArray());
 
             if (keyStore.containsAlias(config.getPncCertificateAlias())) {
                 Certificate certificate = keyStore.getCertificate(config.getPncCertificateAlias());
