@@ -151,17 +151,6 @@ jobs:
         batch-size: 500
   dashboard:
     ams:
-      sftp:
-        host: "localhost"
-        port: 2222
-        password: password404
-        user: userName101
-        azure-deployment: false
-        remote-directory: print
-        private-key: /Users/benedwards/.ssh/id_ecdsa
-        session-wait-timeout: 10000
-        pool-size: 10
-        allow-unknown-keys: true
       pnc-certificate-location: /mnt/secrets/juror/pnckeystore
       pnc-certificate-password: ${PNCSTORE_PASSWORD}
       pnc-certificate-alias: "1"
