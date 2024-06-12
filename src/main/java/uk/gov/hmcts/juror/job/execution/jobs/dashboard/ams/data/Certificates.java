@@ -31,12 +31,12 @@ public class Certificates extends DashboardDataEntry {
     final AmsDashboardConfig config;
     final Clock clock;
 
-    static final String TITLE = "Certificates";
+    static final String JOB_TITLE = "Certificates";
 
     public Certificates(DashboardData dashboardData,
                         AmsDashboardConfig config,
                         Clock clock) {
-        super(dashboardData, TITLE, "Name", "Expiry Date", "Status");
+        super(dashboardData, JOB_TITLE, "Name", "Expiry Date", "Status");
         this.config = config;
         this.clock = clock;
     }
@@ -86,14 +86,14 @@ public class Certificates extends DashboardDataEntry {
                 expiryDate,
                 status
             );
-            populateTimestamp(dashboardData, TITLE, LocalDateTime.now(clock));
+            populateTimestamp(dashboardData, JOB_TITLE, LocalDateTime.now(clock));
             if (message == null) {
                 return Job.Result.passed();
             } else {
                 return Job.Result.failed(message);
             }
         } catch (Exception e) {
-            populateTimestamp(dashboardData, TITLE, LocalDateTime.now(clock));
+            populateTimestamp(dashboardData, JOB_TITLE, LocalDateTime.now(clock));
             log.error("Failed to populate certificates", e);
             return Job.Result.failed("Failed to populate certificates. Unexpected exception", e);
         }

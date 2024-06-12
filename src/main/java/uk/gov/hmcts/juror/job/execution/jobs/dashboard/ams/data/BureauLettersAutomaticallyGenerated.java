@@ -24,11 +24,15 @@ public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
     final DatabaseConfig databaseConfig;
     final Clock clock;
 
+    static final String WITHDRAWAL = "Withdrawal";
+
+    static final String CONFIRMATION = "Confirmation";
+
     protected BureauLettersAutomaticallyGenerated(DashboardData dashboardData,
                                                   DatabaseService databaseService,
                                                   DatabaseConfig databaseConfig,
                                                   Clock clock) {
-        super(dashboardData, "Bureau Letters Automatically Generated", "Withdrawal", "Confirmation");
+        super(dashboardData, "Bureau Letters Automatically Generated", WITHDRAWAL, CONFIRMATION);
         this.databaseService = databaseService;
         this.databaseConfig = databaseConfig;
         this.clock = clock;
@@ -39,8 +43,8 @@ public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
     }
 
     public void addRow(BureauLettersAutomaticallyGeneratedDB bureauLettersAutomaticallyGeneratedDB) {
-        this.addRow("WITHDRAWAL", bureauLettersAutomaticallyGeneratedDB.getWithdrawal().toString());
-        this.addRow("CONFIRMATION", bureauLettersAutomaticallyGeneratedDB.getConfirmation().toString());
+        this.addRow(WITHDRAWAL, bureauLettersAutomaticallyGeneratedDB.getWithdrawal().toString());
+        this.addRow(CONFIRMATION, bureauLettersAutomaticallyGeneratedDB.getConfirmation().toString());
     }
 
     public Job.Result populate() {
@@ -53,16 +57,16 @@ public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
                         BUREAU_AUTO_GEN_LETTERS_SQL);
 
                 if (response == null || response.isEmpty()) {
-                    addRow("Withdrawal", errorText);
-                    addRow("Confirmation", errorText);
+                    addRow(WITHDRAWAL, errorText);
+                    addRow(CONFIRMATION, errorText);
                     result.set(Job.Result.failed("No response from database"));
                 } else {
                     response.forEach(this::addRow);
                 }
             });
         } catch (Exception e) {
-            addRow("Withdrawal", errorText);
-            addRow("Confirmation", errorText);
+            addRow(WITHDRAWAL, errorText);
+            addRow(CONFIRMATION, errorText);
             return Job.Result.failed("Failed to get Confirmation letter or withdraw letter information");
         }
 
