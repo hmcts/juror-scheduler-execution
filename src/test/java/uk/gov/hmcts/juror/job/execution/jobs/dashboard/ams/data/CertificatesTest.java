@@ -39,9 +39,6 @@ class CertificatesTest {
     private DashboardData dashboardData;
     private Certificates certificates;
 
-    @TempDir
-    public Path tempDir;
-
     @BeforeEach
     void beforeEach() {
         this.config = AmsDashboardGenerateJobTest.createConfig();
