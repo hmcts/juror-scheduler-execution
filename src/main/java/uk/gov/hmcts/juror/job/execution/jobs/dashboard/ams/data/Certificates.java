@@ -56,19 +56,6 @@ public class Certificates extends DashboardDataEntry {
             return DATE_FORMATTER.format(date);
         }
     }
-    private KeyStore loadKeyStore(final File file, final char... password)
-        throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
-
-        byte[] fileContent = Files.readAllBytes(file.toPath());
-        if (this.config.getPncCertificateBase64Encoded()) {
-            fileContent = Base64.decodeBase64(fileContent);
-        }
-        final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        try (InputStream inputStream = new ByteArrayInputStream(fileContent)) {
-            keyStore.load(inputStream, password);
-        }
-        return keyStore;
-    }
 
     public Job.Result populate() {
         try {
@@ -108,6 +95,20 @@ public class Certificates extends DashboardDataEntry {
             log.error("Failed to populate certificates", e);
             return Job.Result.failed("Failed to populate certificates. Unexpected exception", e);
         }
+    }
+
+    public KeyStore loadKeyStore(final File file, final char... password)
+        throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+        if (this.config.getPncCertificateBase64Encoded()) {
+            fileContent = Base64.decodeBase64(fileContent);
+        }
+        final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        try (InputStream inputStream = new ByteArrayInputStream(fileContent)) {
+            keyStore.load(inputStream, password);
+        }
+        return keyStore;
     }
 }
 
