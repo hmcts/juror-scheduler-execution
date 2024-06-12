@@ -17,6 +17,8 @@ import java.util.function.BiFunction;
 @Slf4j
 public final class DatabaseFieldConvertor {
 
+    static final String FAILED_CONVERT_RESULT_MESSAGE = "Failed to convert result set into: ";
+
     static final Map<Class<?>, BiFunction<DatabaseColumn, ResultSet, ?>> CONVERTERS = new ConcurrentHashMap<>();
 
     private DatabaseFieldConvertor() {
@@ -56,7 +58,7 @@ public final class DatabaseFieldConvertor {
         try {
             return resultSet.getObject(columnName, type);
         } catch (Exception e) {
-            throw new InternalServerException("Failed to convert result set into: " + type, e);
+            throw new InternalServerException(FAILED_CONVERT_RESULT_MESSAGE + type, e);
         }
     }
 
@@ -75,8 +77,8 @@ public final class DatabaseFieldConvertor {
             }
             return dto;
         } catch (Exception exception) {
-            log.error("Failed to convert result set into: " + convertToClass, exception);
-            throw new InternalServerException("Failed to convert result set into: " + convertToClass, exception);
+            log.error(FAILED_CONVERT_RESULT_MESSAGE + convertToClass, exception);
+            throw new InternalServerException(FAILED_CONVERT_RESULT_MESSAGE + convertToClass, exception);
         }
     }
 

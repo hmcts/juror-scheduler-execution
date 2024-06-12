@@ -33,4 +33,7 @@ public class AmsDashboardConfig implements HasDatabaseConfig {
 
     @NotBlank
     private String pncCertificateAlias;
+
+    @NotBlank
+    private Boolean pncCertificateBase64Encoded;
 }

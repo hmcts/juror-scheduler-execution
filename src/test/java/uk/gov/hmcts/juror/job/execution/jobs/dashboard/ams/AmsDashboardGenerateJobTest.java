@@ -57,6 +57,7 @@ public class AmsDashboardGenerateJobTest {
         config.setDatabase(mock(DatabaseConfig.class));
         config.setPncCertificateLocation(mock(File.class));
         config.setDashboardCsvLocation(mock(File.class));
+        config.setPncCertificateBase64Encoded(false);
         config.setPncCertificatePassword(RandomStringUtils.randomAlphabetic(10));
         config.setPncCertificateAlias(RandomStringUtils.randomAlphabetic(10));
         return config;

@@ -30,6 +30,7 @@ public class PncCheck extends DashboardDataEntry {
 
     public Job.Result populate() {
         final String errorText = "ERROR";
+        final String bureauText = "Bureau";
         LocalDateTime lastUpdatedAt = null;
         Job.Result result;
         try {
@@ -37,7 +38,7 @@ public class PncCheck extends DashboardDataEntry {
                 schedulerServiceClient.getLatestTask("PNC_BATCH");
 
             if (task == null) {
-                this.addRow("Bureau", errorText, errorText, errorText, errorText);
+                this.addRow(bureauText, errorText, errorText, errorText, errorText);
                 result = Job.Result.failed("Failed to get PNC check results");
             } else {
                 String submitted = task.getMetaData().getOrDefault(PncBatchJob.TOTAL_CHECKS_REQUESTED_KEY, "0");
@@ -47,13 +48,13 @@ public class PncCheck extends DashboardDataEntry {
                 Long maxRetriesExceeded = getPoliceCheckValue(task, PoliceCheck.UNCHECKED_MAX_RETRIES_EXCEEDED);
 
 
-                addRow("Bureau", submitted, String.valueOf(eligible + ineligible), String.valueOf(ineligible),
+                addRow(bureauText, submitted, String.valueOf(eligible + ineligible), String.valueOf(ineligible),
                     String.valueOf(maxRetriesExceeded));
                 lastUpdatedAt = task.getLastUpdatedAt();
                 result = Job.Result.passed();
             }
         } catch (Exception e) {
-            this.addRow("Bureau", errorText, errorText, errorText, errorText);
+            this.addRow(bureauText, errorText, errorText, errorText, errorText);
             result = Job.Result.failed("Failed to get PNC check results", e);
         }
         addRow("Court", "0", "0", "0", "0");

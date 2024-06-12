@@ -1,11 +1,20 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardConfig;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,10 +31,12 @@ public class Certificates extends DashboardDataEntry {
     final AmsDashboardConfig config;
     final Clock clock;
 
+    static final String JOB_TITLE = "Certificates";
+
     public Certificates(DashboardData dashboardData,
                         AmsDashboardConfig config,
                         Clock clock) {
-        super(dashboardData, "Certificates", "Name", "Expiry Date", "Status");
+        super(dashboardData, JOB_TITLE, "Name", "Expiry Date", "Status");
         this.config = config;
         this.clock = clock;
     }
@@ -54,9 +65,9 @@ public class Certificates extends DashboardDataEntry {
             String message = null;
             Date expiryDate = null;
             String status = "OK";
-            KeyStore keyStore = KeyStore
-                .getInstance(config.getPncCertificateLocation(),
-                    config.getPncCertificatePassword().toCharArray());
+
+            KeyStore keyStore = loadKeyStore(config.getPncCertificateLocation(),
+                config.getPncCertificatePassword().toCharArray());
 
             if (keyStore.containsAlias(config.getPncCertificateAlias())) {
                 Certificate certificate = keyStore.getCertificate(config.getPncCertificateAlias());
@@ -75,17 +86,31 @@ public class Certificates extends DashboardDataEntry {
                 expiryDate,
                 status
             );
-            populateTimestamp(dashboardData, "Certificates", LocalDateTime.now(clock));
+            populateTimestamp(dashboardData, JOB_TITLE, LocalDateTime.now(clock));
             if (message == null) {
                 return Job.Result.passed();
             } else {
                 return Job.Result.failed(message);
             }
         } catch (Exception e) {
-            populateTimestamp(dashboardData, "Certificates", LocalDateTime.now(clock));
+            populateTimestamp(dashboardData, JOB_TITLE, LocalDateTime.now(clock));
             log.error("Failed to populate certificates", e);
             return Job.Result.failed("Failed to populate certificates. Unexpected exception", e);
         }
+    }
+
+    public KeyStore loadKeyStore(final File file, final char... password)
+        throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+        if (this.config.getPncCertificateBase64Encoded()) {
+            fileContent = Base64.decodeBase64(fileContent);
+        }
+        final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        try (InputStream inputStream = new ByteArrayInputStream(fileContent)) {
+            keyStore.load(inputStream, password);
+        }
+        return keyStore;
     }
 }
 

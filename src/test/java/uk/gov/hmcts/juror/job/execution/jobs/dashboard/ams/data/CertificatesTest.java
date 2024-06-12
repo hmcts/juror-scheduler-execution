@@ -1,9 +1,7 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardConfig;
@@ -39,8 +37,6 @@ class CertificatesTest {
     private DashboardData dashboardData;
     private Certificates certificates;
 
-    private MockedStatic<KeyStore> keyStoreMockedStatic;
-
     @BeforeEach
     void beforeEach() {
         this.config = AmsDashboardGenerateJobTest.createConfig();
@@ -48,13 +44,6 @@ class CertificatesTest {
         this.dashboardData = mock(DashboardData.class);
         this.certificates = spy(new Certificates(dashboardData, config, clock));
 
-    }
-
-    @AfterEach
-    void afterEach() {
-        if (keyStoreMockedStatic != null) {
-            keyStoreMockedStatic.close();
-        }
     }
 
     @Test
@@ -107,21 +96,22 @@ class CertificatesTest {
 
     @Test
     void positivePopulateCertificateDoesNotExpiredWithin30Days() throws Exception {
-        keyStoreMockedStatic = Mockito.mockStatic(KeyStore.class);
+
         KeyStore keyStore = mock(KeyStore.class);
         X509Certificate certificate = mock(X509Certificate.class);
 
         Date expiryDate = Date.from(clock.instant().minus(31, ChronoUnit.DAYS));
         doReturn(expiryDate).when(certificate).getNotAfter();
 
-        keyStoreMockedStatic.when(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
-            config.getPncCertificatePassword().toCharArray())).thenReturn(keyStore);
+        doReturn(keyStore).when(certificates).loadKeyStore(config.getPncCertificateLocation(),
+            config.getPncCertificatePassword().toCharArray());
 
         doNothing().when(certificates).addRow(any(), any(Date.class), any());
         doNothing().when(certificates).populateTimestamp(any(), any(), any(LocalDateTime.class));
 
         doReturn(true).when(keyStore).containsAlias(config.getPncCertificateAlias());
         doReturn(certificate).when(keyStore).getCertificate(config.getPncCertificateAlias());
+
 
         Job.Result result = certificates.populate();
 
@@ -133,16 +123,16 @@ class CertificatesTest {
 
         assertEquals(Job.Result.passed(), result, "Result should be passed");
 
-        keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
-            config.getPncCertificatePassword().toCharArray()), times(1));
+        Mockito.verify(certificates, times(1)).loadKeyStore(config.getPncCertificateLocation(),
+            config.getPncCertificatePassword().toCharArray());
     }
 
     @Test
     void negativePopulateCanNotFindCertificateAlias() throws Exception {
-        keyStoreMockedStatic = Mockito.mockStatic(KeyStore.class);
+
         KeyStore keyStore = mock(KeyStore.class);
-        keyStoreMockedStatic.when(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
-            config.getPncCertificatePassword().toCharArray())).thenReturn(keyStore);
+        doReturn(keyStore).when(certificates).loadKeyStore(config.getPncCertificateLocation(),
+            config.getPncCertificatePassword().toCharArray());
 
         doNothing().when(certificates).addRow(any(), any(Date.class), any());
         doNothing().when(certificates).populateTimestamp(any(), any(), any(LocalDateTime.class));
@@ -160,19 +150,19 @@ class CertificatesTest {
         assertEquals(Job.Result.failed("Unable to locate certificate from alias"), result,
             "Result should be failed with message");
 
-        keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
-            config.getPncCertificatePassword().toCharArray()), times(1));
+        Mockito.verify(certificates, times(1)).loadKeyStore(config.getPncCertificateLocation(),
+            config.getPncCertificatePassword().toCharArray());
     }
 
     @Test
     void negativePopulateWrongCertificateType() throws Exception {
-        keyStoreMockedStatic = Mockito.mockStatic(KeyStore.class);
+
         KeyStore keyStore = mock(KeyStore.class);
         Certificate certificate = mock(Certificate.class);
         when(certificate.getType()).thenReturn("SomeCertificateType");
 
-        keyStoreMockedStatic.when(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
-            config.getPncCertificatePassword().toCharArray())).thenReturn(keyStore);
+        doReturn(keyStore).when(certificates).loadKeyStore(config.getPncCertificateLocation(),
+            config.getPncCertificatePassword().toCharArray());
 
         doNothing().when(certificates).addRow(any(), any(Date.class), any());
         doNothing().when(certificates).populateTimestamp(any(), any(), any(LocalDateTime.class));
@@ -191,21 +181,22 @@ class CertificatesTest {
         assertEquals(Job.Result.failed("Unable to process certificate of type 'SomeCertificateType'"), result,
             "Result should be passed");
 
-        keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
-            config.getPncCertificatePassword().toCharArray()), times(1));
+        Mockito.verify(certificates, times(1)).loadKeyStore(config.getPncCertificateLocation(),
+            config.getPncCertificatePassword().toCharArray());
     }
 
     @Test
     void negativePopulateCertificateExpiresWithin30Days() throws Exception {
-        keyStoreMockedStatic = Mockito.mockStatic(KeyStore.class);
+
         KeyStore keyStore = mock(KeyStore.class);
         X509Certificate certificate = mock(X509Certificate.class);
 
         Date expiryDate = Date.from(clock.instant().minus(29, ChronoUnit.DAYS));
         doReturn(expiryDate).when(certificate).getNotAfter();
 
-        keyStoreMockedStatic.when(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
-            config.getPncCertificatePassword().toCharArray())).thenReturn(keyStore);
+        doReturn(keyStore).when(certificates).loadKeyStore(config.getPncCertificateLocation(),
+            config.getPncCertificatePassword().toCharArray());
+
 
         doNothing().when(certificates).addRow(any(), any(Date.class), any());
         doNothing().when(certificates).populateTimestamp(any(), any(), any(LocalDateTime.class));
@@ -223,21 +214,20 @@ class CertificatesTest {
 
         assertEquals(Job.Result.passed(), result, "Result should be passed");
 
-        keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
-            config.getPncCertificatePassword().toCharArray()), times(1));
+        Mockito.verify(certificates, times(1)).loadKeyStore(config.getPncCertificateLocation(),
+            config.getPncCertificatePassword().toCharArray());
 
     }
 
     @Test
     void negativePopulateUnexpectedException() throws Exception {
 
-        keyStoreMockedStatic = Mockito.mockStatic(KeyStore.class);
         KeyStore keyStore = mock(KeyStore.class);
         X509Certificate certificate = mock(X509Certificate.class);
 
+        doReturn(keyStore).when(certificates).loadKeyStore(config.getPncCertificateLocation(),
+            config.getPncCertificatePassword().toCharArray());
 
-        keyStoreMockedStatic.when(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
-            config.getPncCertificatePassword().toCharArray())).thenReturn(keyStore);
 
         doNothing().when(certificates).addRow(any(), any(Date.class), any());
         doNothing().when(certificates).populateTimestamp(any(), any(), any(LocalDateTime.class));
@@ -251,11 +241,10 @@ class CertificatesTest {
         verify(certificates, times(1))
             .populateTimestamp(dashboardData, "Certificates", LocalDateTime.now(clock));
 
-
         assertEquals(Job.Result.failed("Failed to populate certificates. Unexpected exception", cause), result,
             "Result should be failed with message");
 
-        keyStoreMockedStatic.verify(() -> KeyStore.getInstance(config.getPncCertificateLocation(),
-            config.getPncCertificatePassword().toCharArray()), times(1));
+        Mockito.verify(certificates, times(1)).loadKeyStore(config.getPncCertificateLocation(),
+            config.getPncCertificatePassword().toCharArray());
     }
 }

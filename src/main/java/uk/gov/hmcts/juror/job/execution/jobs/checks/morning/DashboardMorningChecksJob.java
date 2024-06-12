@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 @Getter
+@SuppressWarnings("PMD.LawOfDemeter")
 public class DashboardMorningChecksJob extends LinearJob {
 
     private final DashboardMorningChecksConfig config;
@@ -85,23 +86,7 @@ public class DashboardMorningChecksJob extends LinearJob {
                     this.schedulerServiceClient.getLatestTask(jobKey);
 
                 Support.TableItem.Status status;
-                if (taskResponse != null) {
-                    if (taskResponse.getCreatedAt().isBefore(support.getStartTime().minusHours(24))) {
-                        status = Support.TableItem.Status.JOB_NOT_FOUND_EXECUTED;
-                        metaData.put(jobKey, "was not executed in last 24 hours");
-                        support.addMessage(jobKey + " was not executed in last 24 hours");
-                    } else {
-                        status = Support.TableItem.mapStatus(taskResponse.getStatus());
-                        metaData.put(jobKey, taskResponse.getStatus().name());
-                        if (taskResponse.getStatus() != Status.SUCCESS) {
-                            support.addMessage(jobKey + " was not successful");
-                        }
-                    }
-                } else {
-                    status = Support.TableItem.Status.JOB_NOT_FOUND;
-                    metaData.put(jobKey, "was not found");
-                    support.addMessage(jobKey + " was not found");
-                }
+                status = processTaskResponse(support, metaData, jobKey, taskResponse);
                 support.addTableRow("Scheduled Job", jobKey, status);
                 if (status != Support.TableItem.Status.OK) {
                     resultStatus = Status.FAILED;
@@ -123,6 +108,29 @@ public class DashboardMorningChecksJob extends LinearJob {
             log.error("Failed to check jobs result", e);
             return new Result(Status.FAILED_UNEXPECTED_EXCEPTION, "Failed to check jobs result", e);
         }
+    }
+
+    private Support.TableItem.Status processTaskResponse(Support support, Map<String, String> metaData, String jobKey,
+                                               SchedulerServiceClient.TaskResponse taskResponse) {
+        Support.TableItem.Status status;
+        if (taskResponse != null) {
+            if (taskResponse.getCreatedAt().isBefore(support.getStartTime().minusHours(24))) {
+                status = Support.TableItem.Status.JOB_NOT_FOUND_EXECUTED;
+                metaData.put(jobKey, "was not executed in last 24 hours");
+                support.addMessage(jobKey + " was not executed in last 24 hours");
+            } else {
+                status = Support.TableItem.mapStatus(taskResponse.getStatus());
+                metaData.put(jobKey, taskResponse.getStatus().name());
+                if (taskResponse.getStatus() != Status.SUCCESS) {
+                    support.addMessage(jobKey + " was not successful");
+                }
+            }
+        } else {
+            status = Support.TableItem.Status.JOB_NOT_FOUND;
+            metaData.put(jobKey, "was not found");
+            support.addMessage(jobKey + " was not found");
+        }
+        return status;
     }
 
     @Getter
