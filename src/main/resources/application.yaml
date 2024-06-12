@@ -164,6 +164,7 @@ jobs:
         allow-unknown-keys: true
       pnc-certificate-location: /mnt/secrets/juror/pnckeystore
       pnc-certificate-password: ${PNCSTORE_PASSWORD}
+      pnc-certificate-alias: "1"
       pnc-certificate-base64-encoded: true
 defaults:
   database:
