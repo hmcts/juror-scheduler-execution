@@ -234,7 +234,7 @@ dependencies {
   annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
 
-  compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+  compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
 
   // Validation
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.2.5'
