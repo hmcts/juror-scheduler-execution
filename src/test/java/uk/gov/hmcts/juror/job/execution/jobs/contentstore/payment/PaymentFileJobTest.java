@@ -9,23 +9,21 @@ import static org.mockito.Mockito.spy;
 
 public class PaymentFileJobTest extends ContentStoreFileJobTest {
 
-    private PaymentConfig config;
-
     public PaymentFileJobTest() {
         super();
     }
 
     @Override
     protected PaymentFileJob getContentStoreFileJob() throws IOException {
-        this.config = new PaymentConfig();
-        this.config.setDatabase(createDatabaseConfig());
-        this.config.setFtpDirectory(Files.createTempDirectory("PaymentFileJobTest").toFile());
-        this.ftpDirectory = this.config.getFtpDirectory();
-        this.databaseConfig = this.config.getDatabase();
+        PaymentConfig config = new PaymentConfig();
+        config.setDatabase(createDatabaseConfig());
+        config.setFtpDirectory(Files.createTempDirectory("PaymentFileJobTest").toFile());
+        this.ftpDirectory = config.getFtpDirectory();
+        this.databaseConfig = config.getDatabase();
         this.fileType = "PAYMENT";
         this.procedureName = "payment_files_to_clob";
         this.procedureArguments = new Object[]{};
-        this.fileNameRegex = "JURY\\d+\\.\\d+.*";
+        this.fileNameRegex = "\\d+.*\\d{13}\\.dat";
         this.sftpClass = PaymentSftp.class;
         return spy(new PaymentFileJob(
             config,
