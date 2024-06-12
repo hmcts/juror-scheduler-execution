@@ -22,7 +22,7 @@ public class PaymentFileJob extends ContentStoreFileJob {
             "PAYMENT",
             "payment_files_to_clob",
             new Object[0],
-            "JURY\\d+\\.\\d+.*",
+            "\\d+.*\\d{13}\\.dat",
             PaymentSftp.class);
     }
 }
