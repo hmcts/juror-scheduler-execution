@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 @Getter
+@SuppressWarnings("PMD.LawOfDemeter")
 public class DashboardMorningChecksJob extends LinearJob {
 
     private final DashboardMorningChecksConfig config;

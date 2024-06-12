@@ -14,7 +14,7 @@ public class HouseKeeping extends DashboardDataEntry {
     final SchedulerServiceClient schedulerServiceClient;
     final Clock clock;
 
-    static final String ERROR = "Error";
+    static final String ERROR = "ERROR";
 
     static final String FAILED = "Failed";
 
