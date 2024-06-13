@@ -29,7 +29,7 @@ uk:
       juror:
         security:
           use-database: false
-          token-validity: 18000
+          token-validity: 600000
           secret: ${SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
         job:
           execution:
