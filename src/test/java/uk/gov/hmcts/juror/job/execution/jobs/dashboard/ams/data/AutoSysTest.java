@@ -80,7 +80,7 @@ class AutoSysTest {
         doReturn(taskResponse).when(autoSys).populate("PRINT_JOB");
         doReturn(lastUpdatedTaskResponse).when(autoSys).populate("POOL_TRANSFER");
         doReturn(taskResponse).when(autoSys).populate("WITHDRAW_LETTER");
-        doReturn(taskResponse).when(autoSys).populate("PNC_CHECK_BULK");
+        doReturn(taskResponse).when(autoSys).populate("PNC_BATCH");
 
         doNothing().when(autoSys).populateTimestamp(any(), any(), any(LocalDateTime.class));
 
@@ -97,7 +97,7 @@ class AutoSysTest {
         verify(autoSys, times(1)).populate("PAYMENT_JOB");
         verify(autoSys, times(1)).populate("PRINT_JOB");
         verify(autoSys, times(1)).populate("POOL_TRANSFER");
-        verify(autoSys, times(1)).populate("PNC_CHECK_BULK");
+        verify(autoSys, times(1)).populate("PNC_BATCH");
         verify(autoSys, times(1)).populate();
     }
 
@@ -122,7 +122,7 @@ class AutoSysTest {
         doReturn(faildeTaskResponse).when(autoSys).populate("PRINT_JOB");
         doReturn(lastUpdatedTaskResponse).when(autoSys).populate("POOL_TRANSFER");
         doReturn(taskResponse).when(autoSys).populate("WITHDRAW_LETTER");
-        doReturn(taskResponse).when(autoSys).populate("PNC_CHECK_BULK");
+        doReturn(taskResponse).when(autoSys).populate("PNC_BATCH");
 
         doNothing().when(autoSys).populateTimestamp(any(), any(), any(LocalDateTime.class));
 
@@ -140,7 +140,7 @@ class AutoSysTest {
         verify(autoSys, times(1)).populate("PAYMENT_JOB");
         verify(autoSys, times(1)).populate("PRINT_JOB");
         verify(autoSys, times(1)).populate("POOL_TRANSFER");
-        verify(autoSys, times(1)).populate("PNC_CHECK_BULK");
+        verify(autoSys, times(1)).populate("PNC_BATCH");
         verify(autoSys, times(1)).populate();
     }
 
@@ -159,7 +159,7 @@ class AutoSysTest {
         doReturn(taskResponse).when(autoSys).populate("PAYMENT_JOB");
         doReturn(null).when(autoSys).populate("PRINT_JOB");
         doReturn(lastUpdatedTaskResponse).when(autoSys).populate("POOL_TRANSFER");
-        doReturn(taskResponse).when(autoSys).populate("PNC_CHECK_BULK");
+        doReturn(taskResponse).when(autoSys).populate("PNC_BATCH");
 
         doNothing().when(autoSys).populateTimestamp(any(), any(), any(LocalDateTime.class));
 
@@ -176,7 +176,7 @@ class AutoSysTest {
         verify(autoSys, times(1)).populate("PAYMENT_JOB");
         verify(autoSys, times(1)).populate("PRINT_JOB");
         verify(autoSys, times(1)).populate("POOL_TRANSFER");
-        verify(autoSys, times(1)).populate("PNC_CHECK_BULK");
+        verify(autoSys, times(1)).populate("PNC_BATCH");
         verify(autoSys, times(1)).populate();
 
     }
