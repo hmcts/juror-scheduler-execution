@@ -16,7 +16,7 @@ public class AutoSys extends DashboardDataEntry {
         "PAYMENT_JOB",
         "PRINT_JOB",
         "POOL_TRANSFER",
-        "PNC_CHECK_BULK"
+        "PNC_BATCH"
     );
     final SchedulerServiceClient schedulerServiceClient;
     final Clock clock;
