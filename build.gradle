@@ -1,6 +1,6 @@
 buildscript {
   ext {
-    springBootVersion = '3.3.0'
+    springBootVersion = '3.3.1'
     postgresVersion = '42.7.3'
     log4JVersion = "2.23.1"
   }
