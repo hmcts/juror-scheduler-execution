@@ -225,7 +225,7 @@ public class ContentStoreFileJobTest {
                 verify(databaseService, times(1))
                     .execute(eq(databaseConfig), any());
 
-                verify(databaseService, times(1))
+                verify(databaseService, never())
                     .executeStoredProcedure(connection, procedureName, procedureArguments);
 
                 verify(databaseService, times(1))
@@ -387,7 +387,7 @@ public class ContentStoreFileJobTest {
             + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
 
         private static final String UPDATE_SQL_FAILED_QUERY = "UPDATE CONTENT_STORE "
-            + "SET CS.FAILED_FILE_TRANSFER=true "
+            + "SET FAILED_FILE_TRANSFER=true "
             + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
 
         @Test

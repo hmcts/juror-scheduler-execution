@@ -36,7 +36,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
         + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
 
     private static final String UPDATE_SQL_FAILED_QUERY = "UPDATE CONTENT_STORE "
-        + "SET CS.FAILED_FILE_TRANSFER=true "
+        + "SET FAILED_FILE_TRANSFER=true "
         + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
 
     private final SftpService sftpService;
@@ -76,32 +76,37 @@ public abstract class ContentStoreFileJob extends LinearJob {
         );
     }
 
+    private boolean isRunFailedOnly(MetaData metaData) {
+        if (metaData.getRequestParams().containsKey("onlyRunFailed")) {
+            return Boolean.parseBoolean(metaData.getRequestParams().get("onlyRunFailed"));
+        } else {
+            return false;
+        }
+    }
+
     protected Result generateFiles(MetaData metaData) {
         Map<String, String> resultMetaData = new ConcurrentHashMap<>();
         AtomicInteger successCount = new AtomicInteger(0);
         AtomicInteger failureCount = new AtomicInteger(0);
         AtomicInteger totalFiles = new AtomicInteger(0);
 
-        final Boolean onlyRunFailed;
-        if (metaData.getRequestParams().containsKey("onlyRunFailed")) {
-            onlyRunFailed = Boolean.parseBoolean(metaData.getRequestParams().get("onlyRunFailed"));
-        } else {
-            onlyRunFailed = null;
-        }
-
+        boolean isRunFailedOnly = isRunFailedOnly(metaData);
         databaseService.execute(getDatabaseConfig(), connection -> {
-            log.info(fileType + ": Updating Content-Store");
-            databaseService.executeStoredProcedure(connection, getProcedureName(), getProcedureArguments());
+            if (!isRunFailedOnly) {
+                log.info(fileType + ": Updating Content-Store");
+                databaseService.executeStoredProcedure(connection, getProcedureName(), getProcedureArguments());
+            }
             log.info(fileType + ": Getting Items to generate");
 
             List<ContentStore> contentStoreList =
                 databaseService.executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType);
 
             // check the flag - only run failed transfers, otherwise run all (failed and new)
-            if (Boolean.TRUE.equals(onlyRunFailed)) {
+            if (isRunFailedOnly) {
                 contentStoreList = contentStoreList
                     .stream()
-                    .filter(contentStore -> contentStore.getFailedFileTransfer() == onlyRunFailed).toList();
+                    .filter(ContentStore::isFailedFileTransfer)
+                    .toList();
             }
 
             totalFiles.set(contentStoreList.size());
