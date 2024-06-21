@@ -18,5 +18,9 @@ public class ContentStore {
     private String data;
     @DatabaseColumn(name = "FAILED_FILE_TRANSFER", setter = "setFailedFileTransfer")
     private Boolean failedFileTransfer;
+
+    public boolean isFailedFileTransfer() {
+        return failedFileTransfer != null && failedFileTransfer;
+    }
 }
 
