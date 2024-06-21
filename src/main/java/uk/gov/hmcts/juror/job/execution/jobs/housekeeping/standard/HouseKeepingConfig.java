@@ -8,12 +8,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
+import uk.gov.hmcts.juror.job.execution.config.contracts.HasDatabaseConfig;
 
 @Configuration
 @ConfigurationProperties(prefix = "jobs.housekeeping.standard")
 @Getter
 @Setter
-public class HouseKeepingConfig {
+public class HouseKeepingConfig implements HasDatabaseConfig {
 
     @NestedConfigurationProperty
     private DatabaseConfig database;
@@ -24,6 +25,6 @@ public class HouseKeepingConfig {
     private Boolean readOnly;
 
     @NotNull
-    @Min(0)
-    private Integer maxRuntime;
+    @Min(600)
+    private int maxTimeout;
 }
