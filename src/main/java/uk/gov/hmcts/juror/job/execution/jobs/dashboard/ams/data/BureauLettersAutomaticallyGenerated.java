@@ -65,6 +65,7 @@ public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
                 }
             });
         } catch (Exception e) {
+            log.error("Unable to get Bureau Letters Automatically Generated", e);
             addRow(WITHDRAWAL, errorText);
             addRow(CONFIRMATION, errorText);
             return Job.Result.failed("Failed to get Confirmation letter or withdraw letter information");
