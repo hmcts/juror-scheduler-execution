@@ -34,6 +34,8 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public void execute(DatabaseConfig config, Consumer<Connection> connectionConsumer) {
+
+
         try (Connection connection = getConnection(config)) {
             connectionConsumer.accept(connection);
         } catch (Exception e) {
@@ -61,13 +63,15 @@ public class DatabaseServiceImpl implements DatabaseService {
         return config;
     }
 
-    private Connection getConnection(DatabaseConfig databaseConfig) throws SQLException {
+    private Connection getConnection(DatabaseConfig databaseConfig) throws SQLException, ClassNotFoundException {
         DatabaseConfig actualConfig = getEffectiveDatabaseConfig(databaseConfig);
-
-        Connection connection = DriverManager.getConnection(actualConfig.getUrl(),
+        Connection connection = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            connection = DriverManager.getConnection(actualConfig.getUrl(),
             actualConfig.getUsername(),
             actualConfig.getPassword());
-        try {
+
             connection.setSchema(actualConfig.getSchema());
         } catch (Exception exception) {
             connection.close();
