@@ -18,7 +18,7 @@ public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
         coalesce(sum(case when jh.history_code = 'RDIS' then 1 else 0 end),0) withdrawal,
         coalesce(sum(case when jh.history_code = 'RRES' then 1 else 0 end),0) confirmation
     from juror_mod.juror_history jh
-    where jh.user_id = 'AUTO' and jh.date_created::date = current_date;
+    where jh.user_id = 'AUTO' and jh.date_created::date = current_date -1;
         """;
     final DatabaseService databaseService;
     final DatabaseConfig databaseConfig;
