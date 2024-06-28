@@ -54,6 +54,7 @@ public class PncCheck extends DashboardDataEntry {
                 result = Job.Result.passed();
             }
         } catch (Exception e) {
+            log.error("Unable to get PNC check results", e);
             this.addRow(bureauText, errorText, errorText, errorText, errorText);
             result = Job.Result.failed("Failed to get PNC check results", e);
         }

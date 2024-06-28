@@ -1,5 +1,6 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings("PMD.LawOfDemeter")
+@Slf4j
 public class BureauLettersToBePrinted extends DashboardDataEntry {
     public static final String BUREAU_LETTERS_TO_BE_PRINTED_SQL = """
 select tfa.form_type type,
@@ -86,6 +88,7 @@ select tfa.form_type type,
                 }
             });
         } catch (Exception e) {
+            log.error("Unable to get Bureau Letters To Be Printed", e);
             addRow(errorText, errorText, errorText);
             result.set(Job.Result.failed("Unexpected exception", e));
         }
