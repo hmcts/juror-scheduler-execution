@@ -1,5 +1,6 @@
 package uk.gov.hmcts.juror.job.execution.service;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -113,6 +115,23 @@ class DatabaseServiceImplTest {
             assertEquals("Failed to execute connection sql consumer", internalServerException.getMessage(),
                 "Message should be the same");
             assertEquals(cause, internalServerException.getCause(), "Cause should be the same");
+        }
+
+        @Test
+        void negativeExecutionTestUnexpectedExceptionBeforeConnection() {
+            driverManagerMockedStatic.when(() -> DriverManager.getConnection(config.getUrl(), config.getUsername(),
+                    config.getPassword()
+                ))
+                .thenReturn(null);
+            InternalServerException internalServerException = assertThrows(InternalServerException.class, () -> {
+                databaseService.execute(config, connection -> {
+                    fail("should not get here");
+                });
+            }, "Should throw InternalServerException");
+            assertEquals("Failed to execute connection sql consumer",
+                internalServerException.getMessage(), "Message should be the same");
+            assertEquals(NullPointerException.class, internalServerException.getCause().getClass(),
+                "Cause should be the same");
         }
 
         @Test
