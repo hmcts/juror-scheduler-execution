@@ -38,11 +38,6 @@ public class AmsDashboardGenerateJobStaticLog extends LinearJob {
         this.clock = clock;
     }
 
-    @PostConstruct
-    void tmp() {
-        executeRunners(new MetaData("", 1L, new HashMap<>()));
-    }
-
     @Override
     public ResultSupplier getResultSupplier() {
         return new ResultSupplier(true, List.of(
