@@ -69,13 +69,15 @@ public class DatabaseServiceImpl implements DatabaseService {
         try {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection(actualConfig.getUrl(),
-            actualConfig.getUsername(),
-            actualConfig.getPassword());
+                actualConfig.getUsername(),
+                actualConfig.getPassword());
 
             connection.setSchema(actualConfig.getSchema());
         } catch (Exception exception) {
-            connection.close();
             log.error("Failed to set database schema", exception);
+            if (connection != null) {
+                connection.close();
+            }
             throw exception;//Close connection and throw original error we do not want to use try with resource here
             // as we need the connection to remain open for consuming sources
         }

@@ -149,6 +149,7 @@ sonarqube {
   properties {
     property "sonar.projectName", "Juror :: juror-scheduler-execution"
     property "sonar.projectKey", "uk.gov.hmcts.juror:juror-scheduler-execution"
+    property "sonar.coverage.exclusions", "src/main/java/uk/gov/hmcts/juror/job/execution/jobs/dashboard/ams/AmsDashboardGenerateJobStaticLog.java"
   }
 }
 
