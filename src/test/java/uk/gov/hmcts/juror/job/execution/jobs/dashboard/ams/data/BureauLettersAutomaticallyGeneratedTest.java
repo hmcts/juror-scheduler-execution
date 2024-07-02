@@ -52,8 +52,8 @@ class BureauLettersAutomaticallyGeneratedTest {
         assertEquals(2, bureauLettersAutomaticallyGenerated.columCount,
             "Expected column count to be 2");
         assertEquals(2, bureauLettersAutomaticallyGenerated.rows.get(0).length);
-        assertEquals("Withdrawal", bureauLettersAutomaticallyGenerated.rows.get(0)[0]);
-        assertEquals("Confirmation", bureauLettersAutomaticallyGenerated.rows.get(0)[1]);
+        assertEquals("Type", bureauLettersAutomaticallyGenerated.rows.get(0)[0]);
+        assertEquals("Count", bureauLettersAutomaticallyGenerated.rows.get(0)[1]);
     }
 
     @Test
