@@ -32,7 +32,7 @@ public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
                                                   DatabaseService databaseService,
                                                   DatabaseConfig databaseConfig,
                                                   Clock clock) {
-        super(dashboardData, "Bureau Letters Automatically Generated", WITHDRAWAL, CONFIRMATION);
+        super(dashboardData, "Bureau Letters Automatically Generated", "Type", "Count");
         this.databaseService = databaseService;
         this.databaseConfig = databaseConfig;
         this.clock = clock;
