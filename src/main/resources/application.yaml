@@ -141,11 +141,6 @@ jobs:
       thirdparty-online-no-months: 6
       welsh-online-responses-no-months: 6
   checks:
-    dashboard-morning-checks:
-      checks-file: /filestore/HOME/jurorpl/checks.txt
-      archive-folder: /filestore/HOME/jurorpl/bin/morning_checks/archive
-      juror-pl-tmp-directory: /filestore/HOME/jurorpl/tmp
-      expected-job-config-location: /Users/benedwards/Desktop/JurorTest/morningChecksConfig.json
     pnc:
       batch:
         batch-size: 500
