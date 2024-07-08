@@ -3,6 +3,7 @@ package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.DashboardDataEntry;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
 import java.time.Clock;
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings("PMD.LawOfDemeter")
 @Slf4j
-public class BureauLettersToBePrinted extends DashboardDataEntry {
+public class BureauLettersToBePrinted extends DashboardDataEntry<DashboardData> {
     public static final String BUREAU_LETTERS_TO_BE_PRINTED_SQL = """
 select tfa.form_type type,
             (case when tfa.form_type ='5221' then 'SUMMONS ENGLISH'

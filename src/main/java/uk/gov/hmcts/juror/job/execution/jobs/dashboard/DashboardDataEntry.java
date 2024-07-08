@@ -1,5 +1,6 @@
-package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
+package uk.gov.hmcts.juror.job.execution.jobs.dashboard;
 
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.DashboardData;
 import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 
 import java.time.LocalDateTime;
@@ -8,16 +9,16 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class DashboardDataEntry {
+public class DashboardDataEntry<D> {
     protected final String title;
 
-    protected final DashboardData dashboardData;
+    protected final D dashboardData;
 
     protected final List<String[]> rows;
 
     protected final int columCount;
 
-    protected DashboardDataEntry(DashboardData dashboardData, String title, String... columns) {
+    protected DashboardDataEntry(D dashboardData, String title, String... columns) {
         this.dashboardData = dashboardData;
         this.title = title;
         this.rows = Collections.synchronizedList(new ArrayList<>());

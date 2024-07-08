@@ -5,12 +5,13 @@ import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.checks.pnc.batch.PncBatchJob;
 import uk.gov.hmcts.juror.job.execution.jobs.checks.pnc.batch.PoliceCheck;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.DashboardDataEntry;
 
 import java.time.LocalDateTime;
 
 @Slf4j
 @SuppressWarnings("PMD.LawOfDemeter")
-public class PncCheck extends DashboardDataEntry {
+public class PncCheck extends DashboardDataEntry<DashboardData> {
     final SchedulerServiceClient schedulerServiceClient;
 
     public PncCheck(DashboardData dashboardData,

@@ -3,6 +3,7 @@ package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.DashboardDataEntry;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardGenerateJobTest;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;

@@ -27,6 +27,8 @@ public class RemoteConfig {
     private String schedulerServiceGetLatestStatusUrl;
     @NotBlank
     private String schedulerServiceGetStatusUrl;
+    @NotBlank
+    private String schedulerServiceGetTaskSearchUrl;
 
     @NotNull
     @NestedConfigurationProperty

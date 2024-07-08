@@ -3,6 +3,7 @@ package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.DashboardDataEntry;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardConfig;
 
 import java.io.ByteArrayInputStream;
@@ -25,7 +26,7 @@ import java.util.Locale;
 
 @Slf4j
 @SuppressWarnings("PMD.LawOfDemeter")
-public class Certificates extends DashboardDataEntry {
+public class Certificates extends DashboardDataEntry<DashboardData> {
     private static final DateFormat DATE_FORMATTER =
         new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.getDefault());
     final AmsDashboardConfig config;

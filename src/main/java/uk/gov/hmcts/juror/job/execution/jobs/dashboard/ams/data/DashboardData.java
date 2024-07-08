@@ -2,6 +2,7 @@ package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
 import lombok.Getter;
 import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.Dashboard;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.AmsDashboardConfig;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
@@ -12,8 +13,7 @@ import java.util.List;
 
 
 @Getter
-public class DashboardData {
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
+public class DashboardData extends Dashboard {
 
     private final BureauLettersAutomaticallyGenerated bureauLettersAutomaticallyGenerated;
     private final BureauLettersToBePrinted bureauLettersToBePrinted;
@@ -25,7 +25,6 @@ public class DashboardData {
     private final HouseKeeping houseKeeping;
     private final Timestamps timestamps;
 
-    private final List<DashboardDataEntry> dashboardDataEntries;
 
     public DashboardData(SchedulerServiceClient schedulerServiceClient,
                          DatabaseService databaseService, AmsDashboardConfig config, Clock clock) {
@@ -53,14 +52,5 @@ public class DashboardData {
             this.houseKeeping,
             this.timestamps
         );
-    }
-
-    public String toCsv(Clock clock) {
-        StringBuilder builder = new StringBuilder(DATE_FORMATTER.format(LocalDateTime.now(clock)));
-        for (DashboardDataEntry entry : this.getDashboardDataEntries()) {
-            builder.append('\n');
-            builder.append(entry.toCsv());
-        }
-        return builder.toString();
     }
 }

@@ -16,6 +16,8 @@ import uk.gov.hmcts.juror.standard.client.contract.ClientType;
 import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 import uk.gov.hmcts.juror.standard.service.exceptions.RemoteGatewayException;
 
+import java.util.List;
+
 @Slf4j
 @Component
 public class SchedulerServiceClientImpl extends AbstractRemoteRestClient implements SchedulerServiceClient {
@@ -23,6 +25,7 @@ public class SchedulerServiceClientImpl extends AbstractRemoteRestClient impleme
     private final String updateStatusUrl;
     private final String getLatestStatusUrl;
     private final String getStatusUrl;
+    private final String getTaskSearchUrl;
 
     public SchedulerServiceClientImpl(
         @ClientType("SchedulerService") RestTemplateBuilder restTemplateBuilder,
@@ -32,13 +35,15 @@ public class SchedulerServiceClientImpl extends AbstractRemoteRestClient impleme
         @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service-update-status-url}") String updateStatusUrl,
         @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service-get-latest-status-url}")
         String getLatestStatusUrl,
-        @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service-get-status-url}") String getStatusUrl
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service-get-status-url}") String getStatusUrl,
+        @Value("${uk.gov.hmcts.juror.job.execution.remote.scheduler-service-get-task-search-url}") String getTaskSearchUrl
     ) {
         super(restTemplateBuilder);
         String urlPrefix = scheme + "://" + host + ":" + port;
         this.updateStatusUrl = urlPrefix + updateStatusUrl;
         this.getLatestStatusUrl = urlPrefix + getLatestStatusUrl;
         this.getStatusUrl = urlPrefix + getStatusUrl;
+        this.getTaskSearchUrl = urlPrefix + getTaskSearchUrl;
     }
 
     @Override
@@ -124,5 +129,32 @@ public class SchedulerServiceClientImpl extends AbstractRemoteRestClient impleme
                     + statusCode);
         }
         return response.getBody();
+    }
+
+    @Override
+    public List<TaskResponse> searchTasks(TaskSearch taskSearch) {
+        ResponseEntity<TaskResponse[]> response;
+        try {
+            response =
+                restTemplate.getForEntity(getTaskSearchUrl, TaskResponse[].class);
+        } catch (Exception exception) {
+            String message = "Failed to search for tasks";
+            log.error(message, exception);
+            throw new InternalServerException(message, exception);
+        }
+
+        final HttpStatusCode statusCode = response.getStatusCode();
+        if (statusCode.equals(HttpStatus.NOT_FOUND)) {
+            return null;
+        }
+        if (!statusCode.equals(HttpStatus.OK)) {
+            throw new RemoteGatewayException(
+                "Call to SchedulerServiceClient.searchTasks(TaskSearch taskSearch) failed status code was: "
+                    + statusCode);
+        }
+        if (response.getBody() == null) {
+            return List.of();
+        }
+        return List.of(response.getBody());
     }
 }
