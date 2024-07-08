@@ -3,6 +3,7 @@ package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.DashboardDataEntry;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
 import java.time.Clock;
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @SuppressWarnings("PMD.LawOfDemeter")
-public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry {
+public class BureauLettersAutomaticallyGenerated extends DashboardDataEntry<DashboardData> {
     static final String BUREAU_AUTO_GEN_LETTERS_SQL = """
     select
         coalesce(sum(case when jh.history_code = 'RDIS' then 1 else 0 end),0) withdrawal,

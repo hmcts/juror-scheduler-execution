@@ -1,8 +1,9 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.DashboardDataEntry;
 
-public class ErrorsOvernight extends DashboardDataEntry {
+public class ErrorsOvernight extends DashboardDataEntry<DashboardData> {
     protected ErrorsOvernight(DashboardData dashboardData) {
         super(dashboardData, "Errors Overnight", "Server Name", "Status");
     }

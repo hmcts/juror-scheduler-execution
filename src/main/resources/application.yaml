@@ -37,6 +37,7 @@ uk:
               scheduler-service-update-status-url: /job/{job-key}/task/{task-id}/status
               scheduler-service-get-latest-status-url: /job/{job-key}/status
               scheduler-service-get-status-url: /job/{job-key}/task/{task-id}
+              scheduler-service-get-task-search-url: /tasks/search
               scheduler-service:
                 security:
                   claims:

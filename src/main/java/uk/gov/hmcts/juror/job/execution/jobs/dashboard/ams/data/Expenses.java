@@ -3,6 +3,7 @@ package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.DashboardDataEntry;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
 import java.time.Clock;
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings("PMD.LawOfDemeter")
 @Slf4j
-public class Expenses extends DashboardDataEntry {
+public class Expenses extends DashboardDataEntry<DashboardData> {
     public static final String EXPENSES_SQL = """
         select to_char(coalesce(max(pd.creation_date), current_date  - '1 day'::interval),'DD/MM/YYYY') date,
          coalesce (sum(expense_total),0) amount

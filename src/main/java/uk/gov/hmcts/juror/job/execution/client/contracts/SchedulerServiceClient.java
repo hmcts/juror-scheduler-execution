@@ -1,8 +1,10 @@
 package uk.gov.hmcts.juror.job.execution.client.contracts;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,6 +14,7 @@ import uk.gov.hmcts.juror.standard.client.contract.Client;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,6 +26,20 @@ public interface SchedulerServiceClient extends Client {
 
     TaskResponse getTask(String jobKey, Long taskId);
 
+
+    List<TaskResponse> searchTasks(TaskSearch taskSearch);
+
+
+    @Getter
+    @Setter
+    @Builder
+    class TaskSearch {
+        @JsonProperty("job_key")
+        private String jobKey;
+        @JsonProperty("from_date")
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        private LocalDateTime fromDate;
+    }
 
     @Getter
     @Setter

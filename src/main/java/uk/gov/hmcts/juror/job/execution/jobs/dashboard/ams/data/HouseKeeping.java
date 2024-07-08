@@ -3,6 +3,7 @@ package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.DashboardDataEntry;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 
 import java.time.Clock;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @SuppressWarnings("PMD.LawOfDemeter")
-public class HouseKeeping extends DashboardDataEntry {
+public class HouseKeeping extends DashboardDataEntry<DashboardData> {
     final SchedulerServiceClient schedulerServiceClient;
     final Clock clock;
 

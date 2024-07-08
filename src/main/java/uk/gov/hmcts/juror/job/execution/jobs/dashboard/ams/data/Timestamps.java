@@ -1,9 +1,11 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.DashboardDataEntry;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Timestamps extends DashboardDataEntry {
+public class Timestamps extends DashboardDataEntry<DashboardData> {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     protected Timestamps(DashboardData dashboardData) {

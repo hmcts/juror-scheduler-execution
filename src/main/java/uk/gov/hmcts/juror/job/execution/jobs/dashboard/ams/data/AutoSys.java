@@ -3,6 +3,7 @@ package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.DashboardDataEntry;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 
 import java.time.Clock;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 @Slf4j
 @SuppressWarnings("PMD.LawOfDemeter")
-public class AutoSys extends DashboardDataEntry {
+public class AutoSys extends DashboardDataEntry<DashboardData> {
     private static final Set<String> JOB_KEYS_TO_TRACK = Set.of(
         "PAYMENT_JOB",
         "PRINT_JOB",
