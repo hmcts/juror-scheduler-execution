@@ -574,8 +574,7 @@ public class ContentStoreFileJobTest {
         }
 
         @Test
-        @SuppressWarnings("VariableDeclarationUsageDistance")
-//Required for mocks setup
+        @SuppressWarnings("VariableDeclarationUsageDistance")//Required for mocks setup
         void negativeParticularSuccess() throws IOException {
             try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class);
                  MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {

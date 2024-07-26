@@ -51,6 +51,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
     private final long retryLimit;
     private final long retryDelay;
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     protected ContentStoreFileJob(
         SftpService sftpService,
         DatabaseService databaseService,
