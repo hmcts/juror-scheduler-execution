@@ -29,13 +29,13 @@ public class SftpServiceImpl implements SftpService {
         ));
     }
 
-
     @Override
-    public Collection<File> upload(Class<? extends Sftp> sftpClass, Collection<File> filesToProcess) {
+    public Collection<File> upload(Class<? extends Sftp> sftpClass, Collection<File> filesToProcess,
+                                   long retryLimit, long retryDelay) {
         Set<File> filesFailedToUpload = new HashSet<>();
         Sftp.SftpServerGateway gateway = getGateway(sftpClass);
         for (File file : filesToProcess) {
-            if (!upload(gateway, file)) {
+            if (!upload(gateway, file, retryLimit, retryDelay)) {
                 filesFailedToUpload.add(file);
             }
         }
@@ -43,17 +43,38 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public boolean upload(Class<? extends Sftp> sftpClass, File fileToProcess) {
-        return upload(getGateway(sftpClass), fileToProcess);
+    public boolean upload(Class<? extends Sftp> sftpClass, File fileToProcess, long retryLimit, long retryDelay) {
+        return upload(getGateway(sftpClass), fileToProcess, retryLimit, retryDelay);
+    }
+
+
+    private boolean upload(Sftp.SftpServerGateway gateway, File fileToProcess, long retryLimit, long retryDelay) {
+        log.info("Uploading: {}", fileToProcess);
+        int retryCount = 0;
+        do {
+            if (retryCount > 0) {
+                log.info("Upload failed retrying ({}/{}): waiting {} ms", retryCount, retryLimit, fileToProcess);
+                try {
+                    Thread.sleep(retryDelay);
+                } catch (InterruptedException e) {
+                    log.error("Failed to sleep", e);
+                }
+            }
+            if (upload(gateway, fileToProcess)) {
+                log.info("Upload successful: {}", fileToProcess);
+                return true;
+            }
+            retryCount++;
+        } while (retryLimit > 0 && retryCount < retryLimit);
+        return false;
     }
 
     private boolean upload(Sftp.SftpServerGateway gateway, File fileToProcess) {
-        log.info("Uploading: " + fileToProcess);
         try {
             gateway.upload(fileToProcess);
             return true;
         } catch (Exception exception) {
-            log.error("Failed to upload file: " + fileToProcess, exception);
+            log.error("Failed to upload file: {}", fileToProcess, exception);
             return false;
         }
     }

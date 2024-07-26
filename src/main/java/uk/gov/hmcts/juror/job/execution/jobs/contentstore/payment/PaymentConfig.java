@@ -25,4 +25,7 @@ public class PaymentConfig implements HasDatabaseConfig, HasSftpConfig {
     private DatabaseConfig database;
     @NotNull
     private File ftpDirectory;
+
+    private long retryLimit;
+    private long retryDelay;
 }

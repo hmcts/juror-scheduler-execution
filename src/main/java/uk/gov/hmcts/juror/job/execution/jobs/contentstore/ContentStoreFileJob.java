@@ -48,6 +48,8 @@ public abstract class ContentStoreFileJob extends LinearJob {
     private final Object[] procedureArguments;
     private final String fileNameRegex;
     private final String fileType;
+    private final long retryLimit;
+    private final long retryDelay;
 
     protected ContentStoreFileJob(
         SftpService sftpService,
@@ -58,7 +60,9 @@ public abstract class ContentStoreFileJob extends LinearJob {
         String procedureName,
         Object[] procedureArguments,
         String fileNameRegex,
-        Class<? extends Sftp> sftpClass
+        Class<? extends Sftp> sftpClass,
+        long retryLimit,
+        long retryDelay
     ) {
         super();
         this.sftpService = sftpService;
@@ -71,6 +75,8 @@ public abstract class ContentStoreFileJob extends LinearJob {
         this.fileNameRegex = fileNameRegex;
         this.sftpClass = sftpClass;
         new File(this.getFtpDirectory().getAbsolutePath()).mkdir();
+        this.retryLimit = retryLimit;
+        this.retryDelay = retryDelay;
         addRules(
             Rules.requireDirectory(this.getFtpDirectory())
         );
@@ -93,10 +99,10 @@ public abstract class ContentStoreFileJob extends LinearJob {
         boolean isRunFailedOnly = isRunFailedOnly(metaData);
         databaseService.execute(getDatabaseConfig(), connection -> {
             if (!isRunFailedOnly) {
-                log.info(fileType + ": Updating Content-Store");
+                log.info("{}: Updating Content-Store", fileType);
                 databaseService.executeStoredProcedure(connection, getProcedureName(), getProcedureArguments());
             }
-            log.info(fileType + ": Getting Items to generate");
+            log.info("{}: Getting Items to generate", fileType);
 
             List<ContentStore> contentStoreList =
                 databaseService.executePreparedStatement(connection, ContentStore.class, SELECT_SQL_QUERY, fileType);
@@ -114,15 +120,15 @@ public abstract class ContentStoreFileJob extends LinearJob {
 
             contentStoreList.forEach(contentStore -> {
                 try {
-                    log.info(fileType + ": Generating file " + count.getAndIncrement() + "/" + totalFiles.get() + ": "
-                        + contentStore.getDocumentId());
+                    log.info("{}: Generating file {}/{}: {}", fileType, count.getAndIncrement(), totalFiles.get(),
+                        contentStore.getDocumentId());
                     File file = FileUtils.createFile(
                         this.getFtpDirectory().getAbsolutePath() + '/' + contentStore.getDocumentId());
 
                     FileUtils.writeToFile(file, contentStore.getData());
                     successCount.incrementAndGet();
                 } catch (Exception e) {
-                    log.error(fileType + ": Failed to generate file for: " + contentStore.getDocumentId(), e);
+                    log.error("{}: Failed to generate file for: {}", fileType, contentStore.getDocumentId(), e);
                     resultMetaData.put("FAILED_TO_GENERATE_FILE_" + failureCount.incrementAndGet(),
                         contentStore.getDocumentId());
                 }
@@ -150,19 +156,19 @@ public abstract class ContentStoreFileJob extends LinearJob {
         String message;
         Status status;
 
-        log.info(fileType + ": Uploading generated files");
+        log.info("{}: Uploading generated files", fileType);
         Set<File> filesToProcess = FileSearch.directory(this.getFtpDirectory(), true)
             .setFileNameRegexFilter(fileNameRegex).search();
         int totalFilesToUpload = filesToProcess.size();
 
         if (filesToProcess.isEmpty()) {
-            log.info(fileType + ": No files found");
+            log.info("{}: No files found", fileType);
             status = Status.SUCCESS;
             message = "No files found";
         } else {
-            log.info(fileType + ": Attempting to upload files");
+            log.info("{}: Attempting to upload files", fileType);
             filesToProcess.forEach(file -> {
-                if (sftpService.upload(sftpClass, file)) {
+                if (sftpService.upload(sftpClass, file, retryLimit, retryDelay)) {
                     updateDateSent(file, successUpdateCount, failedUpdateCount, metaData);
                     successCount.incrementAndGet();
                 } else {
@@ -172,7 +178,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
                 }
                 FileUtils.deleteFile(file);
             });
-            log.info(fileType + ": Job completed");
+            log.info("{}: Job completed", fileType);
 
             if (failureCount.get() > 0 || failedUpdateCount.get() > 0) {
                 message = failureCount.get() + " files failed to upload out of " + filesToProcess.size();
@@ -212,7 +218,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
                 databaseService.executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType);
                 successUpdateCount.incrementAndGet();
             } catch (SQLException e) {
-                log.error(fileType + ": Failed to update file: " + file.getName() + " as uploaded", e);
+                log.error("{}: Failed to update file: {} as uploaded", fileType, file.getName(), e);
                 metaData.put("FAILED_TO_UPDATE_FILE_" + failedUpdateCount.incrementAndGet(), "file.getName()");
             }
         });
@@ -223,7 +229,7 @@ public abstract class ContentStoreFileJob extends LinearJob {
             try {
                 databaseService.executeUpdate(connection, UPDATE_SQL_FAILED_QUERY, file.getName(), fileType);
             } catch (SQLException e) {
-                log.error(fileType + ": Failed to set failed file transfer flag: " + file.getName(), e);
+                log.error("{}: Failed to set failed file transfer flag: {}", fileType, file.getName(), e);
             }
         });
     }

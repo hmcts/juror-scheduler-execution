@@ -23,6 +23,8 @@ public class PrintFileJob extends ContentStoreFileJob {
             "printfiles_to_clob",
             new Object[]{printConfig.getPrintFileRowLimit()},
             "JURY\\d+\\.\\d+.*",
-            PrintSftp.class);
+            PrintSftp.class,
+            printConfig.getRetryLimit(),
+            printConfig.getRetryDelay());
     }
 }
