@@ -23,6 +23,8 @@ public class PaymentFileJob extends ContentStoreFileJob {
             "payment_files_to_clob",
             new Object[0],
             "\\d+.*\\d{13}\\.dat",
-            PaymentSftp.class);
+            PaymentSftp.class,
+            paymentConfig.getRetryLimit(),
+            paymentConfig.getRetryDelay());
     }
 }

@@ -27,4 +27,7 @@ public class PrintConfig implements HasDatabaseConfig, HasSftpConfig {
     private Integer printFileRowLimit;
     @NotNull
     private File ftpDirectory;
+
+    private long retryLimit;
+    private long retryDelay;
 }
