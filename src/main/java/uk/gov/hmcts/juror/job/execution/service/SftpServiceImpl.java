@@ -65,7 +65,7 @@ public class SftpServiceImpl implements SftpService {
                 return true;
             }
             retryCount++;
-        } while (retryLimit > 0 && retryCount < retryLimit);
+        } while (retryLimit > 0 && retryCount <= retryLimit);
         return false;
     }
 
