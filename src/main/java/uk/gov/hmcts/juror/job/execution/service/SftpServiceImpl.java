@@ -58,6 +58,7 @@ public class SftpServiceImpl implements SftpService {
                     Thread.sleep(retryDelay);
                 } catch (InterruptedException e) {
                     log.error("Failed to sleep", e);
+                    Thread.currentThread().interrupt();
                 }
             }
             if (upload(gateway, fileToProcess)) {
