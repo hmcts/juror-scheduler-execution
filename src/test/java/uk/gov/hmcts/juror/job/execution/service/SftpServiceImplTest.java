@@ -76,6 +76,12 @@ class SftpServiceImplTest {
         assertFalse(sftpService.upload(TestSftpError.class, new File("test1")), "File should have failed to upload");
     }
 
+    @Test
+    void uploadSingleFailRetry() {
+        assertFalse(sftpService.upload(TestSftpError.class, new File("test1"), 2, 1000),
+                "File should have failed to upload");
+    }
+
     class TestSftp extends Sftp {
 
         protected TestSftp(SftpConfig config) {
