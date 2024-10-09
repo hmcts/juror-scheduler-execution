@@ -53,7 +53,8 @@ public class SftpServiceImpl implements SftpService {
         int retryCount = 0;
         do {
             if (retryCount > 0) {
-                log.info("Upload failed retrying ({}/{}): waiting {} ms", retryCount, retryLimit, fileToProcess);
+                log.info("Uploading {} failed, retrying ({}/{}): waiting {} ms", fileToProcess, retryCount, retryLimit,
+                         retryDelay);
                 try {
                     Thread.sleep(retryDelay);
                 } catch (InterruptedException e) {
