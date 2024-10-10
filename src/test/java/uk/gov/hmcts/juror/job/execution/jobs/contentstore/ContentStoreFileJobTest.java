@@ -38,6 +38,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -408,7 +409,8 @@ public class ContentStoreFileJobTest {
 
                 when(fileSearch.search()).thenReturn(files);
                 when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
-                when(sftpService.upload(eq(sftpClass), any(File.class))).thenReturn(true);
+                when(sftpService.upload(eq(sftpClass), any(File.class), anyLong(), anyLong()))
+                    .thenReturn(true);
 
                 Job.Result result = contentStoreFileJob.uploadFiles();
                 assertEquals(5, result.getMetaData().size(),
@@ -427,7 +429,7 @@ public class ContentStoreFileJobTest {
                 verify(fileSearch, times(1)).setFileNameRegexFilter(fileNameRegex);
                 for (File file : files) {
                     fileUtilsMock.verify(() -> FileUtils.deleteFile(eq(file)), times(1));
-                    verify(sftpService, times(1)).upload(sftpClass, file);
+                    verify(sftpService, times(1)).upload(sftpClass, file, 0, 0);
                     verify(databaseService, times(1))
                         .executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType);
                 }
@@ -455,7 +457,7 @@ public class ContentStoreFileJobTest {
 
                 when(fileSearch.search()).thenReturn(files);
                 when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
-                when(sftpService.upload(eq(sftpClass), any(File.class))).thenReturn(true);
+                when(sftpService.upload(eq(sftpClass), any(File.class), anyLong(), anyLong())).thenReturn(true);
 
                 SQLException sqlException = new SQLException("Forced sql exception");
                 for (File file : files) {
@@ -484,7 +486,7 @@ public class ContentStoreFileJobTest {
 
                 for (File file : files) {
                     fileUtilsMock.verify(() -> FileUtils.deleteFile(eq(file)), times(1));
-                    verify(sftpService, times(1)).upload(sftpClass, file);
+                    verify(sftpService, times(1)).upload(sftpClass, file, 0, 0);
                     verify(databaseService, times(1))
                         .executeUpdate(connection, UPDATE_SQL_QUERY, file.getName(), fileType);
                 }
@@ -507,12 +509,12 @@ public class ContentStoreFileJobTest {
 
                 when(fileSearch.search()).thenReturn(files);
                 when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
-                when(sftpService.upload(eq(sftpClass), any(File.class))).thenReturn(false);
+                when(sftpService.upload(eq(sftpClass), any(File.class), anyLong(), anyLong())).thenReturn(false);
 
                 SQLException sqlException = new SQLException("Forced sql exception");
                 for (File file : files) {
                     fileUtilsMock.when(() -> databaseService.executeUpdate(connection,
-                            UPDATE_SQL_FAILED_QUERY, file.getName(), fileType)).thenThrow(sqlException);
+                        UPDATE_SQL_FAILED_QUERY, file.getName(), fileType)).thenThrow(sqlException);
                 }
 
                 Job.Result result = contentStoreFileJob.uploadFiles();
@@ -535,7 +537,7 @@ public class ContentStoreFileJobTest {
 
                 for (File file : files) {
                     fileUtilsMock.verify(() -> FileUtils.deleteFile(eq(file)), times(1));
-                    verify(sftpService, times(1)).upload(sftpClass, file);
+                    verify(sftpService, times(1)).upload(sftpClass, file, 0, 0);
                     verify(databaseService, times(1))
                         .executeUpdate(connection, UPDATE_SQL_FAILED_QUERY, file.getName(), fileType);
                 }
@@ -572,8 +574,7 @@ public class ContentStoreFileJobTest {
         }
 
         @Test
-        @SuppressWarnings("VariableDeclarationUsageDistance")
-        //Required for mocks setup
+        @SuppressWarnings("VariableDeclarationUsageDistance")//Required for mocks setup
         void negativeParticularSuccess() throws IOException {
             try (MockedStatic<FileUtils> fileUtilsMock = Mockito.mockStatic(FileUtils.class);
                  MockedStatic<FileSearch> fileSearchMock = Mockito.mockStatic(FileSearch.class)) {
@@ -591,9 +592,9 @@ public class ContentStoreFileJobTest {
                 when(fileSearch.search()).thenReturn(allFiles);
                 when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
                 for (File file : workingFiles) {
-                    when(sftpService.upload(sftpClass, file)).thenReturn(true);
+                    when(sftpService.upload(sftpClass, file, 0, 0)).thenReturn(true);
                 }
-                when(sftpService.upload(sftpClass, failedFile)).thenReturn(false);
+                when(sftpService.upload(sftpClass, failedFile, 0, 0)).thenReturn(false);
 
 
                 Job.Result result = contentStoreFileJob.uploadFiles();
@@ -616,10 +617,10 @@ public class ContentStoreFileJobTest {
                 verify(fileSearch, times(1)).setFileNameRegexFilter(fileNameRegex);
 
                 for (File file : workingFiles) {
-                    verify(sftpService, times(1)).upload(sftpClass, file);
+                    verify(sftpService, times(1)).upload(sftpClass, file, 0, 0);
                     fileUtilsMock.verify(() -> FileUtils.deleteFile(any()), times(4));
                 }
-                verify(sftpService, times(1)).upload(sftpClass, failedFile);
+                verify(sftpService, times(1)).upload(sftpClass, failedFile, 0, 0);
                 fileUtilsMock.verify(() -> FileUtils.deleteFile(failedFile), times(1));
                 assertEquals(Status.PARTIAL_SUCCESS, result.getStatus());
                 assertEquals("1 files failed to upload out of 4",
@@ -650,7 +651,7 @@ public class ContentStoreFileJobTest {
 
                 when(fileSearch.search()).thenReturn(uploadFiles);
                 when(fileSearch.setFileNameRegexFilter(any())).thenReturn(fileSearch);
-                when(sftpService.upload(sftpClass, files)).thenReturn(files);
+                when(sftpService.upload(sftpClass, files, 1, 1)).thenReturn(files);
 
                 Job.Result result = contentStoreFileJob.uploadFiles();
                 assertEquals(8, result.getMetaData().size(), "Expect 8 metadata entries");
@@ -667,7 +668,7 @@ public class ContentStoreFileJobTest {
                 verify(fileSearch, times(1)).setFileNameRegexFilter(fileNameRegex);
 
                 for (File file : files) {
-                    verify(sftpService, times(1)).upload(sftpClass, file);
+                    verify(sftpService, times(1)).upload(sftpClass, file, 0, 0);
                     fileUtilsMock.verify(() -> FileUtils.deleteFile(any()), times(3));
                 }
 
@@ -694,8 +695,7 @@ public class ContentStoreFileJobTest {
                                           Object[] procedureArguments, String fileNameRegex,
                                           Class<? extends Sftp> sftpClass) {
             super(sftpService, databaseService, ftpDirectory, databaseConfig, fileType, procedureName,
-                procedureArguments,
-                fileNameRegex, sftpClass);
+                procedureArguments, fileNameRegex, sftpClass, 0, 0);
         }
     }
 }
