@@ -132,7 +132,7 @@ jobs:
       log-file-directory: /Users/benedwards/Desktop/JurorTest/logs
       max-runtime: 240
       read-only: false
-      owner-restrict: false
+      owner-restrict: true
       database:
         schema: HK
   stats:
