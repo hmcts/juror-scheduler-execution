@@ -88,13 +88,13 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public void executeStoredProcedure(Connection connection, String procedureName, Object... arguments) {
         final String sql = "CALL " + procedureName + "(" + StringUtils.chop("?,".repeat(arguments.length)) + ")";
-        log.debug("Attempting to run sql: '" + sql + "' with parameters: " + Arrays.toString(arguments));
+        log.info("Attempting to run sql: '" + sql + "' with parameters: " + Arrays.toString(arguments));
         try (CallableStatement callableStatement = connection.prepareCall(sql)) {
             for (int i = 0; i < arguments.length; i++) {
                 callableStatement.setObject(i + 1, arguments[i]);
             }
             callableStatement.execute();
-            log.debug("Call to " + procedureName + " Successful");
+            log.info("Call to " + procedureName + " Successful");
         } catch (Exception e) {
             log.error("Failed to execute stored procedure: " + procedureName, e);
             throw new InternalServerException("Failed to execute stored procedure: " + procedureName, e);
@@ -111,7 +111,7 @@ public class DatabaseServiceImpl implements DatabaseService {
                                                   int returnSqlType,
                                                   Object... arguments) {
         final String sql = "{? = CALL " + procedureName + "(" + StringUtils.chop("?,".repeat(arguments.length)) + ")}";
-        log.debug("Attempting to run sql: '" + sql + "' with parameters: " + Arrays.toString(arguments));
+        log.info("Attempting to run sql: '" + sql + "' with parameters: " + Arrays.toString(arguments));
         try (CallableStatement callableStatement = connection.prepareCall(sql)) {
 
             callableStatement.registerOutParameter(1, returnSqlType);
@@ -119,7 +119,7 @@ public class DatabaseServiceImpl implements DatabaseService {
                 callableStatement.setObject(i + 2, arguments[i]);
             }
             callableStatement.execute();
-            log.debug("Call to " + procedureName + " Successful");
+            log.info("Call to " + procedureName + " Successful");
             return callableStatement.getObject(1, returnClass);
         } catch (Exception e) {
             log.error("Failed to execute stored procedure with return: " + procedureName, e);
