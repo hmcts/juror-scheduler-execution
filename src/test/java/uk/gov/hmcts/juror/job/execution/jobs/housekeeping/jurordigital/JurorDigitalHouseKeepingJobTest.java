@@ -1,9 +1,11 @@
 package uk.gov.hmcts.juror.job.execution.jobs.housekeeping.jurordigital;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 import uk.gov.hmcts.juror.job.execution.testsupport.AbstractStoredProcedureJobTest;
 
+@Slf4j
 class JurorDigitalHouseKeepingJobTest
     extends AbstractStoredProcedureJobTest<JurorDigitalHouseKeepingJob, JurorDigitalHouseKeepingConfig> {
 
@@ -16,6 +18,7 @@ class JurorDigitalHouseKeepingJobTest
     @Override
     public JurorDigitalHouseKeepingJob createStoredProcedureJob(DatabaseService databaseService,
                                                                 JurorDigitalHouseKeepingConfig config) {
+        log.info("Juror Digital Housekeeping timeout is set to: {}", config.getMaxTimeout());
         return new JurorDigitalHouseKeepingJob(databaseService, config);
     }
 

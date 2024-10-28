@@ -1,9 +1,11 @@
 package uk.gov.hmcts.juror.job.execution.jobs.housekeeping.standard;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 import uk.gov.hmcts.juror.job.execution.testsupport.AbstractStoredProcedureJobTest;
 
+@Slf4j
 class HouseKeepingJobTest
     extends AbstractStoredProcedureJobTest<HouseKeepingJob, HouseKeepingConfig> {
 
@@ -16,6 +18,8 @@ class HouseKeepingJobTest
     @Override
     public HouseKeepingJob createStoredProcedureJob(DatabaseService databaseService,
                                                     HouseKeepingConfig config) {
+        log.info("Juror Housekeeping timeout is set to: {}", config.getMaxTimeout());
+        log.info("Juror Housekeeping owner restrict is set to: {}", config.getOwnerRestrict());
         return new HouseKeepingJob(databaseService, config);
     }
 
