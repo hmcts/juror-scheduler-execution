@@ -125,12 +125,13 @@ jobs:
   housekeeping:
     juror-digital:
       retention-threshold: 1
+      max-timeout: 240
       database:
         schema: HK
     standard:
       max-log-file-age-in-days: 10
       log-file-directory: /Users/benedwards/Desktop/JurorTest/logs
-      max-runtime: 240
+      max-timeout: 240
       read-only: false
       owner-restrict: true
       database:
