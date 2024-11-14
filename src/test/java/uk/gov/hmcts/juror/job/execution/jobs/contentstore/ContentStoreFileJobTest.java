@@ -385,7 +385,7 @@ public class ContentStoreFileJobTest {
     class UploadFiles {
         private static final String UPDATE_SQL_QUERY = "UPDATE CONTENT_STORE "
             + "SET DATE_SENT=now(), FAILED_FILE_TRANSFER=false "
-            + "WHERE DOCUMENT_ID=? AND FILE_TYPE=?";
+            + "WHERE DOCUMENT_ID=? AND FILE_TYPE=? AND DATE_SENT is NULL";
 
         private static final String UPDATE_SQL_FAILED_QUERY = "UPDATE CONTENT_STORE "
             + "SET FAILED_FILE_TRANSFER=true "
