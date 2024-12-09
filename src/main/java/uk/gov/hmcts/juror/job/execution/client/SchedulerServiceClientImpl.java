@@ -45,9 +45,9 @@ public class SchedulerServiceClientImpl extends AbstractRemoteRestClient impleme
     public void updateStatus(String jobKey, Long taskId, StatusUpdatePayload payload) {
         ResponseEntity<Void> response;
         try {
-            log.info("JobKey: " + jobKey + ".\n"
-                + "TaskId: " + taskId + ".\n"
-                + "Result: " + payload + ".");
+            log.info("[JobKey:] --[" + jobKey + "].\n"
+                         + "[TaskId: " + taskId + "].\n"
+                         + "[Result:] --[" + payload + "].");
             if (Strings.isBlank(jobKey) || taskId == null) {
                 return;//No need to continue if jobKey/taskId are not provided as these are required for reporting back
             }
