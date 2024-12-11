@@ -47,12 +47,15 @@ public class SchedulerServiceClientImpl extends AbstractRemoteRestClient impleme
     public void updateStatus(String jobKey, Long taskId, StatusUpdatePayload payload) {
         ResponseEntity<Void> response;
         try {
-            log.info("[JobKey: " + jobKey + "]\n"
-                         + "[" + LocalDateTime.now() + "]\n"
-                         + "TaskId: " + taskId + ",\n"
-                         + "status=" + payload.getStatus() + ",\n"
-                         + "message=" + payload.getMessage() + ",\n"
-                         + "metadata=" + payload.getMetaData());
+            log.info(
+                "[JobKey: {}]\n[{}]\nTaskId: {},\nstatus={},\nmessage={},\nmetadata={}",
+                jobKey,
+                LocalDateTime.now(),
+                taskId,
+                payload.getStatus(),
+                payload.getMessage(),
+                payload.getMetaData()
+            );
             if (Strings.isBlank(jobKey) || taskId == null) {
                 return;//No need to continue if jobKey/taskId are not provided as these are required for reporting back
             }
