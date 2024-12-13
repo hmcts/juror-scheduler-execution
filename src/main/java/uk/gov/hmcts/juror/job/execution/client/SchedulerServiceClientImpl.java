@@ -16,6 +16,8 @@ import uk.gov.hmcts.juror.standard.client.contract.ClientType;
 import uk.gov.hmcts.juror.standard.service.exceptions.InternalServerException;
 import uk.gov.hmcts.juror.standard.service.exceptions.RemoteGatewayException;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Component
 public class SchedulerServiceClientImpl extends AbstractRemoteRestClient implements SchedulerServiceClient {
@@ -45,9 +47,15 @@ public class SchedulerServiceClientImpl extends AbstractRemoteRestClient impleme
     public void updateStatus(String jobKey, Long taskId, StatusUpdatePayload payload) {
         ResponseEntity<Void> response;
         try {
-            log.info("JobKey: " + jobKey + ".\n"
-                + "TaskId: " + taskId + ".\n"
-                + "Result: " + payload + ".");
+            log.info(
+                "[JobKey: {}]\n[{}]\nTaskId: {},\nstatus={},\nmessage={},\nmetadata={}",
+                jobKey,
+                LocalDateTime.now(),
+                taskId,
+                payload.getStatus(),
+                payload.getMessage(),
+                payload.getMetaData()
+            );
             if (Strings.isBlank(jobKey) || taskId == null) {
                 return;//No need to continue if jobKey/taskId are not provided as these are required for reporting back
             }
