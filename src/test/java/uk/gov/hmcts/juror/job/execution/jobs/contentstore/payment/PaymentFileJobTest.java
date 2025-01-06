@@ -23,7 +23,7 @@ public class PaymentFileJobTest extends ContentStoreFileJobTest {
         this.fileType = "PAYMENT";
         this.procedureName = "payment_files_to_clob";
         this.procedureArguments = new Object[]{};
-        this.fileNameRegex = "\\d+.*\\d{13}\\.dat";
+        this.fileNameRegex = "JUROR_\\d+.*\\d{12}\\.dat";
         this.sftpClass = PaymentSftp.class;
         return spy(new PaymentFileJob(
             config,
