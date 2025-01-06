@@ -18,6 +18,8 @@ import uk.gov.hmcts.juror.standard.service.exceptions.RemoteGatewayException;
 
 import java.time.LocalDateTime;
 
+import static uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.Timestamps.DATE_TIME_FORMATTER;
+
 @Slf4j
 @Component
 public class SchedulerServiceClientImpl extends AbstractRemoteRestClient implements SchedulerServiceClient {
@@ -50,7 +52,7 @@ public class SchedulerServiceClientImpl extends AbstractRemoteRestClient impleme
             log.info(
                 "[JobKey: {}]\n[{}]\nTaskId: {},\nstatus={},\nmessage={},\nmetadata={}",
                 jobKey,
-                LocalDateTime.now(),
+                DATE_TIME_FORMATTER.format(LocalDateTime.now()),
                 taskId,
                 payload.getStatus(),
                 payload.getMessage(),
