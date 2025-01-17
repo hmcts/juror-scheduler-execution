@@ -85,9 +85,8 @@ public class AmsDashboardGenerateJobTest {
         Job.ResultSupplier resultSupplier1 = resultSuppliers.get(0);
         Job.ResultSupplier resultSupplier2 = resultSuppliers.get(1);
 
-
         assertTrue(resultSupplier1.isContinueOnFailure(), "First result supplier should continue on failure");
-        assertEquals(8, resultSupplier1.getResultRunners().size(), "First result supplier should have 7 runners");
+        assertEquals(5, resultSupplier1.getResultRunners().size(), "First result supplier should have 5 runners");
 
         assertFalse(resultSupplier2.isContinueOnFailure(), "Second result supplier should not continue on failure");
         assertEquals(1, resultSupplier2.getResultRunners().size(), "Second result supplier should have 1 runner");

@@ -20,9 +20,6 @@ public class DashboardData {
     private final PncCheck pncCheck;
     private final Expenses expenses;
     private final Certificates certificates;
-    private final AutoSys autoSys;
-    private final ErrorsOvernight errorsOvernight;
-    private final HouseKeeping houseKeeping;
     private final Timestamps timestamps;
 
     private final List<DashboardDataEntry> dashboardDataEntries;
@@ -37,9 +34,6 @@ public class DashboardData {
         this.pncCheck = new PncCheck(this, schedulerServiceClient);
         this.expenses = new Expenses(this, databaseService, config.getDatabase(), clock);
         this.certificates = new Certificates(this, config, clock);
-        this.autoSys = new AutoSys(this, schedulerServiceClient, clock);
-        this.errorsOvernight = new ErrorsOvernight(this);
-        this.houseKeeping = new HouseKeeping(this, schedulerServiceClient, clock);
         this.timestamps = new Timestamps(this);
 
         this.dashboardDataEntries = List.of(
@@ -48,9 +42,6 @@ public class DashboardData {
             this.pncCheck,
             this.expenses,
             this.certificates,
-            this.autoSys,
-            this.errorsOvernight,
-            this.houseKeeping,
             this.timestamps
         );
     }

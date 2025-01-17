@@ -58,7 +58,6 @@ public class PncCheck extends DashboardDataEntry {
             this.addRow(bureauText, errorText, errorText, errorText, errorText);
             result = Job.Result.failed("Failed to get PNC check results", e);
         }
-        addRow("Court", "0", "0", "0", "0");
         populateTimestamp(dashboardData, "PNC Checks", lastUpdatedAt);
         return result;
     }

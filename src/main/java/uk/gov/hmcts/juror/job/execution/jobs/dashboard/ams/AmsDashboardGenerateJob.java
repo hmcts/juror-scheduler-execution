@@ -45,10 +45,7 @@ public class AmsDashboardGenerateJob extends ParallelJob {
                     metaData -> dashboardData.getBureauLettersToBePrinted().populate(),
                     metaData -> dashboardData.getPncCheck().populate(),
                     metaData -> dashboardData.getExpenses().populate(),
-                    metaData -> dashboardData.getCertificates().populate(),
-                    metaData -> dashboardData.getAutoSys().populate(),
-                    metaData -> dashboardData.getErrorsOvernight().populate(),
-                    metaData -> dashboardData.getHouseKeeping().populate()
+                    metaData -> dashboardData.getCertificates().populate()
                 )
             ),
             new ResultSupplier(false,
