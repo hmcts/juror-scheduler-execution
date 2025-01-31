@@ -233,8 +233,8 @@ dependencies {
 
   // Data Mapping
   implementation 'org.modelmapper:modelmapper:3.2.2'
-  implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-  annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+  implementation 'org.mapstruct:mapstruct:1.6.3'
+  annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
 
   compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
