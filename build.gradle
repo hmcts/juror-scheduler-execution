@@ -2,7 +2,7 @@ buildscript {
   ext {
     springBootVersion = '3.3.7'
     postgresVersion = '42.7.5'
-    log4JVersion = "2.23.1"
+    log4JVersion = "2.24.3"
   }
   dependencies {
     classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
