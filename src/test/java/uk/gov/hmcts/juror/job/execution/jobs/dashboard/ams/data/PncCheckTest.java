@@ -105,9 +105,6 @@ class PncCheckTest {
             .addRow("Bureau", "10", "10", "5", "0");
 
         verify(pncCheck, times(1))
-            .addRow("Court", "0", "0", "0", "0");
-
-        verify(pncCheck, times(1))
             .populateTimestamp(dashboardData, "PNC Checks", taskResponse.getLastUpdatedAt());
 
         verify(pncCheck, times(1)).populate();
@@ -132,9 +129,6 @@ class PncCheckTest {
 
         verify(pncCheck, times(1))
             .addRow("Bureau", "10", "8", "4", "2");
-
-        verify(pncCheck, times(1))
-            .addRow("Court", "0", "0", "0", "0");
 
         verify(pncCheck, times(1))
             .populateTimestamp(dashboardData, "PNC Checks", taskResponse.getLastUpdatedAt());
@@ -163,9 +157,6 @@ class PncCheckTest {
             .addRow("Bureau", "12", "8", "4", "2");
 
         verify(pncCheck, times(1))
-            .addRow("Court", "0", "0", "0", "0");
-
-        verify(pncCheck, times(1))
             .populateTimestamp(dashboardData, "PNC Checks", taskResponse.getLastUpdatedAt());
 
         verify(pncCheck, times(1)).populate();
@@ -181,9 +172,6 @@ class PncCheckTest {
 
         verify(pncCheck, times(1))
             .addRow("Bureau", "ERROR", "ERROR", "ERROR", "ERROR");
-
-        verify(pncCheck, times(1))
-            .addRow("Court", "0", "0", "0", "0");
 
         verify(pncCheck, times(1))
             .populateTimestamp(dashboardData, "PNC Checks", (LocalDateTime) null);
@@ -202,9 +190,6 @@ class PncCheckTest {
 
         verify(pncCheck, times(1))
             .addRow("Bureau", "ERROR", "ERROR", "ERROR", "ERROR");
-
-        verify(pncCheck, times(1))
-            .addRow("Court", "0", "0", "0", "0");
 
         verify(pncCheck, times(1))
             .populateTimestamp(dashboardData, "PNC Checks", (LocalDateTime) null);

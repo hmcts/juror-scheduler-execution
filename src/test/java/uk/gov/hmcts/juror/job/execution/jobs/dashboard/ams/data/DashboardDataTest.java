@@ -70,7 +70,6 @@ class DashboardDataTest {
         assertSame(clock, expenses.clock,
             "clock should be the same");
 
-
         Certificates certificates = dashboardData.getCertificates();
         assertSame(dashboardData, certificates.dashboardData,
             "DashboardData should be the same");
@@ -79,33 +78,12 @@ class DashboardDataTest {
         assertSame(clock, certificates.clock,
             "clock should be the same");
 
-        AutoSys autoSys = dashboardData.getAutoSys();
-        assertSame(dashboardData, autoSys.dashboardData,
-            "DashboardData should be the same");
-        assertSame(schedulerServiceClient, autoSys.schedulerServiceClient,
-            "schedulerServiceClient should be the same");
-        assertSame(clock, autoSys.clock,
-            "clock should be the same");
-
-        ErrorsOvernight errorsOvernight = dashboardData.getErrorsOvernight();
-        assertSame(dashboardData, errorsOvernight.dashboardData,
-            "DashboardData should be the same");
-
-        HouseKeeping houseKeeping = dashboardData.getHouseKeeping();
-        assertSame(dashboardData, houseKeeping.dashboardData,
-            "DashboardData should be the same");
-        assertSame(schedulerServiceClient, houseKeeping.schedulerServiceClient,
-            "schedulerServiceClient should be the same");
-        assertSame(clock, houseKeeping.clock,
-            "clock should be the same");
-
         Timestamps timestamps = dashboardData.getTimestamps();
         assertSame(dashboardData, timestamps.dashboardData,
             "DashboardData should be the same");
 
-
         List<DashboardDataEntry> dashboardDataEntries = dashboardData.getDashboardDataEntries();
-        assertEquals(9, dashboardDataEntries.size(), "dashboardDataEntries should be the same");
+        assertEquals(6, dashboardDataEntries.size(), "dashboardDataEntries should be the same");
         assertTrue(dashboardDataEntries.contains(bureauLettersAutomaticallyGenerated),
             "dashboardDataEntries should contain bureauLettersAutomaticallyGenerated");
         assertTrue(dashboardDataEntries.contains(bureauLettersToBePrinted),
@@ -116,12 +94,6 @@ class DashboardDataTest {
             "dashboardDataEntries should contain expenses");
         assertTrue(dashboardDataEntries.contains(certificates),
             "dashboardDataEntries should contain certificates");
-        assertTrue(dashboardDataEntries.contains(autoSys),
-            "dashboardDataEntries should contain autoSys");
-        assertTrue(dashboardDataEntries.contains(errorsOvernight),
-            "dashboardDataEntries should contain errorsOvernight");
-        assertTrue(dashboardDataEntries.contains(houseKeeping),
-            "dashboardDataEntries should contain houseKeeping");
         assertTrue(dashboardDataEntries.contains(timestamps),
             "dashboardDataEntries should contain timestamps");
     }
