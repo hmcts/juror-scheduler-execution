@@ -214,7 +214,7 @@ dependencies {
   implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
 
 
-  implementation 'org.springframework.integration:spring-integration-sftp:6.3.1'
+  implementation 'org.springframework.integration:spring-integration-sftp:6.4.1'
 
   // Database, repository
   implementation 'jakarta.persistence:jakarta.persistence-api:3.2.0'
