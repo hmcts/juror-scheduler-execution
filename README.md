@@ -17,7 +17,7 @@ JUROR_SERVICE_PORT=8080
 ```
 
 ###
-### Building the application 
+### Building the application
 
 When running the application for the first time you will need to create an ADMIN user.
 
