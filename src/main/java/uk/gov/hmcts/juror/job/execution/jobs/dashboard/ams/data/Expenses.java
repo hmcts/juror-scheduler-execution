@@ -62,11 +62,11 @@ public class Expenses extends DashboardDataEntry {
                     response.stream().map(ExpensesDB::getAmount).forEach(amount ->
                         // Add the amount to the first element of expenseTotals
                         expenseTotals.set(0, expenseTotals.get(0).add(amount)));
-                        
+
                     addRow(
                         expensesDB.getDate(), expenseTotals.get(0).toString()
                     );
-                 }
+                }
             });
         } catch (Exception e) {
             log.error("Unable to get Payment totals (expenses)", e);
