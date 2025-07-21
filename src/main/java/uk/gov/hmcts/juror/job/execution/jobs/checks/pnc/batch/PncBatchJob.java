@@ -119,6 +119,7 @@ public class PncBatchJob extends LinearJob {
         jurorsThatRequirePncCheck.forEach(requirePncCheck -> {
             //If the user is missing information update status and skip
             if (StringUtils.isBlank(requirePncCheck.getPostcode())
+                || StringUtils.isBlank(requirePncCheck.getFirstName())
                 || requirePncCheck.getDateOfBirth() == null) {
                 jurorServiceClient.call(requirePncCheck.getJurorNumber(),
                     new JurorServiceClient.Payload(PoliceCheck.INSUFFICIENT_INFORMATION));
