@@ -5,8 +5,10 @@ import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -55,8 +57,14 @@ public class Expenses extends DashboardDataEntry {
                     result.set(Job.Result.failed("No response from database"));
                 } else {
                     ExpensesDB expensesDB = response.get(0);
+                    List<BigDecimal> expenseTotals = new ArrayList<>();
+                    expenseTotals.add(BigDecimal.ZERO);
+                    response.stream().map(ExpensesDB::getAmount).forEach(amount ->
+                        // Add the amount to the first element of expenseTotals
+                        expenseTotals.set(0, expenseTotals.get(0).add(amount)));
+
                     addRow(
-                        expensesDB.getDate(), expensesDB.getAmount().toString()
+                        expensesDB.getDate(), expenseTotals.get(0).toString()
                     );
                 }
             });
