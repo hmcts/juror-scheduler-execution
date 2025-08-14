@@ -118,13 +118,30 @@ public class PncBatchJob extends LinearJob {
         List<PoliceNationalCheckServiceClient.JurorCheckRequest> jurorCheckRequests = new ArrayList<>();
         jurorsThatRequirePncCheck.forEach(requirePncCheck -> {
             //If the user is missing information update status and skip
-            if (StringUtils.isBlank(requirePncCheck.getPostcode())
-                || requirePncCheck.getDateOfBirth() == null) {
+            boolean isMissingInformation = false;
+            if (StringUtils.isBlank(requirePncCheck.getPostcode())) {
+                isMissingInformation = true;
+                log.info("Skipping juror {} as they are missing postcode information",
+                         requirePncCheck.getJurorNumber());
+
+            }
+            if (StringUtils.isBlank(requirePncCheck.getFirstName())) {
+                isMissingInformation = true;
+                log.info("Skipping juror {} as they are missing firstname information",
+                         requirePncCheck.getJurorNumber());
+
+            }
+            if (requirePncCheck.getDateOfBirth() == null) {
+                isMissingInformation = true;
+                log.info("Skipping juror {} as they are missing DOB information", requirePncCheck.getJurorNumber());
+            }
+
+            if (isMissingInformation) {
                 jurorServiceClient.call(requirePncCheck.getJurorNumber(),
-                    new JurorServiceClient.Payload(PoliceCheck.INSUFFICIENT_INFORMATION));
-                log.info("Skipping juror {} as they are missing information", requirePncCheck.getJurorNumber());
+                                        new JurorServiceClient.Payload(PoliceCheck.INSUFFICIENT_INFORMATION));
                 return;
             }
+
             //If this is the users first check update status to in progress and continue
             if (requirePncCheck.getPoliceCheck() == null
                 || requirePncCheck.getPoliceCheck() == PoliceCheck.NOT_CHECKED) {

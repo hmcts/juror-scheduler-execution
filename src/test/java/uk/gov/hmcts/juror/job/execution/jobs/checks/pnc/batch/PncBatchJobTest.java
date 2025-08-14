@@ -353,6 +353,7 @@ class PncBatchJobTest {
             verifyNoMoreInteractions(jurorServiceClient, databaseService);
         }
 
+
         @Test
         void positiveGetJurorsToCheckInsufficientInformationMissingDateOfBirth() {
             Connection connection = mock(Connection.class);
@@ -370,7 +371,7 @@ class PncBatchJobTest {
                 createRequirePncCheck(PoliceCheck.IN_PROGRESS)
             );
             when(databaseService.executePreparedStatement(connection, RequirePncCheck.class,
-                "select * from juror_mod.require_pnc_check_view"))
+                                                          "select * from juror_mod.require_pnc_check_view"))
                 .thenReturn(requirePncCheck);
 
 
@@ -382,6 +383,55 @@ class PncBatchJobTest {
             );
 
             assertEquals(expectedJurorChecks, jurorCheckRequests,
+                         "jurorCheckRequests is not as expected");
+
+
+            verify(jurorServiceClient, times(1))
+                .call(requirePncCheck.get(0).getJurorNumber(),
+                      new JurorServiceClient.Payload(PoliceCheck.INSUFFICIENT_INFORMATION));
+            verify(jurorServiceClient, times(1))
+                .call(requirePncCheck.get(1).getJurorNumber(),
+                      new JurorServiceClient.Payload(PoliceCheck.INSUFFICIENT_INFORMATION));
+
+            verify(databaseService, times(1))
+                .execute(eq(config.getDatabase()), any());
+
+            verify(databaseService, times(1))
+                .executePreparedStatement(connection, RequirePncCheck.class,
+                                          "select * from juror_mod.require_pnc_check_view");
+            verifyNoMoreInteractions(jurorServiceClient, databaseService);
+
+        }
+
+        @Test
+        void positiveGetJurorsToCheckInsufficientInformationMissingFirstName() {
+            Connection connection = mock(Connection.class);
+
+            doAnswer(invocation -> {
+                Consumer<Connection> connectionConsumer = invocation.getArgument(1);
+                connectionConsumer.accept(connection);
+                return null;
+            }).when(databaseService).execute(eq(config.getDatabase()), any());
+
+
+            List<RequirePncCheck> requirePncCheck = List.of(
+                createRequirePncCheck(null).setFirstName(null),
+                createRequirePncCheck(PoliceCheck.IN_PROGRESS),
+                createRequirePncCheck(PoliceCheck.IN_PROGRESS).setFirstName(null)
+            );
+            when(databaseService.executePreparedStatement(connection, RequirePncCheck.class,
+                "select * from juror_mod.require_pnc_check_view"))
+                .thenReturn(requirePncCheck);
+
+
+            List<PoliceNationalCheckServiceClient.JurorCheckRequest> jurorCheckRequests
+                = pncBatchJob.getJurorsToCheck();
+
+            List<PoliceNationalCheckServiceClient.JurorCheckRequest> expectedJurorChecks = List.of(
+                requirePncCheck.get(1).toJurorCheckRequest()
+            );
+
+            assertEquals(expectedJurorChecks, jurorCheckRequests,
                 "jurorCheckRequests is not as expected");
 
 
@@ -389,7 +439,7 @@ class PncBatchJobTest {
                 .call(requirePncCheck.get(0).getJurorNumber(),
                     new JurorServiceClient.Payload(PoliceCheck.INSUFFICIENT_INFORMATION));
             verify(jurorServiceClient, times(1))
-                .call(requirePncCheck.get(1).getJurorNumber(),
+                .call(requirePncCheck.get(2).getJurorNumber(),
                     new JurorServiceClient.Payload(PoliceCheck.INSUFFICIENT_INFORMATION));
 
             verify(databaseService, times(1))
