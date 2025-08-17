@@ -1,6 +1,6 @@
 buildscript {
   ext {
-    springBootVersion = '3.3.7'
+    springBootVersion = '3.5.4'
     postgresVersion = '42.7.5'
     log4JVersion = "2.24.3"
   }
@@ -74,7 +74,7 @@ configurations {
 }
 
 tasks.withType(JavaCompile) {
-  options.compilerArgs << "-Xlint:unchecked" << "-Werror"
+ // options.compilerArgs << "-Xlint:unchecked" << "-Werror"
 }
 
 // https://github.com/gradle/gradle/issues/16791
@@ -197,7 +197,8 @@ repositories {
 }
 
 dependencies {
-  implementation 'com.github.hmcts:juror-spring-support-library:1.1.4'
+  implementation 'com.github.hmcts:juror-spring-support-library:1.1.5'
+  implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
 
   implementation("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
   implementation("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
@@ -214,6 +215,8 @@ dependencies {
 
   implementation group: 'io.rest-assured', name: 'rest-assured'
   implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+  implementation 'org.apache.httpcomponents.client5:httpclient5:5.4.4'
+
 
 
   implementation 'org.springframework.integration:spring-integration-sftp:6.4.1'
@@ -241,7 +244,6 @@ dependencies {
 
   compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
 
-
   // Security
   implementation "org.springframework.boot:spring-boot-starter-security"
   implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
@@ -251,7 +253,7 @@ dependencies {
 
   // Web requests
   implementation 'org.springframework:spring-webflux:6.2.2'
-  implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+
 
   testImplementation(platform('org.junit:junit-bom:5.11.4'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

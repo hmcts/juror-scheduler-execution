@@ -2,10 +2,10 @@ package uk.gov.hmcts.juror.job.execution.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.boot.web.client.RootUriTemplateHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import uk.gov.hmcts.juror.standard.client.contract.ClientType;
 import uk.gov.hmcts.juror.standard.client.interceptor.JwtAuthenticationInterceptor;
 import uk.gov.hmcts.juror.standard.config.WebConfig;
@@ -49,10 +49,16 @@ public class ClientConfig {
                                                     final JwtService jwtService) {
         final List<ClientHttpRequestInterceptor> clientHttpRequestInterceptorList =
             List.of(new JwtAuthenticationInterceptor(jwtService, webConfig.getSecurity()));
+
+        // Construct URI builder with scheme, host, and port
+        DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory(
+            webConfig.getScheme() + "://" + webConfig.getHost() + ":" + webConfig.getPort());
+        uriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.URI_COMPONENT);
+
+        // Return builder with explicit URI handler and request factory
         return new RestTemplateBuilder()
-            .uriTemplateHandler(new RootUriTemplateHandler(
-                webConfig.getScheme() + "://" + webConfig.getHost() + ":" + webConfig.getPort()))
-            .additionalInterceptors(clientHttpRequestInterceptorList)
-            .requestFactory(webConfig::getRequestFactory);
+            .requestFactory(webConfig::getRequestFactory) // Avoids Spring's HttpClient5 auto-configuration
+            .uriTemplateHandler(uriBuilderFactory)
+            .additionalInterceptors(clientHttpRequestInterceptorList);
     }
 }
