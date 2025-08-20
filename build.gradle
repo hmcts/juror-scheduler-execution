@@ -192,12 +192,12 @@ repositories {
   mavenLocal()
   mavenCentral()
   maven {
-    url 'https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1'
+    url = uri('https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1')
   }
 }
 
 dependencies {
-  implementation 'com.github.hmcts:juror-spring-support-library:1.1.5'
+  implementation 'com.github.hmcts:juror-spring-support-library:1.1.5:plain@jar'
   implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
 
   implementation("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
