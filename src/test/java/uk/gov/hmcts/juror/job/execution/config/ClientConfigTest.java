@@ -5,12 +5,14 @@ import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.boot.web.client.RootUriTemplateHandler;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import uk.gov.hmcts.juror.standard.client.interceptor.JwtAuthenticationInterceptor;
 import uk.gov.hmcts.juror.standard.config.WebConfig;
 import uk.gov.hmcts.juror.standard.service.contracts.auth.JwtService;
+
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -73,20 +75,28 @@ class ClientConfigTest {
     private void validateRestTemplateBuilder(WebConfig config, RestTemplateBuilder restTemplateBuilder) {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
-        assertInstanceOf(RootUriTemplateHandler.class, restTemplate.getUriTemplateHandler(),
+        assertInstanceOf(DefaultUriBuilderFactory.class, restTemplate.getUriTemplateHandler(),
             "RestTemplateBuilder should be of type DefaultUriBuilderFactory");
 
+        DefaultUriBuilderFactory handler = (DefaultUriBuilderFactory) restTemplate.getUriTemplateHandler();
 
-        RootUriTemplateHandler rootUriTemplateHandler = (RootUriTemplateHandler) restTemplate.getUriTemplateHandler();
 
-        assertEquals(config.getScheme() + "://" + config.getHost() + ":" + config.getPort(),
-            rootUriTemplateHandler.getRootUri(),
-            "RestTemplateBuilder should have been configured with the correct root uri");
+        // Assert correct URI base
+        URI builtUri = handler.uriString("/example").build();
+        String baseUri = config.getScheme() + "://" + config.getHost() + ":" + config.getPort();
 
+        String expectedUri = (config.getScheme() + "://" + config.getHost()
+            + ":" + config.getPort() + "/example").toLowerCase();
+        assertEquals(expectedUri, builtUri.toString().toLowerCase(),
+                     "RestTemplateBuilder should build URI with correct base URL (case-insensitive scheme)");
+
+        // Assert correct interceptor
         assertEquals(1, restTemplate.getInterceptors().size(),
-            "RestTemplateBuilder should have been configured with the correct number of interceptors");
+                     "RestTemplateBuilder should have one interceptor configured");
+
         assertInstanceOf(JwtAuthenticationInterceptor.class, restTemplate.getInterceptors().get(0),
-            "RestTemplateBuilder should have been configured with the correct interceptor");
+                         "Interceptor should be of type JwtAuthenticationInterceptor");
+
         verify(config, times(1)).getRequestFactory();
     }
 }

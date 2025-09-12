@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
@@ -53,9 +53,9 @@ import static org.mockito.Mockito.when;
 public class JobControllerTest {
     private static final String CONTROLLER_BASEURL = "/job";
     private static final String TEST_DATA_DIRECTORY = "jobController/";
-    @MockBean
+    @MockitoBean
     private JobService jobService;
-    @MockBean
+    @MockitoBean
     private PncBatchJob pncBatchJob;
 
     @Nested
