@@ -1,6 +1,6 @@
 buildscript {
   ext {
-    springBootVersion = '3.5.4'
+    springBootVersion = '3.5.6'
     postgresVersion = '42.7.5'
     log4JVersion = "2.24.3"
   }
@@ -25,7 +25,7 @@ plugins {
 }
 
 group = 'uk.gov.hmcts.juror'
-version = '5.10.0'
+version = '5.14.0'
 
 java {
   toolchain {
@@ -117,7 +117,7 @@ task smoke(type: Test) {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '10.17.0'
+  toolVersion = '10.26.1'
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
 }
 
@@ -206,7 +206,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-json:${springBootVersion}")
   implementation("org.springframework.boot:spring-boot-starter-validation:${springBootVersion}")
 
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.9'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.9'
 
@@ -233,8 +233,9 @@ dependencies {
   testImplementation 'junit:junit:4.13.2'
   annotationProcessor 'org.projectlombok:lombok:1.18.36'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
-  implementation 'org.springframework.data:spring-data-commons:3.4.2'
-  runtimeOnly(group: 'com.microsoft.azure', name: 'applicationinsights-core', version: '3.7.0')
+  implementation 'org.springframework.data:spring-data-commons:3.5.4'
+  runtimeOnly(group: 'com.microsoft.azure', name: 'applicationinsights-core', version: '3.7.5')
+
 
   // Data Mapping
   implementation 'org.modelmapper:modelmapper:3.2.2'
@@ -252,7 +253,7 @@ dependencies {
 
 
   // Web requests
-  implementation 'org.springframework:spring-webflux:6.2.2'
+  implementation 'org.springframework:spring-webflux:6.2.11'
 
 
   testImplementation(platform('org.junit:junit-bom:5.11.4'))
