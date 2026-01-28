@@ -44,6 +44,7 @@ class PerformanceStatsJobTest {
         performanceStatsConfig.setThirdpartyOnlineNoMonths(RandomUtils.nextInt());
         performanceStatsConfig.setDeferralsNoMonths(RandomUtils.nextInt());
         performanceStatsConfig.setExcusalsNoMonths(RandomUtils.nextInt());
+        performanceStatsConfig.setServiceNoMonths(RandomUtils.nextInt());
         return performanceStatsConfig;
     }
 
@@ -87,8 +88,8 @@ class PerformanceStatsJobTest {
         Job.ResultSupplier resultSupplier2 = resultSuppliers.get(1);
         assertFalse(resultSupplier2.isContinueOnFailure(),
             "The second result supplier should not continue on failure");
-        assertEquals(6, resultSupplier2.getResultRunners().size(),
-            "There should be 6 result runner");
+        assertEquals(7, resultSupplier2.getResultRunners().size(),
+            "There should be 7 result runner");
 
         for (Function<MetaData, Job.Result> runner : resultSupplier2.getResultRunners()) {
             runner.apply(metaData);
@@ -110,6 +111,9 @@ class PerformanceStatsJobTest {
         verify(performanceStatsJob, times(1))
             .runRunProcedure("excusals",
                 this.config.getExcusalsNoMonths());
+        verify(performanceStatsJob, times(1))
+            .runRunProcedure("service_stats",
+                             this.config.getServiceNoMonths());
 
         verifyNoMoreInteractions(databaseService);
         verifyNoMoreInteractions(performanceStatsJob);

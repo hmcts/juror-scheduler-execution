@@ -145,6 +145,7 @@ jobs:
       response-times-and-non-respond-no-months: 6
       thirdparty-online-no-months: 6
       welsh-online-responses-no-months: 6
+      service-no-months: 84
   checks:
     pnc:
       batch:
