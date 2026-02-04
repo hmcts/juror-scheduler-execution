@@ -27,4 +27,6 @@ public class PerformanceStatsConfig {
     private Integer deferralsNoMonths;
     @NotNull
     private Integer excusalsNoMonths;
+    @NotNull
+    private Integer serviceNoMonths;
 }
