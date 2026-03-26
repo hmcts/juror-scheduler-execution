@@ -1,6 +1,6 @@
 java:
   applicationPort: 8080
-  image: 'sdshmctspublic.azurecr.io/juror/pnc:latest'
+  image: 'hmctsprod.azurecr.io/juror/pnc:latest'
   ingressHost: juror-scheduler-execution.{{ .Values.global.environment }}.platform.hmcts.net
   aadIdentityName: juror
   keyVaults:
