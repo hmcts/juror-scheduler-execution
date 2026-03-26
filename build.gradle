@@ -227,12 +227,12 @@ dependencies {
   implementation 'org.hibernate.orm:hibernate-envers:6.6.5.Final'
 
   // Documentation, logging
-  implementation 'org.projectlombok:lombok:1.18.36'
-  testImplementation 'org.projectlombok:lombok:1.18.36'
+  implementation 'org.projectlombok:lombok:1.18.44'
+  testImplementation 'org.projectlombok:lombok:1.18.44'
   implementation 'org.jetbrains:annotations:26.0.2'
   testImplementation 'junit:junit:4.13.2'
-  annotationProcessor 'org.projectlombok:lombok:1.18.36'
-  testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
+  annotationProcessor 'org.projectlombok:lombok:1.18.44'
+  testAnnotationProcessor 'org.projectlombok:lombok:1.18.44'
   implementation 'org.springframework.data:spring-data-commons:3.5.4'
   runtimeOnly(group: 'com.microsoft.azure', name: 'applicationinsights-core', version: '3.7.5')
 
