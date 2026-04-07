@@ -25,7 +25,7 @@ plugins {
 }
 
 group = 'uk.gov.hmcts.juror'
-version = '5.22.0'
+version = '5.23.0'
 
 java {
   toolchain {
@@ -74,7 +74,7 @@ configurations {
 }
 
 tasks.withType(JavaCompile) {
- // options.compilerArgs << "-Xlint:unchecked" << "-Werror"
+  options.compilerArgs << "-Xlint:unchecked" << "-Werror"
 }
 
 // https://github.com/gradle/gradle/issues/16791
