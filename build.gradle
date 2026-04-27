@@ -197,7 +197,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'com.github.hmcts:juror-spring-support-library:1.1.5:plain@jar'
+  implementation 'com.github.hmcts:juror-spring-support-library:1.2.0:plain@jar'
   implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
 
   implementation("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
