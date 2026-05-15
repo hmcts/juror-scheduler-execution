@@ -26,7 +26,7 @@ plugins {
 }
 
 group = 'uk.gov.hmcts.juror'
-version = '5.25.0'
+version = '5.26.0'
 
 java {
   toolchain {
