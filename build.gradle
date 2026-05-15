@@ -26,7 +26,7 @@ plugins {
 }
 
 group = 'uk.gov.hmcts.juror'
-version = '5.25.0'
+version = '5.26.0'
 
 java {
   toolchain {
@@ -209,7 +209,7 @@ dependencies {
 
   implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.9'
 
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.9'
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '8.0.0'
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
