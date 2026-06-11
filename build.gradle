@@ -220,8 +220,7 @@ dependencies {
 
   implementation 'org.springframework.integration:spring-integration-sftp:6.4.1'
 
-  // Database, repository
-  implementation 'jakarta.persistence:jakarta.persistence-api:3.2.0'
+  // Database
   implementation group: 'org.postgresql', name: 'postgresql', version: "${postgresVersion}"
 
   // Documentation, logging
