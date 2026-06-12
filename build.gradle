@@ -1,7 +1,7 @@
 buildscript {
   ext {
-    springBootVersion = '3.5.6'
-    postgresVersion = '42.7.5'
+    springBootVersion = '3.5.14'
+    postgresVersion = '42.7.11'
     log4JVersion = "2.24.3"
     jsonwebtokenVersion = "0.13.0"
   }
@@ -26,7 +26,7 @@ plugins {
 }
 
 group = 'uk.gov.hmcts.juror'
-version = '5.26.0'
+version = '5.26.1'
 
 java {
   toolchain {
@@ -214,14 +214,13 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
 
-  implementation group: 'io.rest-assured', name: 'rest-assured'
+  implementation group: 'io.rest-assured', name: 'rest-assured', version: '5.4.0'
   implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
   implementation 'org.apache.httpcomponents.client5:httpclient5:5.4.4'
 
   implementation 'org.springframework.integration:spring-integration-sftp:6.4.1'
 
-  // Database, repository
-  implementation 'jakarta.persistence:jakarta.persistence-api:3.2.0'
+  // Database
   implementation group: 'org.postgresql', name: 'postgresql', version: "${postgresVersion}"
 
   // Documentation, logging
@@ -251,7 +250,7 @@ dependencies {
 
 
   // Web requests
-  implementation 'org.springframework:spring-webflux:6.2.11'
+  implementation 'org.springframework:spring-webflux:6.2.18'
 
 
   testImplementation(platform('org.junit:junit-bom:5.11.4'))
@@ -277,7 +276,7 @@ rootProject.tasks.named("processSmokeTestResources") {
 }
 
 wrapper {
-    distributionType = Wrapper.DistributionType.ALL
+  distributionType = Wrapper.DistributionType.ALL
 }
 task runAllStyleChecks {
   dependsOn 'checkstyleMain'
