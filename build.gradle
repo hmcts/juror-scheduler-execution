@@ -218,7 +218,7 @@ dependencies {
   implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
   implementation 'org.apache.httpcomponents.client5:httpclient5:5.4.4'
 
-  implementation 'org.springframework.integration:spring-integration-sftp:6.4.1'
+  implementation 'org.springframework.integration:spring-integration-sftp:6.5.9'
 
   // Database
   implementation group: 'org.postgresql', name: 'postgresql', version: "${postgresVersion}"
