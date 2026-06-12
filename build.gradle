@@ -250,7 +250,7 @@ dependencies {
 
 
   // Web requests
-  implementation 'org.springframework:spring-webflux:6.2.18'
+  implementation 'org.springframework:spring-webflux:6.2.19'
 
 
   testImplementation(platform('org.junit:junit-bom:5.11.4'))
