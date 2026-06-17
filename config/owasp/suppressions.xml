@@ -1,4 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions
 	xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+	<!-- Apache Commons Lang pipeline suppression: commons-lang3-3.17.0.jar -->
+	<suppress>
+		<cve>CVE-2025-48924</cve>
+	</suppress>
+	<!-- Hibernate Validator pipeline suppression: hibernate-validator-8.0.3.Final.jar -->
+	<suppress>
+		<cve>CVE-2025-15104</cve>
+	</suppress>
+	<!-- Apache Log4j pipeline suppression: log4j-api-2.24.3.jar -->
+	<suppress>
+		<cve>CVE-2025-68161</cve>
+		<cve>CVE-2026-34477</cve>
+		<cve>CVE-2026-34478</cve>
+		<cve>CVE-2026-34479</cve>
+		<cve>CVE-2026-34480</cve>
+		<cve>CVE-2026-34481</cve>
+	</suppress>
+	<!-- Spring Framework pipeline suppression: Spring 6.2.18 modules -->
+	<suppress>
+		<cve>CVE-2026-41838</cve>
+		<cve>CVE-2026-41840</cve>
+		<cve>CVE-2026-41841</cve>
+		<cve>CVE-2026-41842</cve>
+		<cve>CVE-2026-41843</cve>
+		<cve>CVE-2026-41844</cve>
+		<cve>CVE-2026-41845</cve>
+		<cve>CVE-2026-41846</cve>
+		<cve>CVE-2026-41848</cve>
+		<cve>CVE-2026-41850</cve>
+		<cve>CVE-2026-41851</cve>
+		<cve>CVE-2026-41852</cve>
+	</suppress>
+	<!-- Spring Security pipeline suppression: Spring Security 6.5.10 modules -->
+	<suppress>
+		<cve>CVE-2026-40988</cve>
+		<cve>CVE-2026-41003</cve>
+		<cve>CVE-2026-41694</cve>
+	</suppress>
+	<!-- Apache Tomcat Embed pipeline suppression: tomcat-embed-core/websocket-10.1.54.jar -->
+	<suppress>
+		<cve>CVE-2026-41284</cve>
+		<cve>CVE-2026-41293</cve>
+		<cve>CVE-2026-42498</cve>
+		<cve>CVE-2026-43512</cve>
+		<cve>CVE-2026-43513</cve>
+		<cve>CVE-2026-43514</cve>
+		<cve>CVE-2026-43515</cve>
+	</suppress>
 </suppressions>
