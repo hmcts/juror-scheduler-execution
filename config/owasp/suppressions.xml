@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions
 	xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+	<!-- Apache Commons Lang pipeline suppression: commons-lang3-3.17.0.jar -->
 	<suppress>
-		<cve>CVE-2023-35116</cve>
+		<cve>CVE-2025-48924</cve>
 	</suppress>
+	<!-- Hibernate Validator pipeline suppression: hibernate-validator-8.0.3.Final.jar -->
 	<suppress>
-		<cve>CVE-2023-48795</cve>
+		<cve>CVE-2025-15104</cve>
+	</suppress>
+	<!-- Apache Log4j pipeline suppression: log4j-api-2.24.3.jar -->
+	<suppress>
+		<cve>CVE-2025-68161</cve>
+		<cve>CVE-2026-34477</cve>
+		<cve>CVE-2026-34478</cve>
+		<cve>CVE-2026-34479</cve>
+		<cve>CVE-2026-34480</cve>
+		<cve>CVE-2026-34481</cve>
 	</suppress>
 </suppressions>

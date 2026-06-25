@@ -146,6 +146,7 @@ jobs:
       thirdparty-online-no-months: 6
       welsh-online-responses-no-months: 6
       service-no-months: 84
+      sitting-days-no-months: 12
   checks:
     pnc:
       batch:
