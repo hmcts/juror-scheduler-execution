@@ -216,7 +216,7 @@ dependencies {
   testImplementation 'junit:junit:4.13.2'
   annotationProcessor 'org.projectlombok:lombok:1.18.46'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.46'
-  implementation 'org.springframework.data:spring-data-commons:3.5.4'
+  implementation 'org.springframework.data:spring-data-commons:3.5.13'
   runtimeOnly(group: 'com.microsoft.azure', name: 'applicationinsights-core', version: '3.7.9')
 
 
