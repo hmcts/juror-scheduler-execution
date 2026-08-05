@@ -147,6 +147,7 @@ jobs:
       welsh-online-responses-no-months: 6
       service-no-months: 84
       sitting-days-no-months: 12
+      dbd-responses-no-months: 6
   checks:
     pnc:
       batch:

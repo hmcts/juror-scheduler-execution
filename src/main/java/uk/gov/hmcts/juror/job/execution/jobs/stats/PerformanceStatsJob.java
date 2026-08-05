@@ -44,7 +44,9 @@ public class PerformanceStatsJob extends ParallelJob {
                     metaData -> runRunProcedure("service_stats",
                         this.config.getServiceNoMonths()),
                     metaData -> runRunProcedure("sitting_days_stats",
-                        this.config.getSittingDaysNoMonths())
+                        this.config.getSittingDaysNoMonths()),
+                    metaData -> runRunProcedure("dbd_responses",
+                        this.config.getdbdResponsesNoMonths())
                 )
             )
         );
