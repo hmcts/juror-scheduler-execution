@@ -53,4 +53,13 @@
     <cve>CVE-2026-54428</cve>
   </suppress>
 
+  <suppress>
+    <notes><![CDATA[
+   dependency-check findings for tomcat-embed-core-10.1.57.jar and tomcat-embed-websocket-10.1.57.jar.
+   CVE-2026-66299 - suppressed pending patched Tomcat release.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat-embed-(core|websocket)@10\.1\.57$</packageUrl>
+    <cve>CVE-2026-66299</cve>
+  </suppress>
+
 </suppressions>
