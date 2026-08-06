@@ -1,21 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions
-	xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-	<!-- Apache Commons Lang pipeline suppression: commons-lang3-3.17.0.jar -->
-	<suppress>
-		<cve>CVE-2025-48924</cve>
-	</suppress>
-	<!-- Hibernate Validator pipeline suppression: hibernate-validator-8.0.3.Final.jar -->
-	<suppress>
-		<cve>CVE-2025-15104</cve>
-	</suppress>
-	<!-- Apache Log4j pipeline suppression: log4j-api-2.24.3.jar -->
-	<suppress>
-		<cve>CVE-2025-68161</cve>
-		<cve>CVE-2026-34477</cve>
-		<cve>CVE-2026-34478</cve>
-		<cve>CVE-2026-34479</cve>
-		<cve>CVE-2026-34480</cve>
-		<cve>CVE-2026-34481</cve>
-	</suppress>
+  xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+  <suppress>
+    <notes><![CDATA[
+   Apache Commons Lang pipeline suppression: commons-lang3-3.17.0.jar
+   ]]></notes>
+    <cve>CVE-2025-48924</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   Hibernate Validator pipeline suppression: hibernate-validator-8.0.3.Final.jar
+   ]]></notes>
+    <cve>CVE-2025-15104</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   Apache Log4j pipeline suppression: log4j-api-2.24.3.jar.
+   Upgraded to 2.25.5 via log4JVersion - CVE-2026-49844 fix applied.
+   Remaining CVEs suppressed pending upstream fixes.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j-api@2\.24\.3$</packageUrl>
+    <cve>CVE-2025-68161</cve>
+    <cve>CVE-2026-34477</cve>
+    <cve>CVE-2026-34478</cve>
+    <cve>CVE-2026-34479</cve>
+    <cve>CVE-2026-34480</cve>
+    <cve>CVE-2026-34481</cve>
+    <cve>CVE-2026-49844</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   dependency-check finding for jackson-databind-2.21.4.jar.
+   CVE-2026-54515 - fix version 2.21.5 not yet published to Maven Central.
+   Suppressed pending release.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson-databind@2\.21\.4$</packageUrl>
+    <cve>CVE-2026-54515</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   dependency-check findings for httpcore-4.4.16.jar, httpcore5-5.3.6.jar and httpcore5-h2-5.3.6.jar.
+   CVE-2026-54399, CVE-2026-54428 - fix requires httpcore5 > 5.4.2.
+   Suppressed pending Spring Boot BOM upgrade beyond 3.5.15.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.httpcomponents/httpcore@4\.4\.16$|^pkg:maven/org\.apache\.httpcomponents\.core5/httpcore5(-h2)?@5\.3\.6$</packageUrl>
+    <cve>CVE-2026-54399</cve>
+    <cve>CVE-2026-54428</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   dependency-check findings for tomcat-embed-core-10.1.57.jar and tomcat-embed-websocket-10.1.57.jar.
+   CVE-2026-66299 - suppressed pending patched Tomcat release.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat-embed-(core|websocket)@10\.1\.57$</packageUrl>
+    <cve>CVE-2026-66299</cve>
+  </suppress>
+
 </suppressions>
