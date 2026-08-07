@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   review:
-    uses: hmcts/codex-agent-workflows/.github/workflows/codex-review-feedback.yml@21999dd3eb636ecb07fc62cd3673da4e0c1f881b
+    uses: hmcts/codex-agent-workflows/.github/workflows/codex-review-feedback.yml@2cd983caa8460d995ca404250451e5d1b5000283
     with:
       runner_label: codex-juror-scheduler-execution-aks
       node_version: "22"
