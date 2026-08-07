@@ -19,14 +19,14 @@ concurrency:
 
 jobs:
   review:
-    uses: hmcts/codex-agent-workflows/.github/workflows/codex-review-feedback.yml@2cd983caa8460d995ca404250451e5d1b5000283
+    uses: hmcts/codex-agent-workflows/.github/workflows/codex-review-feedback.yml@c3fc827b836f1fcb9c56f4543b7d849f80b8ae26
     with:
       runner_label: codex-juror-scheduler-execution-aks
       node_version: "22"
-      publisher_login: ${{ vars.BOT_PUBLISHER_LOGIN }}
+      github_app_client_id: ${{ vars.CODEX_GITHUB_APP_CLIENT_ID }}
       sonar_host_url: https://sonarcloud.io
       sonar_project_key: uk.gov.hmcts.juror:juror-scheduler-execution
     secrets:
       CODEX_OPENAI_API_KEY: ${{ secrets.CODEX_OPENAI_API_KEY }}
-      BOT_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+      CODEX_GITHUB_APP_PRIVATE_KEY: ${{ secrets.CODEX_GITHUB_APP_PRIVATE_KEY }}
       CODEX_SONAR_TOKEN: ${{ secrets.CODEX_SONAR_TOKEN }}
