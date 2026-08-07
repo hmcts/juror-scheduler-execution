@@ -1,0 +1,60 @@
+name: Codex Jira Dispatch
+
+run-name: Codex Jira Dispatch - ${{ inputs.issueKey }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      issueKey:
+        description: Jira issue key
+        required: true
+        type: string
+      summary:
+        description: Jira issue summary
+        required: true
+        type: string
+      description:
+        description: Jira issue description
+        required: true
+        type: string
+      status:
+        description: Jira issue status
+        required: true
+        type: string
+      assignee:
+        description: Jira assignee
+        required: false
+        default: ""
+        type: string
+      issueUrl:
+        description: Jira issue URL
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codex-jira-${{ inputs.issueKey }}
+  cancel-in-progress: false
+
+jobs:
+  implement:
+    uses: hmcts/codex-agent-workflows/.github/workflows/codex-implement.yml@21999dd3eb636ecb07fc62cd3673da4e0c1f881b
+    with:
+      issueKey: ${{ inputs.issueKey }}
+      summary: ${{ inputs.summary }}
+      description: ${{ inputs.description }}
+      status: ${{ inputs.status }}
+      assignee: ${{ inputs.assignee }}
+      issueUrl: ${{ inputs.issueUrl }}
+      runner_label: codex-juror-scheduler-execution-aks
+      node_version: "22"
+      publisher_login: ${{ vars.BOT_PUBLISHER_LOGIN }}
+      sonar_host_url: https://sonarcloud.io
+      sonar_project_key: uk.gov.hmcts.juror:juror-scheduler-execution
+    secrets:
+      CODEX_OPENAI_API_KEY: ${{ secrets.CODEX_OPENAI_API_KEY }}
+      BOT_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+      CODEX_JIRA_PR_NOTIFY_URL: ${{ secrets.CODEX_JIRA_PR_NOTIFY_URL }}
+      CODEX_SONAR_TOKEN: ${{ secrets.CODEX_SONAR_TOKEN }}
