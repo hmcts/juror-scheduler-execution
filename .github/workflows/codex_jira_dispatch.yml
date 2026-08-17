@@ -30,6 +30,11 @@ on:
         description: Jira issue URL
         required: true
         type: string
+      initiatorDisplayName:
+        description: Display name of the Jira user who initiated the automation
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: read
@@ -40,7 +45,7 @@ concurrency:
 
 jobs:
   implement:
-    uses: hmcts/codex-agent-workflows/.github/workflows/codex-implement.yml@c3fc827b836f1fcb9c56f4543b7d849f80b8ae26
+    uses: hmcts/codex-agent-workflows/.github/workflows/codex-implement.yml@6da7d270e69a3c9fd50e5b66acb3c4eb040c8fa9
     with:
       issueKey: ${{ inputs.issueKey }}
       summary: ${{ inputs.summary }}
@@ -48,6 +53,7 @@ jobs:
       status: ${{ inputs.status }}
       assignee: ${{ inputs.assignee }}
       issueUrl: ${{ inputs.issueUrl }}
+      initiatorDisplayName: ${{ inputs.initiatorDisplayName }}
       runner_label: codex-juror-scheduler-execution-aks
       node_version: "22"
       github_app_client_id: ${{ vars.CODEX_GITHUB_APP_CLIENT_ID }}
