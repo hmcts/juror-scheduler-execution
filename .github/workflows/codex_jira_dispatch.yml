@@ -45,7 +45,7 @@ concurrency:
 
 jobs:
   implement:
-    uses: hmcts/codex-agent-workflows/.github/workflows/codex-implement.yml@4d33c9d256e07b5df97493b28ffcd1955d3f2082
+    uses: hmcts/codex-agent-workflows/.github/workflows/codex-implement.yml@123bbcd2fa6fab5ba4bb19a5b4485ac37f4d877b
     with:
       issueKey: ${{ inputs.issueKey }}
       summary: ${{ inputs.summary }}
@@ -63,4 +63,3 @@ jobs:
       CODEX_OPENAI_API_KEY: ${{ secrets.CODEX_OPENAI_API_KEY }}
       CODEX_GITHUB_APP_PRIVATE_KEY: ${{ secrets.CODEX_GITHUB_APP_PRIVATE_KEY }}
       CODEX_JIRA_PR_NOTIFY_URL: ${{ secrets.CODEX_JIRA_PR_NOTIFY_URL }}
-      CODEX_SONAR_TOKEN: ${{ secrets.CODEX_SONAR_TOKEN }}

@@ -3,10 +3,6 @@ name: Codex PR Review Feedback
 on:
   issue_comment:
     types: [created]
-  pull_request_review:
-    types: [submitted]
-  pull_request_review_comment:
-    types: [created]
 
 permissions:
   contents: read
@@ -19,7 +15,8 @@ concurrency:
 
 jobs:
   review:
-    uses: hmcts/codex-agent-workflows/.github/workflows/codex-review-feedback.yml@4d33c9d256e07b5df97493b28ffcd1955d3f2082
+    if: ${{ github.event.issue.pull_request && github.event.comment.body == '/codex-review' && contains(fromJSON('["COLLABORATOR","MEMBER","OWNER"]'), github.event.comment.author_association) }}
+    uses: hmcts/codex-agent-workflows/.github/workflows/codex-review-feedback.yml@123bbcd2fa6fab5ba4bb19a5b4485ac37f4d877b
     with:
       runner_label: codex-juror-scheduler-execution-aks
       node_version: "22"
@@ -30,4 +27,3 @@ jobs:
       CODEX_OPENAI_API_KEY: ${{ secrets.CODEX_OPENAI_API_KEY }}
       CODEX_GITHUB_APP_PRIVATE_KEY: ${{ secrets.CODEX_GITHUB_APP_PRIVATE_KEY }}
       CODEX_JIRA_PR_NOTIFY_URL: ${{ secrets.CODEX_JIRA_PR_NOTIFY_URL }}
-      CODEX_SONAR_TOKEN: ${{ secrets.CODEX_SONAR_TOKEN }}
