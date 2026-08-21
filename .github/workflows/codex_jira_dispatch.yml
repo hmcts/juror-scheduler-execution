@@ -1,0 +1,65 @@
+name: Codex Jira Dispatch
+
+run-name: Codex Jira Dispatch - ${{ inputs.issueKey }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      issueKey:
+        description: Jira issue key
+        required: true
+        type: string
+      summary:
+        description: Jira issue summary
+        required: true
+        type: string
+      description:
+        description: Jira issue description
+        required: true
+        type: string
+      status:
+        description: Jira issue status
+        required: true
+        type: string
+      assignee:
+        description: Jira assignee
+        required: false
+        default: ""
+        type: string
+      issueUrl:
+        description: Jira issue URL
+        required: true
+        type: string
+      initiatorDisplayName:
+        description: Display name of the Jira user who initiated the automation
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codex-jira-${{ inputs.issueKey }}
+  cancel-in-progress: false
+
+jobs:
+  implement:
+    uses: hmcts/codex-agent-workflows/.github/workflows/codex-implement.yml@123bbcd2fa6fab5ba4bb19a5b4485ac37f4d877b
+    with:
+      issueKey: ${{ inputs.issueKey }}
+      summary: ${{ inputs.summary }}
+      description: ${{ inputs.description }}
+      status: ${{ inputs.status }}
+      assignee: ${{ inputs.assignee }}
+      issueUrl: ${{ inputs.issueUrl }}
+      initiatorDisplayName: ${{ inputs.initiatorDisplayName }}
+      runner_label: codex-juror-scheduler-execution-aks
+      node_version: "22"
+      github_app_client_id: ${{ vars.CODEX_GITHUB_APP_CLIENT_ID }}
+      sonar_host_url: https://sonarcloud.io
+      sonar_project_key: uk.gov.hmcts.juror:juror-scheduler-execution
+    secrets:
+      CODEX_OPENAI_API_KEY: ${{ secrets.CODEX_OPENAI_API_KEY }}
+      CODEX_GITHUB_APP_PRIVATE_KEY: ${{ secrets.CODEX_GITHUB_APP_PRIVATE_KEY }}
+      CODEX_JIRA_PR_NOTIFY_URL: ${{ secrets.CODEX_JIRA_PR_NOTIFY_URL }}

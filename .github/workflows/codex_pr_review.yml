@@ -1,0 +1,29 @@
+name: Codex PR Review Feedback
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: codex-review-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  review:
+    if: ${{ github.event.issue.pull_request && github.event.comment.body == '/codex-review' && contains(fromJSON('["COLLABORATOR","MEMBER","OWNER"]'), github.event.comment.author_association) }}
+    uses: hmcts/codex-agent-workflows/.github/workflows/codex-review-feedback.yml@123bbcd2fa6fab5ba4bb19a5b4485ac37f4d877b
+    with:
+      runner_label: codex-juror-scheduler-execution-aks
+      node_version: "22"
+      github_app_client_id: ${{ vars.CODEX_GITHUB_APP_CLIENT_ID }}
+      sonar_host_url: https://sonarcloud.io
+      sonar_project_key: uk.gov.hmcts.juror:juror-scheduler-execution
+    secrets:
+      CODEX_OPENAI_API_KEY: ${{ secrets.CODEX_OPENAI_API_KEY }}
+      CODEX_GITHUB_APP_PRIVATE_KEY: ${{ secrets.CODEX_GITHUB_APP_PRIVATE_KEY }}
+      CODEX_JIRA_PR_NOTIFY_URL: ${{ secrets.CODEX_JIRA_PR_NOTIFY_URL }}
