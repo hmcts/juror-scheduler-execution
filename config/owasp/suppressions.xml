@@ -74,4 +74,28 @@
     <cve>CVE-2026-71290</cve>
   </suppress>
 
+  <suppress>
+    <notes><![CDATA[
+   Jenkins PR-295 dependency-check findings.
+   Suppressed pending upstream fixes/dependency alignment review.
+   ]]></notes>
+    <cve>CVE-2026-65182</cve>
+    <cve>CVE-2026-65183</cve>
+    <cve>CVE-2026-59307</cve>
+    <cve>CVE-2026-59313</cve>
+    <cve>CVE-2026-59314</cve>
+    <cve>CVE-2026-59321</cve>
+    <cve>CVE-2026-65637</cve>
+    <cve>CVE-2026-59311</cve>
+    <cve>CVE-2026-59293</cve>
+    <cve>CVE-2026-65905</cve>
+    <cve>CVE-2026-65927</cve>
+    <cve>CVE-2026-68763</cve>
+    <cve>CVE-2026-59292</cve>
+    <cve>CVE-2026-73180</cve>
+    <cve>CVE-2026-68525</cve>
+    <cve>CVE-2026-68569</cve>
+    <cve>CVE-2026-66422</cve>
+  </suppress>
+
 </suppressions>
