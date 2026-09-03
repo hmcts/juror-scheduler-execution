@@ -1,0 +1,47 @@
+#!groovy
+
+properties([
+    pipelineTriggers([cron('H 08 * * 1-5')])
+])
+
+@Library("Infrastructure@2.5.4") _
+
+def type = "java"
+def product = "juror"
+def component = "scheduler-execution"
+
+def branchesToSync = []
+
+def secrets = [
+  'juror-${env}': [
+    secret('app-insights-connection-string', 'app-insights-connection-string'),
+    secret('AppInsightsInstrumentationKey', 'azure.application-insights.instrumentation-key'),
+    secret('scheduler-execution-SECRET', 'SECRET'),
+    secret('scheduler-api-SECRET', 'SCHEDULER_SERVICE_SECRET'),
+    secret('pnc-SECRET', 'POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET'),
+    secret('api-JWT-SECRET-BUREAU', 'JUROR_SERVICE_SECRET')
+    ],
+]
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
+  [$class     : 'AzureKeyVaultSecret',
+   secretType : 'Secret',
+   name       : secretName,
+   version    : '',
+   envVariable: envVar
+  ]
+}
+
+withNightlyPipeline(type, product, component) {
+  loadVaultSecrets(secrets)
+  enableSlackNotifications('#juror-build-notices')
+
+  env.SCHEDULER_SERVICE_HOST = 'juror-scheduler-api.staging.platform.hmcts.net'
+  env.SCHEDULER_SERVICE_PORT = 443
+  env.SCHEDULER_SERVICE_SUBJECT = 'external-api@juror-scheduler-api.hmcts.net'
+  env.POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_HOST = 'juror-pnc.staging.platform.hmcts.net'
+  env.POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_PORT = 443
+  env.POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT = 'api.job.execution.service@schedular.cgi.com'
+  env.JUROR_SERVICE_HOST = 'juror-api.staging.platform.hmcts.net'
+  env.JUROR_SERVICE_PORT = 443
+}
