@@ -133,6 +133,18 @@ public class DatabaseFieldConvertorTest {
         }
 
         @Test
+        void positiveBooleanConvertorTest() throws Exception {
+            final String columnName = "testBoolean";
+            DatabaseColumn databaseColumn = createDatabaseColumnMock(columnName, "setTestBoolean");
+            ResultSet resultSet = mock(ResultSet.class);
+            when(resultSet.getObject(columnName, Boolean.class)).thenReturn(Boolean.TRUE);
+            assertEquals(Boolean.TRUE, DatabaseFieldConvertor.CONVERTERS.get(Boolean.class).apply(databaseColumn,
+                resultSet), "Should return expected value");
+            verify(resultSet, times(1)).getObject(columnName, Boolean.class);
+            verifyNoMoreInteractions(resultSet);
+        }
+
+        @Test
         void positiveBigDecimalConvertorTest() throws Exception {
             final String columnName = "testBigDecimal";
             BigDecimal expectedValue = new BigDecimal(1);
