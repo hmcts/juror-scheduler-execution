@@ -12,6 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RulesEngineTest {
 
     @Test
+    void positiveNoRules() {
+        assertTrue(RulesEngine.fire(List.of()).isEmpty(),
+            "No rules should result in no failure messages being returned");
+    }
+
+    @Test
     void positiveAllRulesPass() {
         List<Rule> rules = List.of(
             createRule(true, "Rule 1"),
