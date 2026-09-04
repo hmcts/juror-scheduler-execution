@@ -98,4 +98,41 @@
     <cve>CVE-2026-66422</cve>
   </suppress>
 
+  <suppress>
+    <notes><![CDATA[
+   Suppressed pending Spring Boot BOM upgrade to a release containing Spring Framework 6.2.20 or later.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-(aop|beans|context|context-support|core|expression|jcl|messaging|tx|webflux|webmvc)@6\.2\.19$</packageUrl>
+    <cve>CVE-2026-47890</cve>
+    <cve>CVE-2026-47891</cve>
+    <cve>CVE-2026-47892</cve>
+    <cve>CVE-2026-47893</cve>
+    <cve>CVE-2026-59280</cve>
+    <cve>CVE-2026-59281</cve>
+    <cve>CVE-2026-59282</cve>
+    <cve>CVE-2026-59283</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   Suppressed pending dependency upgrade to Spring Integration 6.5.11 or later.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.integration/spring-integration-(core|file|sftp)@6\.5\.10$</packageUrl>
+    <cve>CVE-2026-47861</cve>
+    <cve>CVE-2026-47862</cve>
+    <cve>CVE-2026-47864</cve>
+    <cve>CVE-2026-59274</cve>
+    <cve>CVE-2026-59322</cve>
+    <cve>CVE-2026-59324</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   Suppressed pending Spring Boot BOM upgrade to a release containing Spring Security 6.5.12 or later.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-(config|core|crypto|web)@6\.5\.11$</packageUrl>
+    <cve>CVE-2026-59270</cve>
+    <cve>CVE-2026-59276</cve>
+  </suppress>
+
 </suppressions>
