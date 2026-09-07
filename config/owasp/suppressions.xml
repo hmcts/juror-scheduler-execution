@@ -118,6 +118,8 @@
    Suppressed pending dependency upgrade to Spring Integration 6.5.11 or later.
    ]]></notes>
     <packageUrl regex="true">^pkg:maven/org\.springframework\.integration/spring-integration-(core|file|sftp)@6\.5\.10$</packageUrl>
+    <cve>CVE-2026-47856</cve>
+    <cve>CVE-2026-47859</cve>
     <cve>CVE-2026-47861</cve>
     <cve>CVE-2026-47862</cve>
     <cve>CVE-2026-47864</cve>
@@ -131,6 +133,8 @@
    Suppressed pending Spring Boot BOM upgrade to a release containing Spring Security 6.5.12 or later.
    ]]></notes>
     <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-(config|core|crypto|web)@6\.5\.11$</packageUrl>
+    <cve>CVE-2026-47841</cve>
+    <cve>CVE-2026-47842</cve>
     <cve>CVE-2026-59270</cve>
     <cve>CVE-2026-59276</cve>
   </suppress>
