@@ -231,6 +231,8 @@ dependencies {
 
   compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
 
+  testImplementation 'com.github.hmcts:fortify-client:1.4.10:all'
+
   // Security
   implementation "org.springframework.boot:spring-boot-starter-security"
   implementation "io.jsonwebtoken:jjwt-api:${jsonwebtokenVersion}"
@@ -279,4 +281,10 @@ task runAllStyleChecks {
   dependsOn 'pmdIntegrationTest'
   dependsOn 'pmdSmokeTest'
   dependsOn 'pmdFunctionalTest'
+}
+
+task fortifyScan(type: JavaExec) {
+  main = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
+  classpath += sourceSets.test.runtimeClasspath
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
