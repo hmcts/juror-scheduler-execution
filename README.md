@@ -7,16 +7,16 @@
 
 ### Environmental Variables
 ```
-SECRET=WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0QnV0Rm9yVGhlRXhlY3V0aW9uTGF5ZXJUaGlzVGltZQ==
+SECRET=
 SPRING_PROFILES_ACTIVE=test
 
 SCHEDULER_SERVICE_SUBJECT=external-api@juror-scheduler-api.hmcts.net
-SCHEDULER_SERVICE_SECRET=WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0
+SCHEDULER_SERVICE_SECRET=
 
 POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT=api.job.execution.service@schedular.cgi.com
-POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET=WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0QnV0Rm9yVGhlRXhlY3V0aW9uTGF5ZXJUaGlzVGltZQ==
+POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET=
 
-JUROR_SERVICE_SECRET=W3N1cGVyLXNlY3JldC1rZXktYnVyZWF1XVtzdXBlci1zZWNyZXQta2V5LWJ1cmVhdV1bc3VwZXItc2VjcmV0LWtleS1idXJlYXVd
+JUROR_SERVICE_SECRET=
 JUROR_SERVICE_HOST=localhost
 JUROR_SERVICE_PORT=8080
 ```
@@ -30,12 +30,6 @@ To do this you will need to add the following environmental variables which (ass
 
 Upon logging in for the first time it is **Highly** recommend you change the password and remove the environment variables.
 If you do not remove the credentials from the configuration after first boot the application will force shutdown.
-```
-ADMIN_EMAIL=admin@scheduler.cgi.com
-ADMIN_PASSWORD=kj3TXdvYqmFTXXTq!9nA7ZUmDgiQ&W7Z&v7mnFyp2bvM&BZ#nPosFfL8zNvw
-ADMIN_FIRSTNAME=Admin
-ADMIN_LASTNAME=Admin
-```
 
 ###
 
