@@ -1,5 +1,10 @@
 # API Execution Service
 
+### Prerequisites
+
+- [Java 21](https://www.oracle.com/java)
+- [Docker](https://www.docker.com)
+
 ### Environmental Variables
 ```
 SECRET=WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0QnV0Rm9yVGhlRXhlY3V0aW9uTGF5ZXJUaGlzVGltZQ==
