@@ -47,6 +47,6 @@ withNightlyPipeline(type, product, component) {
   env.JUROR_SERVICE_PORT = 443
 
   afterSuccess('fortify-scan') {
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '/Fortify Scan//*’
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '/Fortify Scan//*'
   }
 }
