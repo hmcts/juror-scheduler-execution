@@ -45,7 +45,7 @@ concurrency:
 
 jobs:
   implement:
-    uses: hmcts/codex-agent-workflows/.github/workflows/codex-implement.yml@bb9b5a579ae55080cb6ca1494fdbe0c97128087c
+    uses: hmcts/codex-agent-workflows/.github/workflows/codex-implement.yml@c5fcfc067decc58da3d7fa0af92c23e670610dfc
     with:
       issueKey: ${{ inputs.issueKey }}
       summary: ${{ inputs.summary }}
@@ -55,6 +55,7 @@ jobs:
       issueUrl: ${{ inputs.issueUrl }}
       initiatorDisplayName: ${{ inputs.initiatorDisplayName }}
       runner_label: codex-juror-scheduler-execution-aks
+      runner_group: juror-codex
       node_version: "22"
       github_app_client_id: ${{ vars.CODEX_GITHUB_APP_CLIENT_ID }}
       sonar_host_url: https://sonarcloud.io
