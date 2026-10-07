@@ -1,0 +1,38 @@
+#!groovy
+
+properties([
+    pipelineTriggers([cron('H 08 * * 1-5')])
+])
+
+@Library("Infrastructure@2.12.1") _
+
+def type = "java"
+def product = "juror"
+def component = "scheduler-execution"
+
+def secrets = [
+  'juror-${env}': [
+    secret('fortify-on-demand-username', 'FORTIFY_USER_NAME'),
+    secret('fortify-on-demand-password', 'FORTIFY_PASSWORD'),
+  ]
+]
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
+  [$class     : 'AzureKeyVaultSecret',
+   secretType : 'Secret',
+   name       : secretName,
+   version    : '',
+   envVariable: envVar
+  ]
+}
+
+withNightlyPipeline(type, product, component) {
+  enableSlackNotifications('#juror-build-notices')
+  loadVaultSecrets(secrets)
+  enableFortifyScan()
+  env.FORTIFY_SCAN_RUNNER = 'library'
+
+  afterSuccess('fortify-scan') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '/Fortify Scan//*'
+  }
+}

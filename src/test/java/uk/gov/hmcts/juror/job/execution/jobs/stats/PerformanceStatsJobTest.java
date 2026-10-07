@@ -1,6 +1,5 @@
 package uk.gov.hmcts.juror.job.execution.jobs.stats;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
@@ -39,12 +38,13 @@ class PerformanceStatsJobTest {
     private PerformanceStatsConfig createConfig() {
         PerformanceStatsConfig performanceStatsConfig = new PerformanceStatsConfig();
         performanceStatsConfig.setDatabase(mock(DatabaseConfig.class));
-        performanceStatsConfig.setResponseTimesAndNonRespondNoMonths(RandomUtils.nextInt());
-        performanceStatsConfig.setWelshOnlineResponsesNoMonths(RandomUtils.nextInt());
-        performanceStatsConfig.setThirdpartyOnlineNoMonths(RandomUtils.nextInt());
-        performanceStatsConfig.setDeferralsNoMonths(RandomUtils.nextInt());
-        performanceStatsConfig.setExcusalsNoMonths(RandomUtils.nextInt());
-        performanceStatsConfig.setServiceNoMonths(RandomUtils.nextInt());
+        performanceStatsConfig.setResponseTimesAndNonRespondNoMonths(1);
+        performanceStatsConfig.setWelshOnlineResponsesNoMonths(2);
+        performanceStatsConfig.setThirdpartyOnlineNoMonths(3);
+        performanceStatsConfig.setDeferralsNoMonths(4);
+        performanceStatsConfig.setExcusalsNoMonths(5);
+        performanceStatsConfig.setServiceNoMonths(6);
+        performanceStatsConfig.setSittingDaysNoMonths(7);
         return performanceStatsConfig;
     }
 
@@ -88,8 +88,8 @@ class PerformanceStatsJobTest {
         Job.ResultSupplier resultSupplier2 = resultSuppliers.get(1);
         assertFalse(resultSupplier2.isContinueOnFailure(),
             "The second result supplier should not continue on failure");
-        assertEquals(7, resultSupplier2.getResultRunners().size(),
-            "There should be 7 result runner");
+        assertEquals(8, resultSupplier2.getResultRunners().size(),
+            "There should be 8 result runner");
 
         for (Function<MetaData, Job.Result> runner : resultSupplier2.getResultRunners()) {
             runner.apply(metaData);
@@ -114,6 +114,9 @@ class PerformanceStatsJobTest {
         verify(performanceStatsJob, times(1))
             .runRunProcedure("service_stats",
                              this.config.getServiceNoMonths());
+        verify(performanceStatsJob, times(1))
+            .runRunProcedure("sitting_days_stats",
+                             this.config.getSittingDaysNoMonths());
 
         verifyNoMoreInteractions(databaseService);
         verifyNoMoreInteractions(performanceStatsJob);

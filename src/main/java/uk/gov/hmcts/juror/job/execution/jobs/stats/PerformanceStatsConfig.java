@@ -29,4 +29,6 @@ public class PerformanceStatsConfig {
     private Integer excusalsNoMonths;
     @NotNull
     private Integer serviceNoMonths;
+    @NotNull
+    private Integer sittingDaysNoMonths;
 }
