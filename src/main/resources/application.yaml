@@ -134,6 +134,7 @@ jobs:
       max-timeout: 240
       read-only: false
       owner-restrict: true
+      inactive-user-threshold-months: 6
       database:
         schema: HK
   stats:
@@ -163,4 +164,3 @@ defaults:
     password: ${DB_PASSWORD:postgres}
     url: ${DB_URL:}
     schema: "juror_mod"
-
