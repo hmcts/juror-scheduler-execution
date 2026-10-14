@@ -1,4 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions
   xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+  <suppress>
+    <notes><![CDATA[
+   Jenkins PR-343 dependency-check finding for commons-lang3-3.17.0.jar.
+   Suppressed pending upstream fix/dependency alignment review.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.commons/commons-lang3@3\.17\.0$</packageUrl>
+    <cve>CVE-2025-48924</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   Jenkins PR-343 dependency-check finding for hibernate-validator-8.0.3.Final.jar.
+   Suppressed pending upstream fix/dependency alignment review.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.hibernate\.validator/hibernate-validator@8\.0\.3\.Final$</packageUrl>
+    <cve>CVE-2025-15104</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   Jenkins PR-343 dependency-check findings for httpcore5-5.3.6.jar and httpcore5-h2-5.3.6.jar.
+   Suppressed pending upstream fix/dependency alignment review.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.httpcomponents\.core5/httpcore5(-h2)?@5\.3\.6$</packageUrl>
+    <cve>CVE-2026-54399</cve>
+    <cve>CVE-2026-54428</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   Jenkins PR-343 dependency-check finding for jackson-databind-2.21.4.jar.
+   Suppressed pending upstream fix/dependency alignment review.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson-databind@2\.21\.4$</packageUrl>
+    <cve>CVE-2026-54515</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   Jenkins PR-343 dependency-check findings for Spring Framework 6.2.19 modules.
+   Suppressed pending upstream fix/dependency alignment review.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-(aop|beans|context|context-support|core|expression|jcl|messaging|tx|webmvc)@6\.2\.19$</packageUrl>
+    <cve>CVE-2026-47883</cve>
+    <cve>CVE-2026-47884</cve>
+    <cve>CVE-2026-47885</cve>
+    <cve>CVE-2026-47886</cve>
+    <cve>CVE-2026-47887</cve>
+    <cve>CVE-2026-47888</cve>
+    <cve>CVE-2026-47889</cve>
+    <cve>CVE-2026-47890</cve>
+    <cve>CVE-2026-47891</cve>
+    <cve>CVE-2026-47892</cve>
+    <cve>CVE-2026-47893</cve>
+    <cve>CVE-2026-59280</cve>
+    <cve>CVE-2026-59281</cve>
+    <cve>CVE-2026-59282</cve>
+    <cve>CVE-2026-59283</cve>
+    <cve>CVE-2026-59313</cve>
+    <cve>CVE-2026-59314</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   Jenkins PR-343 dependency-check findings for Spring Integration 6.5.10 modules.
+   Suppressed pending upstream fix/dependency alignment review.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.integration/spring-integration-(core|file|sftp)@6\.5\.10$</packageUrl>
+    <cve>CVE-2026-47856</cve>
+    <cve>CVE-2026-47859</cve>
+    <cve>CVE-2026-47861</cve>
+    <cve>CVE-2026-47862</cve>
+    <cve>CVE-2026-47864</cve>
+    <cve>CVE-2026-47880</cve>
+    <cve>CVE-2026-59274</cve>
+    <cve>CVE-2026-59292</cve>
+    <cve>CVE-2026-59293</cve>
+    <cve>CVE-2026-59307</cve>
+    <cve>CVE-2026-59311</cve>
+    <cve>CVE-2026-59321</cve>
+    <cve>CVE-2026-59322</cve>
+    <cve>CVE-2026-59324</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   Jenkins PR-343 dependency-check findings for Spring Security 6.5.11 modules.
+   Suppressed pending upstream fix/dependency alignment review.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-(config|core|crypto|web)@6\.5\.11$</packageUrl>
+    <cve>CVE-2026-41707</cve>
+    <cve>CVE-2026-47841</cve>
+    <cve>CVE-2026-47842</cve>
+    <cve>CVE-2026-59270</cve>
+    <cve>CVE-2026-59276</cve>
+  </suppress>
+
 </suppressions>
