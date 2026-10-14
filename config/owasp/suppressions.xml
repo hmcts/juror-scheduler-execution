@@ -4,39 +4,36 @@
 
   <suppress>
     <notes><![CDATA[
-   Apache Commons Lang pipeline suppression: commons-lang3-3.17.0.jar
+   Jenkins PR-343 dependency-check finding for commons-lang3-3.17.0.jar.
+   Suppressed pending upstream fix/dependency alignment review.
    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.commons/commons-lang3@3\.17\.0$</packageUrl>
     <cve>CVE-2025-48924</cve>
   </suppress>
 
   <suppress>
     <notes><![CDATA[
-   Hibernate Validator pipeline suppression: hibernate-validator-8.0.3.Final.jar
+   Jenkins PR-343 dependency-check finding for hibernate-validator-8.0.3.Final.jar.
+   Suppressed pending upstream fix/dependency alignment review.
    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.hibernate\.validator/hibernate-validator@8\.0\.3\.Final$</packageUrl>
     <cve>CVE-2025-15104</cve>
   </suppress>
 
   <suppress>
     <notes><![CDATA[
-   Apache Log4j pipeline suppression: log4j-api-2.24.3.jar.
-   Upgraded to 2.25.5 via log4JVersion - CVE-2026-49844 fix applied.
-   Remaining CVEs suppressed pending upstream fixes.
+   Jenkins PR-343 dependency-check findings for httpcore5-5.3.6.jar and httpcore5-h2-5.3.6.jar.
+   Suppressed pending upstream fix/dependency alignment review.
    ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j-api@2\.24\.3$</packageUrl>
-    <cve>CVE-2025-68161</cve>
-    <cve>CVE-2026-34477</cve>
-    <cve>CVE-2026-34478</cve>
-    <cve>CVE-2026-34479</cve>
-    <cve>CVE-2026-34480</cve>
-    <cve>CVE-2026-34481</cve>
-    <cve>CVE-2026-49844</cve>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.httpcomponents\.core5/httpcore5(-h2)?@5\.3\.6$</packageUrl>
+    <cve>CVE-2026-54399</cve>
+    <cve>CVE-2026-54428</cve>
   </suppress>
 
   <suppress>
     <notes><![CDATA[
-   dependency-check finding for jackson-databind-2.21.4.jar.
-   CVE-2026-54515 - fix version 2.21.5 not yet published to Maven Central.
-   Suppressed pending release.
+   Jenkins PR-343 dependency-check finding for jackson-databind-2.21.4.jar.
+   Suppressed pending upstream fix/dependency alignment review.
    ]]></notes>
     <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson-databind@2\.21\.4$</packageUrl>
     <cve>CVE-2026-54515</cve>
@@ -44,65 +41,10 @@
 
   <suppress>
     <notes><![CDATA[
-   dependency-check findings for httpcore-4.4.16.jar, httpcore5-5.3.6.jar and httpcore5-h2-5.3.6.jar.
-   CVE-2026-54399, CVE-2026-54428 - fix requires httpcore5 > 5.4.2.
-   Suppressed pending Spring Boot BOM upgrade beyond 3.5.15.
+   Jenkins PR-343 dependency-check findings for Spring Framework 6.2.19 modules.
+   Suppressed pending upstream fix/dependency alignment review.
    ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.apache\.httpcomponents/httpcore@4\.4\.16$|^pkg:maven/org\.apache\.httpcomponents\.core5/httpcore5(-h2)?@5\.3\.6$</packageUrl>
-    <cve>CVE-2026-54399</cve>
-    <cve>CVE-2026-54428</cve>
-  </suppress>
-
-  <suppress>
-    <notes><![CDATA[
-   dependency-check findings for tomcat-embed-core-10.1.57.jar and tomcat-embed-websocket-10.1.57.jar.
-   CVE-2026-66299 - suppressed pending patched Tomcat release.
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat-embed-(core|websocket)@10\.1\.57$</packageUrl>
-    <cve>CVE-2026-66299</cve>
-  </suppress>
-
-  <suppress>
-    <notes><![CDATA[
-  dependency-check finding for httpclient5-5.4.4.jar.
-  CVE-2026-64607 - fix version 5.6.3 conflicts with Spring Boot BOM httpcore5:5.3.6
-  causing connection issues. Pinned to 5.4.4 for compatibility.
-  Suppressed pending Spring Boot BOM upgrade beyond 3.5.16.
-  ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.apache\.httpcomponents\.client5/httpclient5@5\.4\.4$</packageUrl>
-    <cve>CVE-2026-64607</cve>
-    <cve>CVE-2026-71290</cve>
-  </suppress>
-
-  <suppress>
-    <notes><![CDATA[
-   Jenkins PR-295 dependency-check findings.
-   Suppressed pending upstream fixes/dependency alignment review.
-   ]]></notes>
-    <cve>CVE-2026-65182</cve>
-    <cve>CVE-2026-65183</cve>
-    <cve>CVE-2026-59307</cve>
-    <cve>CVE-2026-59313</cve>
-    <cve>CVE-2026-59314</cve>
-    <cve>CVE-2026-59321</cve>
-    <cve>CVE-2026-65637</cve>
-    <cve>CVE-2026-59311</cve>
-    <cve>CVE-2026-59293</cve>
-    <cve>CVE-2026-65905</cve>
-    <cve>CVE-2026-65927</cve>
-    <cve>CVE-2026-68763</cve>
-    <cve>CVE-2026-59292</cve>
-    <cve>CVE-2026-73180</cve>
-    <cve>CVE-2026-68525</cve>
-    <cve>CVE-2026-68569</cve>
-    <cve>CVE-2026-66422</cve>
-  </suppress>
-
-  <suppress>
-    <notes><![CDATA[
-   Suppressed pending Spring Boot BOM upgrade to a release containing Spring Framework 6.2.20 or later.
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-(aop|beans|context|context-support|core|expression|jcl|messaging|tx|webflux|webmvc)@6\.2\.19$</packageUrl>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-(aop|beans|context|context-support|core|expression|jcl|messaging|tx|webmvc)@6\.2\.19$</packageUrl>
     <cve>CVE-2026-47883</cve>
     <cve>CVE-2026-47884</cve>
     <cve>CVE-2026-47885</cve>
@@ -118,32 +60,41 @@
     <cve>CVE-2026-59281</cve>
     <cve>CVE-2026-59282</cve>
     <cve>CVE-2026-59283</cve>
+    <cve>CVE-2026-59313</cve>
+    <cve>CVE-2026-59314</cve>
   </suppress>
 
   <suppress>
     <notes><![CDATA[
-   Suppressed pending dependency upgrade to Spring Integration 6.5.11 or later.
+   Jenkins PR-343 dependency-check findings for Spring Integration 6.5.10 modules.
+   Suppressed pending upstream fix/dependency alignment review.
    ]]></notes>
     <packageUrl regex="true">^pkg:maven/org\.springframework\.integration/spring-integration-(core|file|sftp)@6\.5\.10$</packageUrl>
-    <cve>CVE-2026-47880</cve>
     <cve>CVE-2026-47856</cve>
     <cve>CVE-2026-47859</cve>
     <cve>CVE-2026-47861</cve>
     <cve>CVE-2026-47862</cve>
     <cve>CVE-2026-47864</cve>
+    <cve>CVE-2026-47880</cve>
     <cve>CVE-2026-59274</cve>
+    <cve>CVE-2026-59292</cve>
+    <cve>CVE-2026-59293</cve>
+    <cve>CVE-2026-59307</cve>
+    <cve>CVE-2026-59311</cve>
+    <cve>CVE-2026-59321</cve>
     <cve>CVE-2026-59322</cve>
     <cve>CVE-2026-59324</cve>
   </suppress>
 
   <suppress>
     <notes><![CDATA[
-   Suppressed pending Spring Boot BOM upgrade to a release containing Spring Security 6.5.12 or later.
+   Jenkins PR-343 dependency-check findings for Spring Security 6.5.11 modules.
+   Suppressed pending upstream fix/dependency alignment review.
    ]]></notes>
     <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-(config|core|crypto|web)@6\.5\.11$</packageUrl>
+    <cve>CVE-2026-41707</cve>
     <cve>CVE-2026-47841</cve>
     <cve>CVE-2026-47842</cve>
-    <cve>CVE-2026-41707</cve>
     <cve>CVE-2026-59270</cve>
     <cve>CVE-2026-59276</cve>
   </suppress>
