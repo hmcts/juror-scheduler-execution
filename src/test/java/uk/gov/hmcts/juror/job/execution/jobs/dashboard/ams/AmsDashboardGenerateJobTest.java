@@ -10,7 +10,12 @@ import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.BureauLettersAutomaticallyGenerated;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.BureauLettersToBePrinted;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.Certificates;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.DashboardData;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.Expenses;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.PncCheck;
 import uk.gov.hmcts.juror.job.execution.model.Status;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 import uk.gov.hmcts.juror.job.execution.util.FileUtils;
@@ -123,6 +128,49 @@ public class AmsDashboardGenerateJobTest {
     }
 
     @Test
+    void positiveGetResultSuppliersRunsPopulateRunners() {
+        MetaData metaData = mock(MetaData.class);
+        DashboardData dashboardData = mock(DashboardData.class);
+        BureauLettersAutomaticallyGenerated bureauLettersAutomaticallyGenerated =
+            mock(BureauLettersAutomaticallyGenerated.class);
+        BureauLettersToBePrinted bureauLettersToBePrinted = mock(BureauLettersToBePrinted.class);
+        PncCheck pncCheck = mock(PncCheck.class);
+        Expenses expenses = mock(Expenses.class);
+        Certificates certificates = mock(Certificates.class);
+        Job.Result bureauLettersAutomaticallyGeneratedResult = Job.Result.passed("Bureau letters generated");
+        Job.Result bureauLettersToBePrintedResult = Job.Result.passed("Bureau letters to be printed");
+        Job.Result pncCheckResult = Job.Result.passed("PNC check");
+        Job.Result expensesResult = Job.Result.passed("Expenses");
+        Job.Result certificatesResult = Job.Result.passed("Certificates");
+
+        doReturn(dashboardData).when(amsDashboardGenerateJob).createDashboardData();
+        when(dashboardData.getBureauLettersAutomaticallyGenerated()).thenReturn(bureauLettersAutomaticallyGenerated);
+        when(dashboardData.getBureauLettersToBePrinted()).thenReturn(bureauLettersToBePrinted);
+        when(dashboardData.getPncCheck()).thenReturn(pncCheck);
+        when(dashboardData.getExpenses()).thenReturn(expenses);
+        when(dashboardData.getCertificates()).thenReturn(certificates);
+        when(bureauLettersAutomaticallyGenerated.populate()).thenReturn(bureauLettersAutomaticallyGeneratedResult);
+        when(bureauLettersToBePrinted.populate()).thenReturn(bureauLettersToBePrintedResult);
+        when(pncCheck.populate()).thenReturn(pncCheckResult);
+        when(expenses.populate()).thenReturn(expensesResult);
+        when(certificates.populate()).thenReturn(certificatesResult);
+
+        List<Job.Result> results = amsDashboardGenerateJob.getResultSuppliers().get(0).getResultRunners()
+            .stream()
+            .map(resultRunner -> resultRunner.apply(metaData))
+            .toList();
+
+        assertEquals(5, results.size(), "Five dashboard section runners should run");
+        assertTrue(results.containsAll(List.of(
+            bureauLettersAutomaticallyGeneratedResult,
+            bureauLettersToBePrintedResult,
+            pncCheckResult,
+            expensesResult,
+            certificatesResult
+        )), "Results should include every dashboard section result");
+    }
+
+    @Test
     void positiveExecuteRunnersSomePopulateJobsSucceedReportsPartialSuccess() {
         MetaData metaData = mock(MetaData.class);
         doReturn(List.of(
@@ -165,6 +213,64 @@ public class AmsDashboardGenerateJobTest {
 
         assertSame(expectedResult, result, "Result should be the dashboard file failure");
         verify(amsDashboardGenerateJob, times(1)).generateDashboardFile(any(DashboardData.class));
+    }
+
+    @Test
+    void positivePopulateDashboardDataRunsAllDashboardSections() {
+        MetaData metaData = mock(MetaData.class);
+        DashboardData dashboardData = mock(DashboardData.class);
+        BureauLettersAutomaticallyGenerated bureauLettersAutomaticallyGenerated =
+            mock(BureauLettersAutomaticallyGenerated.class);
+        BureauLettersToBePrinted bureauLettersToBePrinted = mock(BureauLettersToBePrinted.class);
+        PncCheck pncCheck = mock(PncCheck.class);
+        Expenses expenses = mock(Expenses.class);
+        Certificates certificates = mock(Certificates.class);
+        Job.Result bureauLettersAutomaticallyGeneratedResult = Job.Result.passed("Bureau letters generated");
+        Job.Result bureauLettersToBePrintedResult = Job.Result.passed("Bureau letters to be printed");
+        Job.Result pncCheckResult = Job.Result.passed("PNC check");
+        Job.Result expensesResult = Job.Result.passed("Expenses");
+        Job.Result certificatesResult = Job.Result.passed("Certificates");
+
+        when(dashboardData.getBureauLettersAutomaticallyGenerated()).thenReturn(bureauLettersAutomaticallyGenerated);
+        when(dashboardData.getBureauLettersToBePrinted()).thenReturn(bureauLettersToBePrinted);
+        when(dashboardData.getPncCheck()).thenReturn(pncCheck);
+        when(dashboardData.getExpenses()).thenReturn(expenses);
+        when(dashboardData.getCertificates()).thenReturn(certificates);
+        when(bureauLettersAutomaticallyGenerated.populate()).thenReturn(bureauLettersAutomaticallyGeneratedResult);
+        when(bureauLettersToBePrinted.populate()).thenReturn(bureauLettersToBePrintedResult);
+        when(pncCheck.populate()).thenReturn(pncCheckResult);
+        when(expenses.populate()).thenReturn(expensesResult);
+        when(certificates.populate()).thenReturn(certificatesResult);
+
+        List<Job.Result> results = amsDashboardGenerateJob.populateDashboardData(dashboardData, metaData);
+
+        assertEquals(5, results.size(), "Five dashboard sections should be populated");
+        assertTrue(results.containsAll(List.of(
+            bureauLettersAutomaticallyGeneratedResult,
+            bureauLettersToBePrintedResult,
+            pncCheckResult,
+            expensesResult,
+            certificatesResult
+        )), "Results should include every dashboard section result");
+        verify(bureauLettersAutomaticallyGenerated, times(1)).populate();
+        verify(bureauLettersToBePrinted, times(1)).populate();
+        verify(pncCheck, times(1)).populate();
+        verify(expenses, times(1)).populate();
+        verify(certificates, times(1)).populate();
+    }
+
+    @Test
+    void positiveCreateResultPreservesMergedResultDetails() {
+        RuntimeException cause = new RuntimeException("Failure cause");
+        Job.Result mergedResult = new Job.Result(Status.FAILED, "Merged message", cause)
+            .addMetaData("key", "value");
+
+        Job.Result result = amsDashboardGenerateJob.createResult(Status.PARTIAL_SUCCESS, mergedResult);
+
+        assertEquals(Status.PARTIAL_SUCCESS, result.getStatus(), "Result status should be overridden");
+        assertEquals("Merged message", result.getMessage(), "Result message should be preserved");
+        assertSame(cause, result.getThrowable(), "Result throwable should be preserved");
+        assertEquals("value", result.getMetaData().get("key"), "Result metadata should be preserved");
     }
 
     @Test
