@@ -45,6 +45,7 @@ class PerformanceStatsJobTest {
         performanceStatsConfig.setExcusalsNoMonths(5);
         performanceStatsConfig.setServiceNoMonths(6);
         performanceStatsConfig.setSittingDaysNoMonths(7);
+        performanceStatsConfig.setDbdResponsesNoMonths(8);
         return performanceStatsConfig;
     }
 
@@ -88,8 +89,8 @@ class PerformanceStatsJobTest {
         Job.ResultSupplier resultSupplier2 = resultSuppliers.get(1);
         assertFalse(resultSupplier2.isContinueOnFailure(),
             "The second result supplier should not continue on failure");
-        assertEquals(8, resultSupplier2.getResultRunners().size(),
-            "There should be 8 result runner");
+        assertEquals(9, resultSupplier2.getResultRunners().size(),
+            "There should be 9 result runner");
 
         for (Function<MetaData, Job.Result> runner : resultSupplier2.getResultRunners()) {
             runner.apply(metaData);
@@ -117,6 +118,9 @@ class PerformanceStatsJobTest {
         verify(performanceStatsJob, times(1))
             .runRunProcedure("sitting_days_stats",
                              this.config.getSittingDaysNoMonths());
+        verify(performanceStatsJob, times(1))
+            .runRunProcedure("dbd_responses",
+                             this.config.getDbdResponsesNoMonths());
 
         verifyNoMoreInteractions(databaseService);
         verifyNoMoreInteractions(performanceStatsJob);
