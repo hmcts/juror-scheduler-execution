@@ -27,4 +27,8 @@ public class HouseKeepingConfig implements HasDatabaseConfig {
     @NotNull
     @Min(600)
     private int maxTimeout;
+
+    @NotNull
+    @Min(1)
+    private int inactiveUserThresholdMonths;
 }

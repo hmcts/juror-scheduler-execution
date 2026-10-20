@@ -1,17 +1,22 @@
 # API Execution Service
 
+### Prerequisites
+
+- [Java 21](https://www.oracle.com/java)
+- [Docker](https://www.docker.com)
+
 ### Environmental Variables
 ```
-SECRET=WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0QnV0Rm9yVGhlRXhlY3V0aW9uTGF5ZXJUaGlzVGltZQ==
+SECRET=
 SPRING_PROFILES_ACTIVE=test
 
 SCHEDULER_SERVICE_SUBJECT=external-api@juror-scheduler-api.hmcts.net
-SCHEDULER_SERVICE_SECRET=WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0
+SCHEDULER_SERVICE_SECRET=
 
 POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT=api.job.execution.service@schedular.cgi.com
-POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET=WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0QnV0Rm9yVGhlRXhlY3V0aW9uTGF5ZXJUaGlzVGltZQ==
+POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET=
 
-JUROR_SERVICE_SECRET=W3N1cGVyLXNlY3JldC1rZXktYnVyZWF1XVtzdXBlci1zZWNyZXQta2V5LWJ1cmVhdV1bc3VwZXItc2VjcmV0LWtleS1idXJlYXVd
+JUROR_SERVICE_SECRET=
 JUROR_SERVICE_HOST=localhost
 JUROR_SERVICE_PORT=8080
 ```
@@ -183,4 +188,5 @@ There is no need to remove postgres and java or similar core images.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
