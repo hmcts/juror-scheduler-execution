@@ -26,6 +26,7 @@ To do this you will need to add the following environmental variables which (ass
 Upon logging in for the first time it is **Highly** recommend you change the password and remove the environment variables.
 If you do not remove the credentials from the configuration after first boot the application will force shutdown.
 ```
+
 ADMIN_EMAIL=admin@scheduler.cgi.com
 ADMIN_PASSWORD=kj3TXdvYqmFTXXTq!9nA7ZUmDgiQ&W7Z&v7mnFyp2bvM&BZ#nPosFfL8zNvw
 ADMIN_FIRSTNAME=Admin
@@ -178,7 +179,7 @@ docker images
 docker image rm <image-id>
 ```
 
-There is no need to remove postgres and java or similar core images. 
+There is no need to remove postgres and java or similar core images.
 
 ## License
 
