@@ -37,64 +37,64 @@ If you do not remove the credentials from the configuration after first boot the
 
 The template contains the following plugins:
 
-  *
+*
 
-    https://docs.gradle.org/current/userguide/checkstyle_plugin.support
+https://docs.gradle.org/current/userguide/checkstyle_plugin.support
 
-    Performs code style checks on Java source files using Checkstyle and generates reports from these checks.
-    The checks are included in gradle's *check* task (you can run them by executing `./gradlew check` command).
+Performs code style checks on Java source files using Checkstyle and generates reports from these checks.
+The checks are included in gradle's *check* task (you can run them by executing `./gradlew check` command).
 
-  * pmd
+* pmd
 
-    https://docs.gradle.org/current/userguide/pmd_plugin.support
+  https://docs.gradle.org/current/userguide/pmd_plugin.support
 
-    Performs static code analysis to finds common programming flaws. Included in gradle `check` task.
+  Performs static code analysis to finds common programming flaws. Included in gradle `check` task.
 
 
-  * jacoco
+* jacoco
 
-    https://docs.gradle.org/current/userguide/jacoco_plugin.support
+  https://docs.gradle.org/current/userguide/jacoco_plugin.support
 
-    Provides code coverage metrics for Java code via integration with JaCoCo.
-    You can create the report by running the following command:
+  Provides code coverage metrics for Java code via integration with JaCoCo.
+  You can create the report by running the following command:
 
-    ```bash
-      ./gradlew jacocoTestReport
-    ```
+  ```bash
+    ./gradlew jacocoTestReport
+  ```
 
-    The report will be created in build/reports subdirectory in your project directory.
+  The report will be created in build/reports subdirectory in your project directory.
 
-  * io.spring.dependency-management
+* io.spring.dependency-management
 
-    https://github.com/spring-gradle-plugins/dependency-management-plugin
+  https://github.com/spring-gradle-plugins/dependency-management-plugin
 
-    Provides Maven-like dependency management. Allows you to declare dependency management
-    using `dependency 'groupId:artifactId:version'`
-    or `dependency group:'group', name:'name', version:version'`.
+  Provides Maven-like dependency management. Allows you to declare dependency management
+  using `dependency 'groupId:artifactId:version'`
+  or `dependency group:'group', name:'name', version:version'`.
 
-  * org.springframework.boot
+* org.springframework.boot
 
-    http://projects.spring.io/spring-boot/
+  http://projects.spring.io/spring-boot/
 
-    Reduces the amount of work needed to create a Spring application
+  Reduces the amount of work needed to create a Spring application
 
-  * org.owasp.dependencycheck
+* org.owasp.dependencycheck
 
-    https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/index.support
+  https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/index.support
 
-    Provides monitoring of the project's dependent libraries and creating a report
-    of known vulnerable components that are included in the build. To run it
-    execute `gradle dependencyCheck` command.
+  Provides monitoring of the project's dependent libraries and creating a report
+  of known vulnerable components that are included in the build. To run it
+  execute `gradle dependencyCheck` command.
 
-  * com.github.ben-manes.versions
+* com.github.ben-manes.versions
 
-    https://github.com/ben-manes/gradle-versions-plugin
+  https://github.com/ben-manes/gradle-versions-plugin
 
-    Provides a task to determine which dependencies have updates. Usage:
+  Provides a task to determine which dependencies have updates. Usage:
 
-    ```bash
-      ./gradlew dependencyUpdates -Drevision=release
-    ```
+  ```bash
+    ./gradlew dependencyUpdates -Drevision=release
+  ```
 
 ## Setup
 

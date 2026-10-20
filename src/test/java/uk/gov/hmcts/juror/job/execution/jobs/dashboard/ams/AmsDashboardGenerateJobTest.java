@@ -10,7 +10,13 @@ import uk.gov.hmcts.juror.job.execution.client.contracts.SchedulerServiceClient;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.BureauLettersAutomaticallyGenerated;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.BureauLettersToBePrinted;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.Certificates;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.DashboardData;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.Expenses;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.PncCheck;
+import uk.gov.hmcts.juror.job.execution.model.Status;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 import uk.gov.hmcts.juror.job.execution.util.FileUtils;
 
@@ -26,7 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -102,6 +110,167 @@ public class AmsDashboardGenerateJobTest {
         assertSame(expectedResult, result, "Result should be the same as the expected result");
 
 
+    }
+
+    @Test
+    void positiveExecuteRunnersAllPopulateJobsSucceedReportsSuccess() {
+        MetaData metaData = mock(MetaData.class);
+        doReturn(List.of(
+            Job.Result.passed("Success 1"),
+            Job.Result.passed("Success 2")
+        )).when(amsDashboardGenerateJob).populateDashboardData(any(DashboardData.class), any(MetaData.class));
+        doReturn(Job.Result.passed()).when(amsDashboardGenerateJob).generateDashboardFile(any(DashboardData.class));
+
+        Job.Result result = amsDashboardGenerateJob.executeRunners(metaData);
+
+        assertEquals(Status.SUCCESS, result.getStatus(), "Result should be success");
+        verify(amsDashboardGenerateJob, times(1)).generateDashboardFile(any(DashboardData.class));
+    }
+
+    @Test
+    void positiveGetResultSuppliersRunsPopulateRunners() {
+        MetaData metaData = mock(MetaData.class);
+        DashboardData dashboardData = mock(DashboardData.class);
+        BureauLettersAutomaticallyGenerated bureauLettersAutomaticallyGenerated =
+            mock(BureauLettersAutomaticallyGenerated.class);
+        BureauLettersToBePrinted bureauLettersToBePrinted = mock(BureauLettersToBePrinted.class);
+        PncCheck pncCheck = mock(PncCheck.class);
+        Expenses expenses = mock(Expenses.class);
+        Certificates certificates = mock(Certificates.class);
+        Job.Result bureauLettersAutomaticallyGeneratedResult = Job.Result.passed("Bureau letters generated");
+        Job.Result bureauLettersToBePrintedResult = Job.Result.passed("Bureau letters to be printed");
+        Job.Result pncCheckResult = Job.Result.passed("PNC check");
+        Job.Result expensesResult = Job.Result.passed("Expenses");
+        Job.Result certificatesResult = Job.Result.passed("Certificates");
+
+        doReturn(dashboardData).when(amsDashboardGenerateJob).createDashboardData();
+        when(dashboardData.getBureauLettersAutomaticallyGenerated()).thenReturn(bureauLettersAutomaticallyGenerated);
+        when(dashboardData.getBureauLettersToBePrinted()).thenReturn(bureauLettersToBePrinted);
+        when(dashboardData.getPncCheck()).thenReturn(pncCheck);
+        when(dashboardData.getExpenses()).thenReturn(expenses);
+        when(dashboardData.getCertificates()).thenReturn(certificates);
+        when(bureauLettersAutomaticallyGenerated.populate()).thenReturn(bureauLettersAutomaticallyGeneratedResult);
+        when(bureauLettersToBePrinted.populate()).thenReturn(bureauLettersToBePrintedResult);
+        when(pncCheck.populate()).thenReturn(pncCheckResult);
+        when(expenses.populate()).thenReturn(expensesResult);
+        when(certificates.populate()).thenReturn(certificatesResult);
+
+        List<Job.Result> results = amsDashboardGenerateJob.getResultSuppliers().get(0).getResultRunners()
+            .stream()
+            .map(resultRunner -> resultRunner.apply(metaData))
+            .toList();
+
+        assertEquals(5, results.size(), "Five dashboard section runners should run");
+        assertTrue(results.containsAll(List.of(
+            bureauLettersAutomaticallyGeneratedResult,
+            bureauLettersToBePrintedResult,
+            pncCheckResult,
+            expensesResult,
+            certificatesResult
+        )), "Results should include every dashboard section result");
+    }
+
+    @Test
+    void positiveExecuteRunnersSomePopulateJobsSucceedReportsPartialSuccess() {
+        MetaData metaData = mock(MetaData.class);
+        doReturn(List.of(
+            Job.Result.passed("Success"),
+            Job.Result.failed("Failed")
+        )).when(amsDashboardGenerateJob).populateDashboardData(any(DashboardData.class), any(MetaData.class));
+        doReturn(Job.Result.passed()).when(amsDashboardGenerateJob).generateDashboardFile(any(DashboardData.class));
+
+        Job.Result result = amsDashboardGenerateJob.executeRunners(metaData);
+
+        assertEquals(Status.PARTIAL_SUCCESS, result.getStatus(), "Result should be partial success");
+        verify(amsDashboardGenerateJob, times(1)).generateDashboardFile(any(DashboardData.class));
+    }
+
+    @Test
+    void negativeExecuteRunnersAllPopulateJobsFailReportsFailed() {
+        MetaData metaData = mock(MetaData.class);
+        doReturn(List.of(
+            Job.Result.failed("Failed 1"),
+            Job.Result.failed("Failed 2")
+        )).when(amsDashboardGenerateJob).populateDashboardData(any(DashboardData.class), any(MetaData.class));
+
+        Job.Result result = amsDashboardGenerateJob.executeRunners(metaData);
+
+        assertEquals(Status.FAILED, result.getStatus(), "Result should be failed");
+        verify(amsDashboardGenerateJob, never()).generateDashboardFile(any(DashboardData.class));
+    }
+
+    @Test
+    void negativeExecuteRunnersDashboardFileFailsReportsFailed() {
+        MetaData metaData = mock(MetaData.class);
+        Job.Result expectedResult = Job.Result.failed("Failed to output dashboard csv");
+        doReturn(List.of(
+            Job.Result.passed("Success"),
+            Job.Result.failed("Failed")
+        )).when(amsDashboardGenerateJob).populateDashboardData(any(DashboardData.class), any(MetaData.class));
+        doReturn(expectedResult).when(amsDashboardGenerateJob).generateDashboardFile(any(DashboardData.class));
+
+        Job.Result result = amsDashboardGenerateJob.executeRunners(metaData);
+
+        assertSame(expectedResult, result, "Result should be the dashboard file failure");
+        verify(amsDashboardGenerateJob, times(1)).generateDashboardFile(any(DashboardData.class));
+    }
+
+    @Test
+    void positivePopulateDashboardDataRunsAllDashboardSections() {
+        MetaData metaData = mock(MetaData.class);
+        DashboardData dashboardData = mock(DashboardData.class);
+        BureauLettersAutomaticallyGenerated bureauLettersAutomaticallyGenerated =
+            mock(BureauLettersAutomaticallyGenerated.class);
+        BureauLettersToBePrinted bureauLettersToBePrinted = mock(BureauLettersToBePrinted.class);
+        PncCheck pncCheck = mock(PncCheck.class);
+        Expenses expenses = mock(Expenses.class);
+        Certificates certificates = mock(Certificates.class);
+        Job.Result bureauLettersAutomaticallyGeneratedResult = Job.Result.passed("Bureau letters generated");
+        Job.Result bureauLettersToBePrintedResult = Job.Result.passed("Bureau letters to be printed");
+        Job.Result pncCheckResult = Job.Result.passed("PNC check");
+        Job.Result expensesResult = Job.Result.passed("Expenses");
+        Job.Result certificatesResult = Job.Result.passed("Certificates");
+
+        when(dashboardData.getBureauLettersAutomaticallyGenerated()).thenReturn(bureauLettersAutomaticallyGenerated);
+        when(dashboardData.getBureauLettersToBePrinted()).thenReturn(bureauLettersToBePrinted);
+        when(dashboardData.getPncCheck()).thenReturn(pncCheck);
+        when(dashboardData.getExpenses()).thenReturn(expenses);
+        when(dashboardData.getCertificates()).thenReturn(certificates);
+        when(bureauLettersAutomaticallyGenerated.populate()).thenReturn(bureauLettersAutomaticallyGeneratedResult);
+        when(bureauLettersToBePrinted.populate()).thenReturn(bureauLettersToBePrintedResult);
+        when(pncCheck.populate()).thenReturn(pncCheckResult);
+        when(expenses.populate()).thenReturn(expensesResult);
+        when(certificates.populate()).thenReturn(certificatesResult);
+
+        List<Job.Result> results = amsDashboardGenerateJob.populateDashboardData(dashboardData, metaData);
+
+        assertEquals(5, results.size(), "Five dashboard sections should be populated");
+        assertTrue(results.containsAll(List.of(
+            bureauLettersAutomaticallyGeneratedResult,
+            bureauLettersToBePrintedResult,
+            pncCheckResult,
+            expensesResult,
+            certificatesResult
+        )), "Results should include every dashboard section result");
+        verify(bureauLettersAutomaticallyGenerated, times(1)).populate();
+        verify(bureauLettersToBePrinted, times(1)).populate();
+        verify(pncCheck, times(1)).populate();
+        verify(expenses, times(1)).populate();
+        verify(certificates, times(1)).populate();
+    }
+
+    @Test
+    void positiveCreateResultPreservesMergedResultDetails() {
+        RuntimeException cause = new RuntimeException("Failure cause");
+        Job.Result mergedResult = new Job.Result(Status.FAILED, "Merged message", cause)
+            .addMetaData("key", "value");
+
+        Job.Result result = amsDashboardGenerateJob.createResult(Status.PARTIAL_SUCCESS, mergedResult);
+
+        assertEquals(Status.PARTIAL_SUCCESS, result.getStatus(), "Result status should be overridden");
+        assertEquals("Merged message", result.getMessage(), "Result message should be preserved");
+        assertSame(cause, result.getThrowable(), "Result throwable should be preserved");
+        assertEquals("value", result.getMetaData().get("key"), "Result metadata should be preserved");
     }
 
     @Test
