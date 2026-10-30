@@ -43,11 +43,14 @@ select tfa.form_type type,
             when tfa.form_type ='6221C' then 'DBD RESPONSE WELSH' else 'UNKNOWN' end) description,
             coalesce(sum(form_counts.number_of_items),0)::bigint "count"
             from juror_mod.t_form_attr tfa left outer join (
-                SELECT form_type,
-                count(juror_no) AS number_of_items
-                FROM juror_mod.bulk_print_data bpd
-                where creation_date >= current_date - case when to_char(current_date, 'dy') = 'tue' then 3 else 1 end
-                GROUP BY form_type, (to_date(creation_date::text, 'YYYY-MM-DD'::text))) form_counts
+               select bpd.form_type,
+                    count(bpd.juror_no) as number_of_items
+               from juror_mod.bulk_print_data bpd
+               where bpd.extracted_flag = true
+               and bpd.extracted_date >= current_date
+                   - case when to_char(current_date, 'dy') = 'tue' then 3 else 1 end
+               and bpd.extracted_date < current_date
+             group by bpd.form_type) form_counts
             on tfa.form_type = form_counts.form_type
             group by tfa.form_type, tfa.dir_name
             order by 1;
