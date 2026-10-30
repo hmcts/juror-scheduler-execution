@@ -241,7 +241,7 @@ dependencies {
 
 
   // Web requests
-  implementation 'org.springframework:spring-webflux:7.0.9'
+  implementation 'org.springframework:spring-webflux:7.0.10'
 
 
   testImplementation(platform('org.junit:junit-bom:5.14.4'))
