@@ -16,14 +16,12 @@ concurrency:
 jobs:
   review:
     if: ${{ github.event.issue.pull_request && github.event.comment.body == '/codex-review' && contains(fromJSON('["COLLABORATOR","MEMBER","OWNER"]'), github.event.comment.author_association) }}
-    uses: hmcts/codex-agent-workflows/.github/workflows/codex-review-feedback.yml@09e7cf7d1370860cde5ddb528a36764dd40615fd
+    uses: hmcts/codex-agent-workflows/.github/workflows/codex-review-feedback.yml@1c408575fe4fb1b4b7c9facf54018ac4b4e4e8cd
     with:
       runner_label: codex-juror-scheduler-execution-aks
       runner_group: juror-codex
       node_version: "22"
       github_app_client_id: ${{ vars.CODEX_GITHUB_APP_CLIENT_ID }}
-      sonar_host_url: https://sonarcloud.io
-      sonar_project_key: uk.gov.hmcts.juror:juror-scheduler-execution
     secrets:
       CODEX_OPENAI_API_KEY: ${{ secrets.CODEX_OPENAI_API_KEY }}
       CODEX_GITHUB_APP_PRIVATE_KEY: ${{ secrets.CODEX_GITHUB_APP_PRIVATE_KEY }}
