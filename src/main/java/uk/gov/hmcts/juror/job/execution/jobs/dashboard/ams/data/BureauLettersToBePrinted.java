@@ -46,10 +46,7 @@ select tfa.form_type type,
                select bpd.form_type,
                     count(bpd.juror_no) as number_of_items
                from juror_mod.bulk_print_data bpd
-               where bpd.extracted_flag = true
-               and bpd.extracted_date >= current_date
-                   - case when to_char(current_date, 'dy') = 'tue' then 3 else 1 end
-               and bpd.extracted_date < current_date
+               where bpd.extracted_date = current_date -1
              group by bpd.form_type) form_counts
             on tfa.form_type = form_counts.form_type
             group by tfa.form_type, tfa.dir_name
