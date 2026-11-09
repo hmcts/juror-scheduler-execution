@@ -205,7 +205,7 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
 
   implementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.7'
-  implementation 'org.apache.httpcomponents.client5:httpclient5:5.6.4'
+  implementation 'org.apache.httpcomponents.client5:httpclient5:5.6.5'
 
   implementation 'org.springframework.integration:spring-integration-sftp:6.5.10'
 
