@@ -134,11 +134,16 @@ public abstract class AbstractStoredProcedureJobTest<J extends StoredProcedureJo
         verify(databaseService, times(1))
             .executeStoredProcedure(connection, procedureName, job.getProcedureArguments());
 
-
+        verifyAdditionalStoredProcedures(databaseService, connection, job, config);
 
         verifyNoMoreInteractions(databaseService);
     }
 
+
+    protected void verifyAdditionalStoredProcedures(DatabaseService databaseService, Connection connection, J job,
+                                                    C config) {
+        // Do nothing by default
+    }
 
     protected Object[] getProcedureArguments(C config) {
         return new Object[0];

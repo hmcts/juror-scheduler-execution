@@ -134,6 +134,7 @@ jobs:
       max-timeout: 240
       read-only: false
       owner-restrict: true
+      inactive-user-threshold-months: 6
       database:
         schema: HK
   stats:
@@ -147,6 +148,7 @@ jobs:
       welsh-online-responses-no-months: 6
       service-no-months: 84
       sitting-days-no-months: 12
+      dbd-responses-no-months: 6
   checks:
     pnc:
       batch:
@@ -163,4 +165,3 @@ defaults:
     password: ${DB_PASSWORD:postgres}
     url: ${DB_URL:}
     schema: "juror_mod"
-

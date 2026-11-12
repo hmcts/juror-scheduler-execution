@@ -31,4 +31,6 @@ public class PerformanceStatsConfig {
     private Integer serviceNoMonths;
     @NotNull
     private Integer sittingDaysNoMonths;
+    @NotNull
+    private Integer dbdResponsesNoMonths;
 }

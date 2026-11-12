@@ -1,8 +1,8 @@
 buildscript {
   ext {
     springBootVersion = '4.0.8'
-    postgresVersion = '42.7.13'
-    log4JVersion = "2.25.5"
+    postgresVersion = '42.7.14'
+    log4JVersion = "2.26.1"
     jsonwebtokenVersion = "0.13.0"
   }
   dependencies {
@@ -27,7 +27,7 @@ plugins {
 }
 
 group = 'uk.gov.hmcts.juror'
-version = '5.31.0'
+version = '5.33.0'
 
 java {
   toolchain {
@@ -178,15 +178,16 @@ dependencyCheck {
 
 repositories {
   mavenLocal()
-  mavenCentral()
-  maven {
-    url = uri('https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1')
+  if (!System.getenv('GITHUB_ACTIONS')) {
+    maven { url'https://artifactory.platform.hmcts.net/artifactory/maven-remotes'}
   }
+  maven { url 'https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1' }
+  mavenCentral()
 }
 
 dependencies {
-  implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.57'      // upgraded from 10.1.55 - CVE-2026-59083, CVE-2026-59084 fix
-  implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:10.1.57' // upgraded from 10.1.55 - CVE-2026-59083, CVE-2026-59084 fix
+  implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.60'      // upgraded from 10.1.55 - CVE-2026-59083, CVE-2026-59084 fix
+  implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:10.1.60' // upgraded from 10.1.55 - CVE-2026-59083, CVE-2026-59084 fix
   implementation 'com.github.hmcts:juror-spring-support-library:2.0.0:plain@jar'
   implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
 
@@ -198,16 +199,15 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-restclient:${springBootVersion}")
   implementation("org.springframework.boot:spring-boot-starter-validation:${springBootVersion}")
 
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.17'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.9.1'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '8.0.0'
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
 
-  implementation group: 'io.rest-assured', name: 'rest-assured', version: '5.4.0'
-  implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
-  implementation 'org.apache.httpcomponents.client5:httpclient5:5.4.4'
+  implementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.7'
+  implementation 'org.apache.httpcomponents.client5:httpclient5:5.6.4'
 
   implementation 'org.springframework.integration:spring-integration-sftp:6.5.10'
 
@@ -215,7 +215,7 @@ dependencies {
   implementation group: 'org.postgresql', name: 'postgresql', version: "${postgresVersion}"
 
   // Documentation, logging
-  implementation 'org.projectlombok:lombok:1.18.46'
+  implementation 'org.projectlombok:lombok:1.18.48'
   testImplementation 'org.projectlombok:lombok:1.18.46'
   implementation 'org.jetbrains:annotations:26.1.0'
   testImplementation 'junit:junit:4.13.2'
@@ -232,6 +232,8 @@ dependencies {
 
   compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
 
+  testImplementation 'com.github.hmcts:fortify-client:1.4.10:all'
+
   // Security
   implementation "org.springframework.boot:spring-boot-starter-security"
   implementation "io.jsonwebtoken:jjwt-api:${jsonwebtokenVersion}"
@@ -241,9 +243,10 @@ dependencies {
 
   // Web requests
   implementation 'org.springframework.boot:spring-boot-starter-webclient'
+  implementation 'org.springframework:spring-webflux:7.0.9'
 
 
-  testImplementation(platform('org.junit:junit-bom:5.11.4'))
+  testImplementation(platform('org.junit:junit-bom:5.14.4'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
@@ -281,4 +284,10 @@ task runAllStyleChecks {
   dependsOn 'pmdIntegrationTest'
   dependsOn 'pmdSmokeTest'
   dependsOn 'pmdFunctionalTest'
+}
+
+task fortifyScan(type: JavaExec) {
+  main = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
+  classpath += sourceSets.test.runtimeClasspath
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
