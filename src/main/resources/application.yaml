@@ -165,3 +165,28 @@ defaults:
     password: ${DB_PASSWORD:postgres}
     url: ${DB_URL:}
     schema: "juror_mod"
+
+---
+# Development defaults: activate explicitly with SPRING_PROFILES_ACTIVE=local.
+spring:
+  config:
+    activate:
+      on-profile: local
+uk:
+  gov:
+    hmcts:
+      juror:
+        security:
+          secret: ${SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
+        job:
+          execution:
+            remote:
+              scheduler-service:
+                security:
+                  secret: ${SCHEDULER_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
+              police-national-computer-check-service:
+                security:
+                  secret: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
+              juror-service:
+                security:
+                  secret: ${JUROR_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
