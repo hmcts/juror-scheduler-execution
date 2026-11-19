@@ -14,6 +14,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
@@ -99,12 +100,11 @@ class BureauLettersToBePrintedTest {
             return null;
         }).when(databaseService).execute(eq(databaseConfig), any());
 
-        doNothing().when(bureauLettersToBePrinted).addRow(any());
         doNothing().when(bureauLettersToBePrinted).populateTimestamp(any(), any(), any(LocalDateTime.class));
         List<BureauLettersToBePrintedDB> responses = List.of(
-            mock(BureauLettersToBePrintedDB.class),
-            mock(BureauLettersToBePrintedDB.class),
-            mock(BureauLettersToBePrintedDB.class)
+            new BureauLettersToBePrintedDB().setType("5221").setDescription("SUMMONS ENGLISH").setCount(1421L),
+            new BureauLettersToBePrintedDB().setType("5224").setDescription("WITHDRAWAL ENGLISH").setCount(126L),
+            new BureauLettersToBePrintedDB().setType("5224AC").setDescription("CONFIRMATION WELSH").setCount(0L)
         );
 
         when(databaseService.executePreparedStatement(connection, BureauLettersToBePrintedDB.class,
@@ -119,6 +119,13 @@ class BureauLettersToBePrintedTest {
             verify(bureauLettersToBePrinted, times(1))
                 .addRow(bureauLettersToBePrintedDB);
         }
+
+        verify(databaseService).executePreparedStatement(connection, BureauLettersToBePrintedDB.class,
+            BureauLettersToBePrinted.BUREAU_LETTERS_TO_BE_PRINTED_SQL);
+        assertEquals(4, bureauLettersToBePrinted.rows.size(), "Expected header and three letter types");
+        assertArrayEquals(new String[]{"5221", "SUMMONS ENGLISH", "1421"}, bureauLettersToBePrinted.rows.get(1));
+        assertArrayEquals(new String[]{"5224", "WITHDRAWAL ENGLISH", "126"}, bureauLettersToBePrinted.rows.get(2));
+        assertArrayEquals(new String[]{"5224AC", "CONFIRMATION WELSH", "0"}, bureauLettersToBePrinted.rows.get(3));
 
         verify(bureauLettersToBePrinted, times(1))
             .populateTimestamp(dashboardData, "Bureau Letters To Be Printed", LocalDateTime.now(clock));
