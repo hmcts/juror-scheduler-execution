@@ -30,7 +30,7 @@ uk:
         security:
           use-database: false
           token-validity: 18000
-          secret: ${SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
+          secret: ${SECRET}
         job:
           execution:
             remote:
@@ -45,7 +45,7 @@ uk:
                       - task::view
                       - job::view::status
                   issuer: api-job-execution-service
-                  secret: ${SCHEDULER_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
+                  secret: ${SCHEDULER_SERVICE_SECRET:}
                   subject: ${SCHEDULER_SERVICE_SUBJECT:external-api@juror-scheduler-api.hmcts.net}
                   token-validity: 300000
                   authentication-prefix: "Bearer "
@@ -60,7 +60,7 @@ uk:
                       - pnc::check::single
                   issuer: api-job-execution-service
                   subject: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SUBJECT:api-job-execution-service}
-                  secret: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
+                  secret: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_SECRET:}
                   token-validity: 300000
                   authentication-prefix: "Bearer "
                 host: ${POLICE_NATIONAL_COMPUTER_CHECK_SERVICE_HOST:localhost}
@@ -77,7 +77,7 @@ uk:
                   issuer: pnc-check-service
                   token-validity: 160000
                   subject: pnc-check-service
-                  secret: ${JUROR_SERVICE_SECRET:WW91clZlcnlWZXJ5VmVyeVNlY3JldEtleVRoYXRJc1NvU2VjcmV0SURvbnRFdmVuS25vd0l0}
+                  secret: ${JUROR_SERVICE_SECRET:}
                   claims:
                     login: AUTO
                     userType: SYSTEM
