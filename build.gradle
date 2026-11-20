@@ -209,7 +209,8 @@ dependencies {
   implementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.7'
   implementation 'org.apache.httpcomponents.client5:httpclient5:5.6.5'
 
-  implementation 'org.springframework.integration:spring-integration-sftp:6.5.10'
+  implementation 'org.springframework.boot:spring-boot-starter-integration'
+  implementation 'org.springframework.integration:spring-integration-sftp'
 
   // Database
   implementation group: 'org.postgresql', name: 'postgresql', version: "${postgresVersion}"
