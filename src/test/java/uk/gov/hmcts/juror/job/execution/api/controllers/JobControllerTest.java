@@ -6,13 +6,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.juror.job.execution.config.JacksonConfig;
 import uk.gov.hmcts.juror.job.execution.database.model.MetaData;
 import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.jobs.checks.pnc.batch.PncBatchJob;
@@ -43,10 +45,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = JobController.class,
     excludeAutoConfiguration = {SecurityAutoConfiguration.class})
+@AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(
     classes = {
         JobController.class,
-        ExceptionHandling.class
+        ExceptionHandling.class,
+        JacksonConfig.class
     }
 )
 @DisplayName("Controller: /job")
