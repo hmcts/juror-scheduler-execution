@@ -26,6 +26,9 @@ plugins {
   id 'org.sonarqube' version '6.0.1.5171'
 }
 
+// Keep Netty modules aligned on a version fixing CVE-2026-89044.
+ext["netty.version"] = "4.2.21.Final"
+
 group = 'uk.gov.hmcts.juror'
 version = '5.34.1'
 

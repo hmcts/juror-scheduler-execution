@@ -12,27 +12,4 @@
     <cve>CVE-2026-54399</cve>
     <cve>CVE-2026-54428</cve>
   </suppress>
-  <suppress>
-    <notes><![CDATA[Netty 4.2.17.Final: suppress the reported PR-358 finding for the listed modules.]]></notes>
-    <packageUrl regex="true">^pkg:maven/io\.netty/netty-(buffer|codec-base|codec-classes-quic|codec-compression|codec-dns|codec-http|codec-http2|codec-http3|codec-socks|common|handler|handler-proxy|resolver|resolver-dns|resolver-dns-classes-macos|resolver-dns-native-macos|transport|transport-classes-epoll|transport-native-epoll|transport-native-unix-common)@4\.2\.17\.Final$</packageUrl>
-    <cve>CVE-2026-89044</cve>
-  </suppress>
-  <suppress>
-    <notes><![CDATA[Spring Integration SFTP 6.5.10: suppress the reported PR-358 findings.]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.springframework\.integration/spring-integration-sftp@6\.5\.10$</packageUrl>
-    <cve>CVE-2026-47864</cve>
-    <cve>CVE-2026-59324</cve>
-    <cve>CVE-2026-59307</cve>
-    <cve>CVE-2026-59311</cve>
-    <cve>CVE-2026-59293</cve>
-    <cve>CVE-2026-47859</cve>
-    <cve>CVE-2026-59274</cve>
-    <cve>CVE-2026-47856</cve>
-    <cve>CVE-2026-47861</cve>
-    <cve>CVE-2026-59322</cve>
-    <cve>CVE-2026-47862</cve>
-    <cve>CVE-2026-47880</cve>
-    <cve>CVE-2026-59321</cve>
-    <cve>CVE-2026-59292</cve>
-  </suppress>
 </suppressions>
