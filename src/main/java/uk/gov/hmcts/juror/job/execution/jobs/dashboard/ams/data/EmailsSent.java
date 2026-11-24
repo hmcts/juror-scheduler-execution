@@ -1,0 +1,112 @@
+package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
+
+import lombok.extern.slf4j.Slf4j;
+import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
+import uk.gov.hmcts.juror.job.execution.jobs.Job;
+import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+@SuppressWarnings("PMD.LawOfDemeter")
+@Slf4j
+public class EmailsSent extends DashboardDataEntry {
+    public static final String EMAILS_SENT_SQL = """
+        select tfa.form_type type,
+            (case when tfa.form_type ='5221' then 'SUMMONS ENGLISH'
+            when tfa.form_type ='5221C' then 'SUMMONS BI-LINGUAL'
+            when tfa.form_type ='5224' then 'WITHDRAWAL ENGLISH'
+            when tfa.form_type ='5224A' then 'CONFIRMATION ENGLISH'
+            when tfa.form_type ='5224AC' then 'CONFIRMATION WELSH'
+            when tfa.form_type ='5224C' then 'WITHDRAWAL WELSH'
+            when tfa.form_type ='5225' then 'EXCUSAL ENGLISH'
+            when tfa.form_type ='5225C' then 'EXCUSAL WELSH'
+            when tfa.form_type ='5226' then 'NON-EXCUSAL ENGLISH'
+            when tfa.form_type ='5226A' then 'NON-DEFER ENGLISH'
+            when tfa.form_type ='5226AC' then 'NON-DEFER WELSH'
+            when tfa.form_type ='5226C' then 'NON-EXCUSAL WELSH'
+            when tfa.form_type ='5227' then 'REQUEST ENGLISH'
+            when tfa.form_type ='5227C' then 'REQUEST WELSH'
+            when tfa.form_type ='5228' then 'NON-RESPONDED ENGLISH'
+            when tfa.form_type ='5228C' then 'NON-RESPONDED WELSH'
+            when tfa.form_type ='5229' then 'POSTPONE ENGLISH'
+            when tfa.form_type ='5229A' then 'DEFERRED ENGLISH'
+            when tfa.form_type ='5229AC' then 'DEFERRED WELSH'
+            when tfa.form_type ='5229C' then 'POSTPONE WELSH'
+            when tfa.form_type ='6220' then 'DBD SUMMONS ENGLISH'
+            when tfa.form_type ='6220C' then 'DBD SUMMONS WELSH'
+            when tfa.form_type ='6228' then 'DBD REMINDER ENGLISH'
+            when tfa.form_type ='6228C' then 'DBD REMINDER WELSH'
+            when tfa.form_type ='6221' then 'DBD RESPONSE ENGLISH'
+            when tfa.form_type ='6221C' then 'DBD RESPONSE WELSH' else 'UNKNOWN' end) description,
+            coalesce(sum(form_counts.number_of_items),0)::bigint "count"
+        from juror_mod.t_form_attr tfa left outer join (
+            select bpd.form_type,
+                count(bpd.juror_no) as number_of_items
+            from juror_mod.bulk_print_data bpd
+            where bpd.creation_date >= ?
+              and bpd.creation_date <= ?
+            group by bpd.form_type) form_counts
+        on tfa.form_type = form_counts.form_type
+        group by tfa.form_type, tfa.dir_name
+        order by 1;
+        """;
+
+    private static final LocalTime EMAIL_JOB_START_TIME = LocalTime.of(20, 15);
+    private static final LocalTime EMAIL_JOB_END_TIME = LocalTime.of(20, 20);
+
+    final DatabaseService databaseService;
+    final DatabaseConfig databaseConfig;
+    final Clock clock;
+
+    protected EmailsSent(DashboardData dashboardData,
+                         DatabaseService databaseService,
+                         DatabaseConfig databaseConfig,
+                         Clock clock) {
+        super(dashboardData, "Emails Sent", "Type", "Description", "Count");
+        this.databaseService = databaseService;
+        this.databaseConfig = databaseConfig;
+        this.clock = clock;
+    }
+
+    public void addRow(String type, String description, String count) {
+        addEntry(type, description, count);
+    }
+
+    public void addRow(EmailsSentDB emailsSentDB) {
+        addRow(emailsSentDB.getType(), emailsSentDB.getDescription(), String.valueOf(emailsSentDB.getCount()));
+    }
+
+    public Job.Result populate() {
+        final String errorText = "ERROR";
+        AtomicReference<Job.Result> result = new AtomicReference<>(null);
+        LocalDate emailRunDate = LocalDate.now(clock).minusDays(1);
+        LocalDateTime emailJobStart = emailRunDate.atTime(EMAIL_JOB_START_TIME);
+        LocalDateTime emailJobEnd = emailRunDate.atTime(EMAIL_JOB_END_TIME);
+
+        try {
+            databaseService.execute(databaseConfig, connection -> {
+                List<EmailsSentDB> response = databaseService.executePreparedStatement(connection,
+                    EmailsSentDB.class, EMAILS_SENT_SQL, emailJobStart, emailJobEnd);
+
+                if (response == null || response.isEmpty()) {
+                    addRow(errorText, errorText, errorText);
+                    result.set(Job.Result.failed("No response from database"));
+                } else {
+                    response.forEach(this::addRow);
+                }
+            });
+        } catch (Exception e) {
+            log.error("Unable to get Emails Sent", e);
+            addRow(errorText, errorText, errorText);
+            result.set(Job.Result.failed("Unexpected exception", e));
+        }
+
+        populateTimestamp(dashboardData, "Emails Sent", LocalDateTime.now(clock));
+        return result.get() == null ? Job.Result.passed() : result.get();
+    }
+}

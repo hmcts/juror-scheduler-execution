@@ -14,6 +14,7 @@ import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.BureauLettersAut
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.BureauLettersToBePrinted;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.Certificates;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.DashboardData;
+import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.EmailsSent;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.Expenses;
 import uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data.PncCheck;
 import uk.gov.hmcts.juror.job.execution.model.Status;
@@ -94,7 +95,7 @@ public class AmsDashboardGenerateJobTest {
         Job.ResultSupplier resultSupplier2 = resultSuppliers.get(1);
 
         assertTrue(resultSupplier1.isContinueOnFailure(), "First result supplier should continue on failure");
-        assertEquals(5, resultSupplier1.getResultRunners().size(), "First result supplier should have 5 runners");
+        assertEquals(6, resultSupplier1.getResultRunners().size(), "First result supplier should have 6 runners");
 
         assertFalse(resultSupplier2.isContinueOnFailure(), "Second result supplier should not continue on failure");
         assertEquals(1, resultSupplier2.getResultRunners().size(), "Second result supplier should have 1 runner");
@@ -134,11 +135,13 @@ public class AmsDashboardGenerateJobTest {
         BureauLettersAutomaticallyGenerated bureauLettersAutomaticallyGenerated =
             mock(BureauLettersAutomaticallyGenerated.class);
         BureauLettersToBePrinted bureauLettersToBePrinted = mock(BureauLettersToBePrinted.class);
+        EmailsSent emailsSent = mock(EmailsSent.class);
         PncCheck pncCheck = mock(PncCheck.class);
         Expenses expenses = mock(Expenses.class);
         Certificates certificates = mock(Certificates.class);
         Job.Result bureauLettersAutomaticallyGeneratedResult = Job.Result.passed("Bureau letters generated");
         Job.Result bureauLettersToBePrintedResult = Job.Result.passed("Bureau letters to be printed");
+        Job.Result emailsSentResult = Job.Result.passed("Emails sent");
         Job.Result pncCheckResult = Job.Result.passed("PNC check");
         Job.Result expensesResult = Job.Result.passed("Expenses");
         Job.Result certificatesResult = Job.Result.passed("Certificates");
@@ -146,11 +149,13 @@ public class AmsDashboardGenerateJobTest {
         doReturn(dashboardData).when(amsDashboardGenerateJob).createDashboardData();
         when(dashboardData.getBureauLettersAutomaticallyGenerated()).thenReturn(bureauLettersAutomaticallyGenerated);
         when(dashboardData.getBureauLettersToBePrinted()).thenReturn(bureauLettersToBePrinted);
+        when(dashboardData.getEmailsSent()).thenReturn(emailsSent);
         when(dashboardData.getPncCheck()).thenReturn(pncCheck);
         when(dashboardData.getExpenses()).thenReturn(expenses);
         when(dashboardData.getCertificates()).thenReturn(certificates);
         when(bureauLettersAutomaticallyGenerated.populate()).thenReturn(bureauLettersAutomaticallyGeneratedResult);
         when(bureauLettersToBePrinted.populate()).thenReturn(bureauLettersToBePrintedResult);
+        when(emailsSent.populate()).thenReturn(emailsSentResult);
         when(pncCheck.populate()).thenReturn(pncCheckResult);
         when(expenses.populate()).thenReturn(expensesResult);
         when(certificates.populate()).thenReturn(certificatesResult);
@@ -160,10 +165,11 @@ public class AmsDashboardGenerateJobTest {
             .map(resultRunner -> resultRunner.apply(metaData))
             .toList();
 
-        assertEquals(5, results.size(), "Five dashboard section runners should run");
+        assertEquals(6, results.size(), "Six dashboard section runners should run");
         assertTrue(results.containsAll(List.of(
             bureauLettersAutomaticallyGeneratedResult,
             bureauLettersToBePrintedResult,
+            emailsSentResult,
             pncCheckResult,
             expensesResult,
             certificatesResult
@@ -222,38 +228,44 @@ public class AmsDashboardGenerateJobTest {
         BureauLettersAutomaticallyGenerated bureauLettersAutomaticallyGenerated =
             mock(BureauLettersAutomaticallyGenerated.class);
         BureauLettersToBePrinted bureauLettersToBePrinted = mock(BureauLettersToBePrinted.class);
+        EmailsSent emailsSent = mock(EmailsSent.class);
         PncCheck pncCheck = mock(PncCheck.class);
         Expenses expenses = mock(Expenses.class);
         Certificates certificates = mock(Certificates.class);
         Job.Result bureauLettersAutomaticallyGeneratedResult = Job.Result.passed("Bureau letters generated");
         Job.Result bureauLettersToBePrintedResult = Job.Result.passed("Bureau letters to be printed");
+        Job.Result emailsSentResult = Job.Result.passed("Emails sent");
         Job.Result pncCheckResult = Job.Result.passed("PNC check");
         Job.Result expensesResult = Job.Result.passed("Expenses");
         Job.Result certificatesResult = Job.Result.passed("Certificates");
 
         when(dashboardData.getBureauLettersAutomaticallyGenerated()).thenReturn(bureauLettersAutomaticallyGenerated);
         when(dashboardData.getBureauLettersToBePrinted()).thenReturn(bureauLettersToBePrinted);
+        when(dashboardData.getEmailsSent()).thenReturn(emailsSent);
         when(dashboardData.getPncCheck()).thenReturn(pncCheck);
         when(dashboardData.getExpenses()).thenReturn(expenses);
         when(dashboardData.getCertificates()).thenReturn(certificates);
         when(bureauLettersAutomaticallyGenerated.populate()).thenReturn(bureauLettersAutomaticallyGeneratedResult);
         when(bureauLettersToBePrinted.populate()).thenReturn(bureauLettersToBePrintedResult);
+        when(emailsSent.populate()).thenReturn(emailsSentResult);
         when(pncCheck.populate()).thenReturn(pncCheckResult);
         when(expenses.populate()).thenReturn(expensesResult);
         when(certificates.populate()).thenReturn(certificatesResult);
 
         List<Job.Result> results = amsDashboardGenerateJob.populateDashboardData(dashboardData, metaData);
 
-        assertEquals(5, results.size(), "Five dashboard sections should be populated");
+        assertEquals(6, results.size(), "Six dashboard sections should be populated");
         assertTrue(results.containsAll(List.of(
             bureauLettersAutomaticallyGeneratedResult,
             bureauLettersToBePrintedResult,
+            emailsSentResult,
             pncCheckResult,
             expensesResult,
             certificatesResult
         )), "Results should include every dashboard section result");
         verify(bureauLettersAutomaticallyGenerated, times(1)).populate();
         verify(bureauLettersToBePrinted, times(1)).populate();
+        verify(emailsSent, times(1)).populate();
         verify(pncCheck, times(1)).populate();
         verify(expenses, times(1)).populate();
         verify(certificates, times(1)).populate();
