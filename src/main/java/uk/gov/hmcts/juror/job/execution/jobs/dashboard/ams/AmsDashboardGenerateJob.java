@@ -72,6 +72,7 @@ public class AmsDashboardGenerateJob extends ParallelJob {
                 List.of(
                     metaData -> dashboardData.getBureauLettersAutomaticallyGenerated().populate(),
                     metaData -> dashboardData.getBureauLettersToBePrinted().populate(),
+                    metaData -> dashboardData.getEmailsSent().populate(),
                     metaData -> dashboardData.getPncCheck().populate(),
                     metaData -> dashboardData.getExpenses().populate(),
                     metaData -> dashboardData.getCertificates().populate()
@@ -94,6 +95,7 @@ public class AmsDashboardGenerateJob extends ParallelJob {
         List<Function<MetaData, Result>> resultRunners = List.of(
             ignoredMetaData -> dashboardData.getBureauLettersAutomaticallyGenerated().populate(),
             ignoredMetaData -> dashboardData.getBureauLettersToBePrinted().populate(),
+            ignoredMetaData -> dashboardData.getEmailsSent().populate(),
             ignoredMetaData -> dashboardData.getPncCheck().populate(),
             ignoredMetaData -> dashboardData.getExpenses().populate(),
             ignoredMetaData -> dashboardData.getCertificates().populate()

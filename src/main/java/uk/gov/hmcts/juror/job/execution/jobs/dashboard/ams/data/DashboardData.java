@@ -17,6 +17,7 @@ public class DashboardData {
 
     private final BureauLettersAutomaticallyGenerated bureauLettersAutomaticallyGenerated;
     private final BureauLettersToBePrinted bureauLettersToBePrinted;
+    private final EmailsSent emailsSent;
     private final PncCheck pncCheck;
     private final Expenses expenses;
     private final Certificates certificates;
@@ -31,6 +32,7 @@ public class DashboardData {
             new BureauLettersAutomaticallyGenerated(this, databaseService, config.getDatabase(), clock);
         this.bureauLettersToBePrinted =
             new BureauLettersToBePrinted(this, databaseService, config.getDatabase(), clock);
+        this.emailsSent = new EmailsSent(this, databaseService, config.getDatabase(), clock);
         this.pncCheck = new PncCheck(this, schedulerServiceClient);
         this.expenses = new Expenses(this, databaseService, config.getDatabase(), clock);
         this.certificates = new Certificates(this, config, clock);
@@ -39,6 +41,7 @@ public class DashboardData {
         this.dashboardDataEntries = List.of(
             this.bureauLettersAutomaticallyGenerated,
             this.bureauLettersToBePrinted,
+            this.emailsSent,
             this.pncCheck,
             this.expenses,
             this.certificates,

@@ -54,6 +54,16 @@ class DashboardDataTest {
         assertSame(clock, bureauLettersToBePrinted.clock,
             "clock should be the same");
 
+        EmailsSent emailsSent = dashboardData.getEmailsSent();
+        assertSame(dashboardData, emailsSent.dashboardData,
+            "DashboardData should be the same");
+        assertSame(databaseService, emailsSent.databaseService,
+            "databaseService should be the same");
+        assertSame(config.getDatabase(), emailsSent.databaseConfig,
+            "databaseConfig should be the same");
+        assertSame(clock, emailsSent.clock,
+            "clock should be the same");
+
         PncCheck pncCheck = dashboardData.getPncCheck();
         assertSame(dashboardData, pncCheck.dashboardData,
             "DashboardData should be the same");
@@ -83,11 +93,15 @@ class DashboardDataTest {
             "DashboardData should be the same");
 
         List<DashboardDataEntry> dashboardDataEntries = dashboardData.getDashboardDataEntries();
-        assertEquals(6, dashboardDataEntries.size(), "dashboardDataEntries should be the same");
+        assertEquals(7, dashboardDataEntries.size(), "dashboardDataEntries should be the same");
         assertTrue(dashboardDataEntries.contains(bureauLettersAutomaticallyGenerated),
             "dashboardDataEntries should contain bureauLettersAutomaticallyGenerated");
         assertTrue(dashboardDataEntries.contains(bureauLettersToBePrinted),
             "dashboardDataEntries should contain bureauLettersToBePrinted");
+        assertTrue(dashboardDataEntries.contains(emailsSent),
+            "dashboardDataEntries should contain emailsSent");
+        assertEquals(emailsSent, dashboardDataEntries.get(2),
+            "emailsSent should be before other dashboard sections and timestamps");
         assertTrue(dashboardDataEntries.contains(pncCheck),
             "dashboardDataEntries should contain pncCheck");
         assertTrue(dashboardDataEntries.contains(expenses),

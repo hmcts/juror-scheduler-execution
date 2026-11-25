@@ -46,7 +46,8 @@ select tfa.form_type type,
                select bpd.form_type,
                     count(bpd.juror_no) as number_of_items
                from juror_mod.bulk_print_data bpd
-               where bpd.extracted_date = current_date -1
+               where bpd.extracted_date = current_date - 1
+                   and bpd.communication_channel = 'LETTER'
              group by bpd.form_type) form_counts
             on tfa.form_type = form_counts.form_type
             group by tfa.form_type, tfa.dir_name
