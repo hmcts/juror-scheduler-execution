@@ -1,18 +1,11 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
-import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
-import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
-@SuppressWarnings("PMD.LawOfDemeter")
-@Slf4j
-public class EmailsSent extends DashboardDataEntry {
+public class EmailsSent extends CommunicationCounts<EmailsSentDB> {
     public static final String EMAILS_SENT_SQL = """
         select tfa.form_type type,
             (case
@@ -52,51 +45,16 @@ public class EmailsSent extends DashboardDataEntry {
         order by 1;
         """;
 
-    final DatabaseService databaseService;
-    final DatabaseConfig databaseConfig;
-    final Clock clock;
-
     protected EmailsSent(DashboardData dashboardData,
                          DatabaseService databaseService,
                          DatabaseConfig databaseConfig,
                          Clock clock) {
-        super(dashboardData, "Emails Sent", "Type", "Description", "Count");
-        this.databaseService = databaseService;
-        this.databaseConfig = databaseConfig;
-        this.clock = clock;
+        super(dashboardData, "Emails Sent", databaseService, databaseConfig, clock,
+            EmailsSentDB.class, EMAILS_SENT_SQL, "Failed to get Emails Sent information");
     }
 
-    public void addRow(String type, String description, String count) {
-        addEntry(type, description, count);
-    }
-
+    @Override
     public void addRow(EmailsSentDB emailsSentDB) {
         addRow(emailsSentDB.getType(), emailsSentDB.getDescription(), String.valueOf(emailsSentDB.getCount()));
-    }
-
-    public Job.Result populate() {
-        final String errorText = "ERROR";
-        AtomicReference<Job.Result> result = new AtomicReference<>(null);
-
-        try {
-            databaseService.execute(databaseConfig, connection -> {
-                List<EmailsSentDB> response = databaseService.executePreparedStatement(connection,
-                    EmailsSentDB.class, EMAILS_SENT_SQL);
-
-                if (response == null || response.isEmpty()) {
-                    addRow(errorText, errorText, errorText);
-                    result.set(Job.Result.failed("No response from database"));
-                } else {
-                    response.forEach(this::addRow);
-                }
-            });
-        } catch (Exception e) {
-            log.error("Unable to get Emails Sent", e);
-            addRow(errorText, errorText, errorText);
-            result.set(Job.Result.failed("Failed to get Emails Sent information", e));
-        }
-
-        populateTimestamp(dashboardData, "Emails Sent", LocalDateTime.now(clock));
-        return result.get() == null ? Job.Result.passed() : result.get();
     }
 }
