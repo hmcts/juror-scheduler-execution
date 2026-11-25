@@ -68,23 +68,23 @@ class EmailsSentTest {
     @Test
     void positiveAddRowDbTest() {
         EmailsSentDB row = new EmailsSentDB()
-            .setType("5221")
-            .setDescription("SUMMONS ENGLISH")
+            .setType("5224A")
+            .setDescription("CONFIRMATION ENGLISH")
             .setCount(4L);
 
         emailsSent.addRow(row);
 
-        assertArrayEquals(new String[]{"5221", "SUMMONS ENGLISH", "4"}, emailsSent.rows.get(1));
+        assertArrayEquals(new String[]{"5224A", "CONFIRMATION ENGLISH", "4"}, emailsSent.rows.get(1));
         assertEquals("""
             [Emails Sent]
             Type,Description,Count
-            5221,SUMMONS ENGLISH,4""", emailsSent.toCsv().toString());
+            5224A,CONFIRMATION ENGLISH,4""", emailsSent.toCsv().toString());
     }
 
     @Test
     void positivePopulateIncludesZeroCounts() {
         List<EmailsSentDB> response = List.of(
-            new EmailsSentDB().setType("5221").setDescription("SUMMONS ENGLISH").setCount(12L),
+            new EmailsSentDB().setType("5224A").setDescription("CONFIRMATION ENGLISH").setCount(12L),
             new EmailsSentDB().setType("5224AC").setDescription("CONFIRMATION WELSH").setCount(0L)
         );
         when(databaseService.executePreparedStatement(connection, EmailsSentDB.class,
@@ -94,7 +94,7 @@ class EmailsSentTest {
 
         verify(databaseService).executePreparedStatement(connection, EmailsSentDB.class,
             EmailsSent.EMAILS_SENT_SQL);
-        assertArrayEquals(new String[]{"5221", "SUMMONS ENGLISH", "12"}, emailsSent.rows.get(1));
+        assertArrayEquals(new String[]{"5224A", "CONFIRMATION ENGLISH", "12"}, emailsSent.rows.get(1));
         assertArrayEquals(new String[]{"5224AC", "CONFIRMATION WELSH", "0"}, emailsSent.rows.get(2));
         verify(emailsSent).populateTimestamp(dashboardData, "Emails Sent", LocalDateTime.now(clock));
     }

@@ -34,7 +34,7 @@ public class EmailsSent extends DashboardDataEntry {
             when tfa.form_type ='5229AC' then 'DEFERRED WELSH'
                 else 'UNKNOWN' end) description,
             coalesce(sum(form_counts.number_of_items),0)::bigint "count"
-        from juror_mod.t_form_attr tfa join (
+        from juror_mod.t_form_attr tfa left outer join (
             select bpd.form_type,
                 count(bpd.juror_no) as number_of_items
             from juror_mod.bulk_print_data bpd
@@ -42,6 +42,12 @@ public class EmailsSent extends DashboardDataEntry {
                 and bpd.communication_channel = 'EMAIL'
             group by bpd.form_type) form_counts
         on tfa.form_type = form_counts.form_type
+        where tfa.form_type in (
+            '5224A', '5224AC', '5224', '5224C',
+            '5225', '5225C', '5226A', '5226AC',
+            '5226', '5226C', '5227', '5227C',
+            '5229', '5229C', '5229A', '5229AC'
+        )
         group by tfa.form_type, tfa.dir_name
         order by 1;
         """;
