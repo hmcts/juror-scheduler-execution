@@ -75,43 +75,28 @@ class EmailsSentTest {
         emailsSent.addRow(row);
 
         assertArrayEquals(new String[]{"5221", "SUMMONS ENGLISH", "4"}, emailsSent.rows.get(1));
+        assertEquals("""
+            [Emails Sent]
+            Type,Description,Count
+            5221,SUMMONS ENGLISH,4""", emailsSent.toCsv().toString());
     }
 
     @Test
-    void positivePopulateUsesMondayWindowAndIncludesZeroCounts() {
+    void positivePopulateIncludesZeroCounts() {
         List<EmailsSentDB> response = List.of(
             new EmailsSentDB().setType("5221").setDescription("SUMMONS ENGLISH").setCount(12L),
             new EmailsSentDB().setType("5224AC").setDescription("CONFIRMATION WELSH").setCount(0L)
         );
-        LocalDateTime start = LocalDateTime.of(2026, 11, 23, 20, 15);
-        LocalDateTime end = LocalDateTime.of(2026, 11, 23, 20, 20);
         when(databaseService.executePreparedStatement(connection, EmailsSentDB.class,
-            EmailsSent.EMAILS_SENT_SQL, start, end)).thenReturn(response);
+            EmailsSent.EMAILS_SENT_SQL)).thenReturn(response);
 
         assertEquals(Job.Result.passed(), emailsSent.populate());
 
         verify(databaseService).executePreparedStatement(connection, EmailsSentDB.class,
-            EmailsSent.EMAILS_SENT_SQL, start, end);
+            EmailsSent.EMAILS_SENT_SQL);
         assertArrayEquals(new String[]{"5221", "SUMMONS ENGLISH", "12"}, emailsSent.rows.get(1));
         assertArrayEquals(new String[]{"5224AC", "CONFIRMATION WELSH", "0"}, emailsSent.rows.get(2));
         verify(emailsSent).populateTimestamp(dashboardData, "Emails Sent", LocalDateTime.now(clock));
-    }
-
-    @Test
-    void positivePopulateUsesFridayWindowForSaturdayRun() {
-        clock = Clock.fixed(Instant.parse("2026-11-28T06:00:00Z"), ZoneOffset.UTC);
-        emailsSent = spy(new EmailsSent(dashboardData, databaseService, databaseConfig, clock));
-        doNothing().when(emailsSent).populateTimestamp(any(), any(), any(LocalDateTime.class));
-        LocalDateTime start = LocalDateTime.of(2026, 11, 27, 20, 15);
-        LocalDateTime end = LocalDateTime.of(2026, 11, 27, 20, 20);
-        when(databaseService.executePreparedStatement(connection, EmailsSentDB.class,
-            EmailsSent.EMAILS_SENT_SQL, start, end)).thenReturn(List.of(
-                new EmailsSentDB().setType("5221").setDescription("SUMMONS ENGLISH").setCount(1L)));
-
-        assertEquals(Job.Result.passed(), emailsSent.populate());
-
-        verify(databaseService).executePreparedStatement(connection, EmailsSentDB.class,
-            EmailsSent.EMAILS_SENT_SQL, start, end);
     }
 
     @Test
@@ -136,12 +121,10 @@ class EmailsSentTest {
     @Test
     void negativePopulateUnexpectedException() {
         RuntimeException cause = new RuntimeException("Database unavailable");
-        LocalDateTime start = LocalDateTime.of(2026, 11, 23, 20, 15);
-        LocalDateTime end = LocalDateTime.of(2026, 11, 23, 20, 20);
         when(databaseService.executePreparedStatement(connection, EmailsSentDB.class,
-            EmailsSent.EMAILS_SENT_SQL, start, end)).thenThrow(cause);
+            EmailsSent.EMAILS_SENT_SQL)).thenThrow(cause);
 
-        assertEquals(Job.Result.failed("Unexpected exception", cause), emailsSent.populate());
+        assertEquals(Job.Result.failed("Failed to get Emails Sent information", cause), emailsSent.populate());
 
         assertArrayEquals(new String[]{"ERROR", "ERROR", "ERROR"}, emailsSent.rows.get(1));
         verify(emailsSent, times(1))
@@ -149,9 +132,7 @@ class EmailsSentTest {
     }
 
     private void mockResponse(List<EmailsSentDB> response) {
-        LocalDateTime start = LocalDateTime.of(2026, 11, 23, 20, 15);
-        LocalDateTime end = LocalDateTime.of(2026, 11, 23, 20, 20);
         when(databaseService.executePreparedStatement(connection, EmailsSentDB.class,
-            EmailsSent.EMAILS_SENT_SQL, start, end)).thenReturn(response);
+            EmailsSent.EMAILS_SENT_SQL)).thenReturn(response);
     }
 }
