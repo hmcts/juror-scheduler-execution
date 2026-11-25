@@ -95,10 +95,10 @@ public class AmsDashboardGenerateJob extends ParallelJob {
         List<Function<MetaData, Result>> resultRunners = List.of(
             ignoredMetaData -> dashboardData.getBureauLettersAutomaticallyGenerated().populate(),
             ignoredMetaData -> dashboardData.getBureauLettersToBePrinted().populate(),
-            ignoredMetaData -> dashboardData.getEmailsSent().populate(),
             ignoredMetaData -> dashboardData.getPncCheck().populate(),
             ignoredMetaData -> dashboardData.getExpenses().populate(),
-            ignoredMetaData -> dashboardData.getCertificates().populate()
+            ignoredMetaData -> dashboardData.getCertificates().populate(),
+            ignoredMetaData -> dashboardData.getEmailsSent().populate()
         );
         resultRunners.parallelStream().forEach(resultRunner ->
             results.add(runJobStep(resultRunner, metaData)));
