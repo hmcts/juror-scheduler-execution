@@ -190,7 +190,7 @@ repositories {
 
 dependencies {
   implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.61'      // upgraded from 10.1.55 - CVE-2026-59083, CVE-2026-59084 fix
-  implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:10.1.61' // upgraded from 10.1.55 - CVE-2026-59083, CVE-2026-59084 fix
+  implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:10.1.62' // upgraded from 10.1.55 - CVE-2026-59083, CVE-2026-59084 fix
   implementation 'com.github.hmcts:juror-spring-support-library:2.0.0:plain@jar'
   implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
 
