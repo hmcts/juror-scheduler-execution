@@ -72,6 +72,7 @@ public class AmsDashboardGenerateJob extends ParallelJob {
                 List.of(
                     metaData -> dashboardData.getBureauLettersAutomaticallyGenerated().populate(),
                     metaData -> dashboardData.getBureauLettersToBePrinted().populate(),
+                    metaData -> dashboardData.getEmailsSent().populate(),
                     metaData -> dashboardData.getPncCheck().populate(),
                     metaData -> dashboardData.getExpenses().populate(),
                     metaData -> dashboardData.getCertificates().populate()
@@ -96,7 +97,8 @@ public class AmsDashboardGenerateJob extends ParallelJob {
             ignoredMetaData -> dashboardData.getBureauLettersToBePrinted().populate(),
             ignoredMetaData -> dashboardData.getPncCheck().populate(),
             ignoredMetaData -> dashboardData.getExpenses().populate(),
-            ignoredMetaData -> dashboardData.getCertificates().populate()
+            ignoredMetaData -> dashboardData.getCertificates().populate(),
+            ignoredMetaData -> dashboardData.getEmailsSent().populate()
         );
         resultRunners.parallelStream().forEach(resultRunner ->
             results.add(runJobStep(resultRunner, metaData)));

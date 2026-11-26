@@ -1,18 +1,11 @@
 package uk.gov.hmcts.juror.job.execution.jobs.dashboard.ams.data;
 
-import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.juror.job.execution.config.DatabaseConfig;
-import uk.gov.hmcts.juror.job.execution.jobs.Job;
 import uk.gov.hmcts.juror.job.execution.service.contracts.DatabaseService;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
-@SuppressWarnings("PMD.LawOfDemeter")
-@Slf4j
-public class BureauLettersToBePrinted extends DashboardDataEntry {
+public class BureauLettersToBePrinted extends CommunicationCounts<BureauLettersToBePrintedDB> {
     public static final String BUREAU_LETTERS_TO_BE_PRINTED_SQL = """
 select tfa.form_type type,
             (case when tfa.form_type ='5221' then 'SUMMONS ENGLISH'
@@ -46,63 +39,26 @@ select tfa.form_type type,
                select bpd.form_type,
                     count(bpd.juror_no) as number_of_items
                from juror_mod.bulk_print_data bpd
-               where bpd.extracted_date = current_date -1
+               where bpd.extracted_date = current_date - 1
+                   and bpd.communication_channel = 'LETTER'
              group by bpd.form_type) form_counts
             on tfa.form_type = form_counts.form_type
             group by tfa.form_type, tfa.dir_name
             order by 1;
         """;
-    final DatabaseService databaseService;
-    final DatabaseConfig databaseConfig;
-    final Clock clock;
 
     protected BureauLettersToBePrinted(DashboardData dashboardData,
                                        DatabaseService databaseService,
                                        DatabaseConfig databaseConfig,
                                        Clock clock) {
-        super(dashboardData, "Bureau Letters To Be Printed", "Type", "Description", "Count");
-        this.databaseService = databaseService;
-        this.databaseConfig = databaseConfig;
-        this.clock = clock;
+        super(dashboardData, "Bureau Letters To Be Printed", databaseService, databaseConfig, clock,
+            BureauLettersToBePrintedDB.class, BUREAU_LETTERS_TO_BE_PRINTED_SQL, "Unexpected exception");
     }
 
-    public void addRow(String type, String description, String count) {
-        addEntry(type, description, count);
-    }
-
+    @Override
     public void addRow(BureauLettersToBePrintedDB bureauLettersToBePrintedDB) {
         this.addRow(bureauLettersToBePrintedDB.getType(),
             bureauLettersToBePrintedDB.getDescription(),
             String.valueOf(bureauLettersToBePrintedDB.getCount()));
-    }
-
-
-    public Job.Result populate() {
-        final String errorText = "ERROR";
-        AtomicReference<Job.Result> result = new AtomicReference<>(null);
-        try {
-            databaseService.execute(databaseConfig, connection -> {
-                List<BureauLettersToBePrintedDB> response =
-                    databaseService.executePreparedStatement(connection, BureauLettersToBePrintedDB.class,
-                        BUREAU_LETTERS_TO_BE_PRINTED_SQL);
-
-                if (response == null || response.isEmpty()) {
-                    addRow(errorText, errorText, errorText);
-                    result.set(Job.Result.failed("No response from database"));
-                } else {
-                    response.forEach(this::addRow);
-                }
-            });
-        } catch (Exception e) {
-            log.error("Unable to get Bureau Letters To Be Printed", e);
-            addRow(errorText, errorText, errorText);
-            result.set(Job.Result.failed("Unexpected exception", e));
-        }
-        populateTimestamp(dashboardData, "Bureau Letters To Be Printed", LocalDateTime.now(clock));
-        if (result.get() == null) {
-            return Job.Result.passed();
-        } else {
-            return result.get();
-        }
     }
 }
